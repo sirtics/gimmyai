@@ -40,7 +40,7 @@ function App() {
     }));
 
     const apiRequestBody = {
-      "model": "gpt-3.5-turbo",
+      "model": "gpt-4-0125-preview",
       "messages": [
         systemMessage,
         ...apiMessages
