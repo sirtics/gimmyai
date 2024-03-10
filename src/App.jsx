@@ -27,15 +27,14 @@ function handlePaste(e) {
 }
 
 function adjustAppHeight() {
-  const appHeight = window.innerHeight + 'px';
-  document.querySelector('.App').style.height = appHeight;
+  const appHeight = `${window.innerHeight}px`;
+  document.documentElement.style.setProperty('--app-height', appHeight);
 }
 
-// Call this function on resize and orientation change events
 window.addEventListener('resize', adjustAppHeight);
 window.addEventListener('orientationchange', adjustAppHeight);
 
-// Initial adjustment
+// Call the function to set the initial value
 adjustAppHeight();
 
 

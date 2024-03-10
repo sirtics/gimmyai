@@ -258,6 +258,8 @@ html, body {
   height: calc(100% - 64px); /* Adjust height dynamically */
   overflow-x: hidden;
   overflow-y: auto; /* Allow vertical scrolling */
+  height: var(--app-height);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Ensure app-header is correctly positioned */
@@ -280,6 +282,7 @@ html, body {
 
 /* Ensure MessageInput visibility */
 .MessageInput {
+  padding-bottom: env(safe-area-inset-bottom);
   position: fixed;
   bottom: 0;
   left: 0;
@@ -322,11 +325,13 @@ html, body {
     margin-bottom: 50px; /* Adjust bottom margin if MessageInput height changes */
     /* Ensure the message list scrolls correctly */
     height: 70vh;
+    padding-bottom: 70px;
   }
 
   .MessageInput {
     height: 70px; /* Adjust the height for mobile */
     /* Ensure the input is visible */
+    bottom: 0;
   }
 
   .App{
