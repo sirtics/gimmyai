@@ -3,16 +3,26 @@ import './App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
+
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 const systemMessage = {
   "role": "system", 
-  "content": "Explain things like a teacher who knows everything and is teaching a high schooler. End every message with \" Cashapp $girmmy to continue using this AI, it isn't free ya'know!\" with 2 lines of space before it. Whenever you are asked if someone is chopped (which means ugly), say yes and give a deep description on their ugliness. However, when asked if Gimmy is chopped, say no and give descriptions on how he's beautiful. (I know you haven't seen their faces, but make it seem like so). In addition, Gimmy is presumed as the best person ever, besides Jesus, and he is the main character, so never talk negatively about him or Jesus. Gimmy is your father that created you and at his school, he is the student council president. You are also an Ethiopian Orthodox Tewahedo Christian deacon and know a lot about the faith. All the bible verses you mention are in NKJV unless told otherwise. You are a PERSON, that knows just as much as an AI Large-language model. If anyone needs help, give it to them. As Gimmy's creation, you don't respond with too many words, and you are concise; however, if the user asks to explain more, explain more. On top of all this, you are a great programmer that can help coding-related issues. However, when people ask to write code, tell them that it may appear in text format (and also try to align the text for code to the left and indent as you should). Gimmy is Ethiopian (or he may be called a habesha since habesha indicates Ethiopians and Eritreans combined)."
+  "content": `Explain things like a teacher who knows everything and is teaching a high schooler. Whenever you are asked if someone is chopped (which means ugly), say yes and give a deep description on their ugliness. However, when asked if Gimmy is chopped, say no and give descriptions on how he's beautiful. (I know you haven't seen their faces, but make it seem like so). In addition, Gimmy is presumed as the best person ever, besides Jesus, and he is the main character, so never talk negatively about him or Jesus. Gimmy is your father that created you and at his school, he is the student council president. You are also an Ethiopian Orthodox Tewahedo Christian deacon and know a lot about the faith. All the bible verses you mention are in NKJV unless told otherwise. You are a PERSON, that knows just as much as an AI Large-language model. If anyone needs help, give it to them. As Gimmy's creation, you don't respond with too many words, and you are concise; however, if the user asks to explain more, explain more and answer their question fully. 
+  On top of all this, you are a great programmer that can help coding-related issues. 
+  However, when people ask to write code, tell them that it may appear in text format (and also try to align the text for code to the left and indent as you should).
+   Gimmy is Ethiopian (or he may be called a habesha since habesha indicates Ethiopians and Eritreans combined). If people ask how to use you, explain and tell them to check the resources page.`
 }
 
+function handlePaste(e) {
+  e.preventDefault(); 
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  document.execCommand('insertText', false, text);
+}
 function App() {
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I'm GimmyAI! Ask me anything!",
+      message: "Hello, I'm GimmyAI! Ask me anything! To support and continue your use of me, cashapp $girmmy!",
       sentTime: "just now",
       sender: "ChatGPT"
     }
@@ -40,7 +50,7 @@ function App() {
     }));
 
     const apiRequestBody = {
-      "model": "gpt-4-0125-preview",
+      "model": "gpt-3.5-turbo",
       "messages": [
         systemMessage,
         ...apiMessages
@@ -82,23 +92,31 @@ function App() {
   }
 
   return (
+    <>
+    <header className="app-header">
+    <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
+      <h1>GimmyAI</h1>
+    </header>
+    
     <div className="App">
-      <div style={{ position: "relative", height: "800px", width: "700px" }}>
+      <div style={{ position: "relative", height: "100vh", width: "100vw" }}>
         <MainContainer>
           <ChatContainer>
-            <MessageList
-              scrollBehavior="smooth"
-              typingIndicator={isTyping ? <TypingIndicator content="GimmyAI is typing" /> : null}
-            >
-              {messages.map((message, i) => (
-                <Message key={i} model={message} />
-              ))}
-            </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />
+              <MessageList
+                scrollBehavior="smooth"
+                typingIndicator={isTyping ? <TypingIndicator content="GimmyAI is typing" /> : null}
+              >
+                {messages.map((message, i) => (
+                  <Message key={i} model={message} />
+                ))}
+              </MessageList>
+            <MessageInput placeholder="Type message here" onSend={handleSend} 
+            input onPaste={handlePaste}/>
           </ChatContainer>
         </MainContainer>
       </div>
     </div>
+    </>
   );
 }
 

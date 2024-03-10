@@ -40,3 +40,213 @@
 .read-the-docs {
   color: #888;
 }
+
+
+
+@media (max-width: 480px) {
+  #root {
+    max-width: 100vw;
+    padding: 0;
+    text-align: left; 
+  }
+
+
+  .main-container-style {
+    height: 100vh;
+    width: 100vw;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  
+}
+
+
+@media (max-width: 390px) {
+  #root {
+    max-width: 100vw;
+    padding: 0;
+    text-align: left; 
+  }
+
+  
+  .main-container-style {
+    height: 100vh;
+    width: 100vw;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+#root {
+  max-width: 100vw;
+  height: 100vh;
+  overflow: hidden; 
+  padding: 0;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.cs-message__html-content{
+  user-select: text;
+}
+
+@media (max-width: 480px) {
+  #root {
+    max-width: 100vw;
+    padding: 0;
+    text-align: left; 
+  }
+
+
+  .main-container-style {
+    height: 100vh;
+    width: 100vw;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  
+}
+
+
+@media (max-width: 390px) {
+  #root {
+    max-width: 100vw;
+    padding: 0;
+    text-align: left; 
+  }
+
+  
+  .main-container-style {
+    height: 100vh;
+    width: 100vw;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+#root {
+  max-width: 100vw;
+  height: 100vh;
+  padding: 0;
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #646cff; 
+  padding: 0 2rem;
+  padding-left: 15px;
+  width: 100%;
+  height: 4rem; /* Header height */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.app-header h1 {
+  color: #FFFF; 
+  font-size: 1.5rem; 
+  font-family: 'Roboto', 'Arial', sans-serif; 
+  float: right;
+}
+
+.logo {
+  height: auto;
+  width: 6rem;
+  padding-bottom: 15px;
+  max-width: 100%;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+#root {
+  display: flex;
+  flex-direction: column;
+  max-width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 5rem; 
+  z-index: 2;
+}
+
+.App {
+  background: white;
+  flex: 1;
+  padding-top: 5rem; 
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  overflow-x: hidden;
+}
+
+.MessageList {
+  flex: 1;
+  overflow-y: auto; 
+  overflow-x: hidden;
+}
+
+.MessageInput {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5rem; 
+  z-index: 2;
+}
