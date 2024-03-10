@@ -239,68 +239,83 @@
   overflow: hidden;
 }
 
+/* Reset margin and padding for all elements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; 
+}
+
+html, body {
+  height: 100%; 
+  overflow-x: hidden; 
+}
+
+/* Main container of your app */
+.App {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 64px; 
+  height: 100%;
+  overflow-x: hidden; 
+}
+
+/* Header */
 .app-header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 5rem; 
-  z-index: 2;
+  z-index: 2; /* Ensure the header is above the MessageList */
+  height: 64px; /* Set the header height */
 }
 
-.App {
-  background: white;
-  flex: 1;
-  padding-top: 5rem; 
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-  overflow-x: hidden;
-}
-
+/* Message list should be scrollable */
 .MessageList {
-  flex: 1;
-  overflow-y: auto; 
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  flex-grow: 1;
+  overflow-y: auto; /* Enable scrolling for the message list */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS devices */
+  padding-bottom: 60px; /* Space for the MessageInput; adjust if your input height is different */
 }
 
+/* Message input fixed at the bottom */
 .MessageInput {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 4rem; 
-  z-index: 1;
+  z-index: 2; 
+  height: 60px; /* Set the MessageInput height */
 }
+
+
+/* Adjustment for iOS safe area */
+@supports(padding-bottom: env(safe-area-inset-bottom)) {
+  .MessageInput {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .MessageList {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Adjust the 60px to your MessageInput's height */
+  }
+}
+
 
 .MessageInput input {
   text-align: left;
 }
-.code-box {
-  background-color: #f4f4f4; /* Light grey background */
-  border: 1px solid #ddd; /* Grey border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 1rem; /* Padding inside the box */
-  overflow-x: auto; /* Horizontal scrolling for long lines of code */
-}
 
-.code-box pre {
-  margin: 0; /* Remove default margin from 'pre' element */
-}
-
-.code-box code {
-  font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
-  line-height: 1.5; /* Line height for better readability */
-}
-
-
-.attach-button {
-  cursor: pointer; 
+@media (max-width: 390px){
+  .App{
+    margin-top: 50px;
+    height: 100vh;
+  }
+  
 }
 
 @media (max-width: 480px) {
   .app-header {
-    height: 50px; /* Slightly smaller header on mobile */
+    height: 50px;
   }
   
   .MessageList {
@@ -316,13 +331,20 @@
   }
 
   .App{
-    padding-top: 50px;
+    margin-top: 50px;
+    padding-top: 0;
     overflow-y: auto;
+    height: 100%;
+  }
+
+  .logo {
+    width: 80px;
+    height: 80px;
   }
 }
 
 @media (max-height: 900px) {
-  /* For shorter screens, ensure MessageList does not push MessageInput off the screen */
+
   .MessageList {
     max-height: calc(100% - 100px); /* Example if header and input are 50px each */
   }
