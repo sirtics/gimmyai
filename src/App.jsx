@@ -119,7 +119,7 @@ function App() {
     </header>
     
     <div className="App">
-      <div style={{ position: "relative", height: "100vh", width: "100vw" }}>
+      <div style={{ position: "relative", height: "calc(100vh - 64px)", width: "100vw" }}>
         <MainContainer>
           <ChatContainer>
           <MessageList

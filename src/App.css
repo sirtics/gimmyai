@@ -247,12 +247,11 @@
 }
 
 html, body {
-  overflow-y:scroll; 
   height: -webkit-fill-available;
 }
 
 :root {
-  --app-height: 100vh; /* Fallback for browsers that don't support -webkit-fill-available */
+  --app-height: 100vh; 
   --app-height: -webkit-fill-available;
 }
 
@@ -260,6 +259,7 @@ html, body {
   display: flex;
   flex-direction: column;
   padding-top: 64px; 
+  padding-bottom: 64px;
   height: calc(100% - 64px); /* Adjust height dynamically */
   overflow-x: hidden;
   overflow-y: auto; 
@@ -274,7 +274,7 @@ html, body {
   right: 0;
   height: 64px;
   z-index: 2;
-  --header-height: 64px; /* Your header height */
+  --header-height: 64px; 
   height: var(--header-height);
 }
 
@@ -282,129 +282,30 @@ html, body {
   flex-grow: 1;
   overflow-y: auto;
   margin-top: 64px; 
-  margin-bottom: 70px; 
+  margin-bottom: 64px; 
   height: calc(100% - (var(--header-height) + var(--input-height)));
 }
 
 .MessageInput {
-  padding-bottom: env(safe-area-inset-bottom);
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px; 
+  height: 64px; 
   z-index: 2;
 }
 
+.cs-message-input{
+  position: fixed;
+}
 /* Adjustment for iOS safe area */
 @supports(padding-bottom: env(safe-area-inset-bottom)) {
   .MessageInput {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .MessageList {
-    padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Adjust the 60px to your MessageInput's height */
+    padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
   }
 }
 
 
 .MessageInput input {
   text-align: left;
-}
-
-@media (max-width: 390px){
-  .App{
-    margin-top: 50px;
-    height: 100vh;
-  }
-  
-}
-
-@media (max-width: 480px) {
-  .app-header {
-    height: 50px;
-  }
-  
-  .MessageList {
-    margin-top: 50px; /* Adjust top margin to match the new header height */
-    margin-bottom: 50px; /* Adjust bottom margin if MessageInput height changes */
-    /* Ensure the message list scrolls correctly */
-    height: 70vh;
-    padding-bottom: 70px;
-  }
-
-  .MessageInput {
-    height: 70px; /* Adjust the height for mobile */
-    /* Ensure the input is visible */
-    bottom: 0;
-  }
-
-  .App{
-    margin-top: 50px;
-    padding-top: 0;
-    overflow-y: auto;
-    height: 100%;
-  }
-
-  .logo {
-    width: 80px;
-    height: 80px;
-  }
-}
-
-@media (max-height: 900px) {
-
-  .MessageList {
-    max-height: calc(100% - 100px); /* Example if header and input are 50px each */
-  }
-
-  .ChatContainer {
-    height: 80vh;
-  }
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .MessageInput {
-    padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
-  }
-  
-  .MessageList {
-    padding-bottom: calc(/* height of your MessageInput */ + env(safe-area-inset-bottom));
-  }
-}
-
-/* Set the height for the html and body to fill the available space */
-html, body {
-  height: -webkit-fill-available;
-}
-
-/* Use a custom property to set the height dynamically based on the available space */
-:root {
-  --app-height: 100vh; /* Fallback for browsers that don't support -webkit-fill-available */
-  --app-height: -webkit-fill-available;
-}
-
-/* Apply the custom property to the main app container */
-.App {
-  height: var(--app-height);
-}
-
-/* Adjust the MessageList to not overflow the App container */
-.MessageList {
-  /* Subtract the header and input heights from 100% to avoid overflow */
-  height: calc(100% - (var(--header-height) + var(--input-height)));
-  /* ... other styles ... */
-}
-
-/* Set variables for header and input heights */
-.app-header {
-  --header-height: 64px; /* Your header height */
-  height: var(--header-height);
-  /* ... other styles ... */
-}
-
-.MessageInput {
-  --input-height: 60px; /* Your input height */
-  height: var(--input-height);
-  /* ... other styles ... */
 }
