@@ -261,6 +261,7 @@
   flex: 1;
   overflow-y: auto; 
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .MessageInput {
@@ -298,41 +299,45 @@
 }
 
 @media (max-width: 480px) {
-  #root {
-    padding: 0; /* Remove padding for full-width content */
-  }
-
   .app-header {
-    height: 4rem; /* Adjust header height for smaller screens */
-    padding: 0 1rem; /* Adjust header padding for smaller screens */
+    height: 50px; /* Slightly smaller header on mobile */
   }
-
-  .app-header h1 {
-    font-size: 1rem; /* Reduce font size for better readability */
-  }
-
-  .logo {
-    height: 4em; /* Adjust logo height for smaller screens */
-    width: 5rem; /* Adjust logo width for smaller screens */
-  }
-
-  .app-header .info {
-    font-size: 0.8rem; /* Reduce font size for info text */
-  }
-
-  /* Additional styles for elements that need adjustments at 480px or less */
+  
   .MessageList {
-    font-size: 0.9rem; /* Adjust message list font size for better readability */
+    margin-top: 50px; /* Adjust top margin to match the new header height */
+    margin-bottom: 50px; /* Adjust bottom margin if MessageInput height changes */
+    /* Ensure the message list scrolls correctly */
+    height: 70vh;
   }
 
-  .MessageInput input {
-    font-size: 0.9rem; /* Adjust message input font size for better readability */
+  .MessageInput {
+    height: 70px; /* Adjust the height for mobile */
+    /* Ensure the input is visible */
+  }
+
+  .App{
+    padding-top: 50px;
+    overflow-y: auto;
   }
 }
 
 @media (max-height: 900px) {
+  /* For shorter screens, ensure MessageList does not push MessageInput off the screen */
   .MessageList {
-    max-height: calc(900px - 8rem); /* Adjust '8rem' to your actual header and input heights combined */
-    overflow-y: scroll; /* Ensures that scrollbars will appear if content overflows */
+    max-height: calc(100% - 100px); /* Example if header and input are 50px each */
+  }
+
+  .ChatContainer {
+    height: 80vh;
+  }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .MessageInput {
+    padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+  }
+  
+  .MessageList {
+    padding-bottom: calc(/* height of your MessageInput */ + env(safe-area-inset-bottom));
   }
 }
