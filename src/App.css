@@ -268,8 +268,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5rem; 
-  z-index: 2;
+  height: 4rem; 
+  z-index: 1;
 }
 
 .MessageInput input {
@@ -295,4 +295,44 @@
 
 .attach-button {
   cursor: pointer; 
+}
+
+@media (max-width: 480px) {
+  #root {
+    padding: 0; /* Remove padding for full-width content */
+  }
+
+  .app-header {
+    height: 4rem; /* Adjust header height for smaller screens */
+    padding: 0 1rem; /* Adjust header padding for smaller screens */
+  }
+
+  .app-header h1 {
+    font-size: 1rem; /* Reduce font size for better readability */
+  }
+
+  .logo {
+    height: 4em; /* Adjust logo height for smaller screens */
+    width: 5rem; /* Adjust logo width for smaller screens */
+  }
+
+  .app-header .info {
+    font-size: 0.8rem; /* Reduce font size for info text */
+  }
+
+  /* Additional styles for elements that need adjustments at 480px or less */
+  .MessageList {
+    font-size: 0.9rem; /* Adjust message list font size for better readability */
+  }
+
+  .MessageInput input {
+    font-size: 0.9rem; /* Adjust message input font size for better readability */
+  }
+}
+
+@media (max-height: 900px) {
+  .MessageList {
+    max-height: calc(900px - 8rem); /* Adjust '8rem' to your actual header and input heights combined */
+    overflow-y: scroll; /* Ensures that scrollbars will appear if content overflows */
+  }
 }
