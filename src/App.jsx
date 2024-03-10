@@ -26,6 +26,18 @@ function handlePaste(e) {
   document.execCommand('insertText', false, text);
 }
 
+function adjustAppHeight() {
+  const appHeight = window.innerHeight + 'px';
+  document.querySelector('.App').style.height = appHeight;
+}
+
+// Call this function on resize and orientation change events
+window.addEventListener('resize', adjustAppHeight);
+window.addEventListener('orientationchange', adjustAppHeight);
+
+// Initial adjustment
+adjustAppHeight();
+
 
 function App() {
   const [messages, setMessages] = useState([
