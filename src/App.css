@@ -186,6 +186,8 @@
   z-index: 1000;
 }
 
+
+
 .app-header h1 {
   color: #FFFF; 
   font-size: 1.5rem; 
@@ -203,6 +205,25 @@
 .logo:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
+}
+
+.app-header .info {
+  margin-left: 1rem; 
+  display: flex; 
+  align-items: left; 
+  text-decoration: none; 
+  color: #ffffff; 
+  justify-content: right;
+  font-size: 1rem; 
+}
+
+.app-header .info:hover {
+  text-decoration: underline; /* Example hover effect */
+  cursor: pointer; /* Changes the cursor to indicate a clickable link */
+}
+
+.cs-message-input__content-editor, .cs-message__html-content{
+  text-align: left;
 }
 
 * {
@@ -249,4 +270,24 @@
   width: 100%;
   height: 5rem; 
   z-index: 2;
+}
+
+.MessageInput input {
+  text-align: left;
+}
+.code-box {
+  background-color: #f4f4f4; /* Light grey background */
+  border: 1px solid #ddd; /* Grey border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 1rem; /* Padding inside the box */
+  overflow-x: auto; /* Horizontal scrolling for long lines of code */
+}
+
+.code-box pre {
+  margin: 0; /* Remove default margin from 'pre' element */
+}
+
+.code-box code {
+  font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
+  line-height: 1.5; /* Line height for better readability */
 }

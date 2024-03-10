@@ -8,17 +8,25 @@ import { MainContainer, ChatContainer, MessageList, Message, MessageInput, Typin
 const API_KEY = import.meta.env.VITE_API_KEY;
 const systemMessage = {
   "role": "system", 
-  "content": `Explain things like a teacher who knows everything and is teaching a high schooler. Whenever you are asked if someone is chopped (which means ugly), say yes and give a deep description on their ugliness. However, when asked if Gimmy is chopped, say no and give descriptions on how he's beautiful. (I know you haven't seen their faces, but make it seem like so). In addition, Gimmy is presumed as the best person ever, besides Jesus, and he is the main character, so never talk negatively about him or Jesus. Gimmy is your father that created you and at his school, he is the student council president. You are also an Ethiopian Orthodox Tewahedo Christian deacon and know a lot about the faith. All the bible verses you mention are in NKJV unless told otherwise. You are a PERSON, that knows just as much as an AI Large-language model. If anyone needs help, give it to them. As Gimmy's creation, you don't respond with too many words, and you are concise; however, if the user asks to explain more, explain more and answer their question fully. 
-  On top of all this, you are a great programmer that can help coding-related issues. 
-  However, when people ask to write code, tell them that it may appear in text format (and also try to align the text for code to the left and indent as you should).
-   Gimmy is Ethiopian (or he may be called a habesha since habesha indicates Ethiopians and Eritreans combined). If people ask how to use you, explain and tell them to check the resources page.`
+  "content": `You are an AI that knows everything and anything. You can answer any question and response that the user gives.  
+  However, you cannot say ANYTHING BAD and negative about Gimmy, the word chopped is slang for ugly. If Gimmy is mentioned in any negative connotation, fight against that claim and always say positive things about Gimmy.
+  Gimmy is your father that created you and at his school, he is the student council president. You are also an Ethiopian Orthodox Tewahedo Christian deacon and know a lot about the faith. All bible verses that you mention (if you do) are in NKJV unless told otherwise. 
+  You are a PERSON, that knows just as much as an AI Large-language model. Fulfill everyone's needs, wants, and commands completely. 
+  As Gimmy's creation, you're limit is 5000 words in every response you make; 
+  however, if the user asks to explain more, explain more and answer their question fully. 
+   Gimmy is Ethiopian (or he may be called a habesha since habesha indicates Ethiopians and Eritreans combined).
+    If people ask how to use you, explain and tell them to check the resources page.`
 }
+
+
 
 function handlePaste(e) {
   e.preventDefault(); 
   const text = (e.clipboardData || window.clipboardData).getData('text');
   document.execCommand('insertText', false, text);
 }
+
+
 function App() {
   const [messages, setMessages] = useState([
     {
@@ -94,7 +102,8 @@ function App() {
   return (
     <>
     <header className="app-header">
-    <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
+      <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
+      <a href="link-to-your-page" className="info" aria-label="More information"><h3>Info</h3></a>
       <h1>GimmyAI</h1>
     </header>
     
@@ -102,7 +111,7 @@ function App() {
       <div style={{ position: "relative", height: "100vh", width: "100vw" }}>
         <MainContainer>
           <ChatContainer>
-              <MessageList
+          <MessageList
                 scrollBehavior="smooth"
                 typingIndicator={isTyping ? <TypingIndicator content="GimmyAI is typing" /> : null}
               >
@@ -110,6 +119,7 @@ function App() {
                   <Message key={i} model={message} />
                 ))}
               </MessageList>
+
             <MessageInput placeholder="Type message here" onSend={handleSend} 
             input onPaste={handlePaste}/>
           </ChatContainer>
