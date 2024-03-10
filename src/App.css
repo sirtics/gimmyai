@@ -247,7 +247,6 @@
 }
 
 html, body {
-  height: 100%; 
   overflow-y:scroll; 
   height: -webkit-fill-available;
 }
@@ -260,6 +259,7 @@ html, body {
   overflow-x: hidden;
   overflow-y: auto; /* Allow vertical scrolling */
   height: var(--app-height);
+  height: -webkit-fill-available;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
