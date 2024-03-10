@@ -103,7 +103,7 @@ function App() {
     <>
     <header className="app-header">
       <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
-      <a href="link-to-your-page" className="info" aria-label="More information"><h3>Info</h3></a>
+      {/* <a href="link-to-your-page" className="info" aria-label="More information"><h3>Info</h3></a> */}
       <h1>GimmyAI</h1>
     </header>
     

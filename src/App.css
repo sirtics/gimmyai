@@ -291,3 +291,8 @@
   font-family: 'Courier New', Courier, monospace; /* Monospaced font for code */
   line-height: 1.5; /* Line height for better readability */
 }
+
+
+.attach-button {
+  cursor: pointer; 
+}
