@@ -251,19 +251,22 @@ html, body {
   height: -webkit-fill-available;
 }
 
+:root {
+  --app-height: 100vh; /* Fallback for browsers that don't support -webkit-fill-available */
+  --app-height: -webkit-fill-available;
+}
+
 .App {
   display: flex;
   flex-direction: column;
-  padding-top: 64px; /* Adjust based on app-header height */
+  padding-top: 64px; 
   height: calc(100% - 64px); /* Adjust height dynamically */
   overflow-x: hidden;
-  overflow-y: auto; /* Allow vertical scrolling */
+  overflow-y: auto; 
   height: var(--app-height);
-  height: -webkit-fill-available;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Ensure app-header is correctly positioned */
 .app-header {
   position: fixed;
   top: 0;
@@ -271,24 +274,25 @@ html, body {
   right: 0;
   height: 64px;
   z-index: 2;
+  --header-height: 64px; /* Your header height */
+  height: var(--header-height);
 }
 
-/* Adjust MessageList to accommodate dynamic content */
 .MessageList {
   flex-grow: 1;
   overflow-y: auto;
-  margin-top: 64px; /* Space for the header */
-  margin-bottom: 70px; /* Space for MessageInput, adjust as needed */
+  margin-top: 64px; 
+  margin-bottom: 70px; 
+  height: calc(100% - (var(--header-height) + var(--input-height)));
 }
 
-/* Ensure MessageInput visibility */
 .MessageInput {
   padding-bottom: env(safe-area-inset-bottom);
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px; /* Adjust as per actual height */
+  height: 60px; 
   z-index: 2;
 }
 
@@ -367,4 +371,40 @@ html, body {
   .MessageList {
     padding-bottom: calc(/* height of your MessageInput */ + env(safe-area-inset-bottom));
   }
+}
+
+/* Set the height for the html and body to fill the available space */
+html, body {
+  height: -webkit-fill-available;
+}
+
+/* Use a custom property to set the height dynamically based on the available space */
+:root {
+  --app-height: 100vh; /* Fallback for browsers that don't support -webkit-fill-available */
+  --app-height: -webkit-fill-available;
+}
+
+/* Apply the custom property to the main app container */
+.App {
+  height: var(--app-height);
+}
+
+/* Adjust the MessageList to not overflow the App container */
+.MessageList {
+  /* Subtract the header and input heights from 100% to avoid overflow */
+  height: calc(100% - (var(--header-height) + var(--input-height)));
+  /* ... other styles ... */
+}
+
+/* Set variables for header and input heights */
+.app-header {
+  --header-height: 64px; /* Your header height */
+  height: var(--header-height);
+  /* ... other styles ... */
+}
+
+.MessageInput {
+  --input-height: 60px; /* Your input height */
+  height: var(--input-height);
+  /* ... other styles ... */
 }
