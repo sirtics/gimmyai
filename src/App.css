@@ -293,6 +293,8 @@ html, body {
   right: 0;
   height: 64px; 
   z-index: 2;
+  padding-bottom: 4px; /* A small default padding */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .cs-message-input{
