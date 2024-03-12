@@ -102,3 +102,13 @@ html, body {
   width: 30px;
   height: 30px;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  height: -webkit-fill-available; /* Fills the viewport height */
+}
+
+App {
+  min-height: 100vh; 
+}

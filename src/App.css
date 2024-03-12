@@ -315,3 +315,13 @@ html, body {
 .MessageInput input {
   text-align: left;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  height: -webkit-fill-available; /* Fills the viewport height */
+}
+
+App {
+  min-height: 100vh; 
+}
