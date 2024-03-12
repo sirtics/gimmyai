@@ -82,7 +82,7 @@
 
 #root {
   max-width: 100vw;
-  height: 100dvh;
+  height: 100vh;
   overflow-x: hidden; 
   padding: 0;
   max-width: 1280px;
@@ -163,6 +163,12 @@
   }
 }
 
+#root {
+  max-width: 100vw;
+  height: 100vh;
+  padding: 0;
+}
+
 .app-header {
   position: fixed;
   top: 0;
@@ -228,8 +234,8 @@
 #root {
   display: flex;
   flex-direction: column;
-  width: 100dvw;
-  height: 100dvh;
+  width: 100vw;
+  height: 100vh;
   overflow-x: hidden;
 }
 
@@ -244,6 +250,10 @@ html, body {
   height: -webkit-fill-available;
 }
 
+:root {
+  --app-height: 100vh; 
+  --app-height: -webkit-fill-available;
+}
 
 .App {
   display: flex;
@@ -279,7 +289,7 @@ html, body {
   right: 0;
   height: 64px; /* Adjusted to the desired height */
   z-index: 2;
-  padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+  margin-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
 }
 
 .cs-message-input{
@@ -307,3 +317,6 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
+App {
+  min-height: 100vh; 
+}

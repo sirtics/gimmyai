@@ -74,7 +74,7 @@ button:focus-visible {
 
 @supports(padding-bottom: env(safe-area-inset-bottom)) {
   .MessageInput {
-    padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+    margin-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
   }
 }
 
@@ -91,7 +91,7 @@ html, body {
   height: 64px; 
   z-index: 2;
   padding-bottom: 4px; /* A small default padding */
-  padding-bottom: env(safe-area-inset-bottom);
+  margin-bottom: env(safe-area-inset-bottom);
 }
 
 .cs-button svg {
