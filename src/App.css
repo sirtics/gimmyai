@@ -52,7 +52,7 @@
 
 
   .main-container-style {
-    height: 100vh;
+    height: -webkit-fill-available;
     width: 100vw;
     max-width: none;
     margin: 0;
@@ -72,7 +72,7 @@
 
   
   .main-container-style {
-    height: 100vh;
+    height: -webkit-fill-available;
     width: 100vw;
     max-width: none;
     margin: 0;
@@ -82,7 +82,7 @@
 
 #root {
   max-width: 100vw;
-  height: 100vh;
+  height: -webkit-fill-available;
   overflow-x: hidden; 
   padding: 0;
   max-width: 1280px;
@@ -135,7 +135,7 @@
 
 
   .main-container-style {
-    height: 100vh;
+    height: -webkit-fill-available;
     width: 100vw;
     max-width: none;
     margin: 0;
@@ -251,7 +251,6 @@ html, body {
 }
 
 :root {
-  --app-height: 100vh; 
   --app-height: -webkit-fill-available;
 }
 
@@ -260,7 +259,6 @@ html, body {
   flex-direction: column;
   padding-top: 4rem; /* Adjusted from 64px to fit the header */
   flex: 1; /* Ensures the content takes up remaining space */
-  overflow-y: auto; /* Allows content to scroll if necessary */
 }
 
 .app-header {
@@ -318,5 +316,5 @@ body {
 }
 
 App {
-  min-height: 100vh; 
+  min-height: -webkit-fill-available; 
 }
