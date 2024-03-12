@@ -277,12 +277,12 @@ html, body {
   overflow-y: auto;
   margin-top: 64px; 
   margin-bottom: 64px; 
-  height: calc(100% - (var(--header-height) + var(--input-height)));
+  height: calc(100% - (var(--header-height) + env(safe-area-inset-bottom) + var(--input-height)));
 }
 
 .MessageInput {
   position: fixed;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom);
   left: 0;
   right: 0;
   height: 64px; /* Adjusted to the desired height */
@@ -315,6 +315,3 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-App {
-  min-height: -webkit-fill-available; 
-}

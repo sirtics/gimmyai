@@ -105,13 +105,10 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-App {
-  min-height: -webkit-fill-available; 
-}
 
 .MessageInput, cs-message-input {
   position: fixed; /* Position the input */
-  bottom: 0; /* Place it at the bottom of the viewport */
+  bottom: env(safe-area-inset-bottom); /* Place it at the bottom of the viewport */
   left: 0;
   right: 0;
   z-index: 2;
