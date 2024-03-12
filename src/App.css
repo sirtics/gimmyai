@@ -315,3 +315,12 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
+@media (max-width: 480px){
+  .app-header{
+    top: 0;
+  }
+  .App{
+    top: --header-height;
+  }
+}
+  
