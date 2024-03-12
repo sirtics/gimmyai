@@ -3,9 +3,8 @@ import './App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
-
-
 const API_KEY = import.meta.env.VITE_API_KEY;
+
 const systemMessage = {
   "role": "system", 
   "content": `You are an AI that knows everything and anything. You can answer any question and response that the user gives.  
@@ -16,9 +15,7 @@ const systemMessage = {
   however, if the user asks to explain more, explain more and answer their question fully. 
    Gimmy is Ethiopian (or he may be called a habesha since habesha indicates Ethiopians and Eritreans combined).
     If people ask how to use you, explain and tell them to check the resources page.`
-}
-
-
+};
 
 function handlePaste(e) {
   e.preventDefault(); 
@@ -37,7 +34,6 @@ window.addEventListener('orientationchange', adjustAppHeight);
 // Call the function to set the initial value
 adjustAppHeight();
 
-
 function App() {
   const [messages, setMessages] = useState([
     {
@@ -46,6 +42,7 @@ function App() {
       sender: "ChatGPT"
     }
   ]);
+
   const [isTyping, setIsTyping] = useState(false);
 
   const handleSend = async (message) => {
@@ -112,31 +109,28 @@ function App() {
 
   return (
     <>
-    <header className="app-header">
-      <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
-      {/* <a href="link-to-your-page" className="info" aria-label="More information"><h3>Info</h3></a> */}
-      <h1>GimmyAI</h1>
-    </header>
-    
-    <div className="App">
-      <div style={{ position: "relative", height: "100vh", width: "100vw" }}>
+      <header className="app-header">
+        <a href="./index.html"><img src="/gaspface-logo.png" alt="GimmyAI Logo" className="logo" /></a>
+        {/* <a href="link-to-your-page" className="info" aria-label="More information"><h3>Info</h3></a> */}
+        <h1>GimmyAI</h1>
+      </header>
+      
+      <div className="App">
         <MainContainer>
           <ChatContainer>
-          <MessageList
-                scrollBehavior="smooth"
-                typingIndicator={isTyping ? <TypingIndicator content="GimmyAI is typing" /> : null}
-              >
-                {messages.map((message, i) => (
-                  <Message key={i} model={message} />
-                ))}
-              </MessageList>
-
-            <MessageInput placeholder="Type message here" onSend={handleSend} 
-            input onPaste={handlePaste}/>
+            <MessageList
+              scrollBehavior="smooth"
+              typingIndicator={isTyping ? <TypingIndicator content="GimmyAI is typing" /> : null}
+            >
+              {messages.map((message, i) => (
+                <Message key={i} model={message} />
+              ))}
+            </MessageList>
           </ChatContainer>
         </MainContainer>
       </div>
-    </div>
+
+      <MessageInput placeholder="Type message here..." onSend={handleSend} input onPaste={handlePaste} />
     </>
   );
 }
