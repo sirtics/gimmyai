@@ -325,3 +325,12 @@ body {
 App {
   min-height: 100vh; 
 }
+
+.MessageInput {
+  position: fixed; /* Position the input */
+  bottom: 0; /* Place it at the bottom of the viewport */
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+}
