@@ -270,6 +270,7 @@ html, body {
   z-index: 2;
   --header-height: 64px; 
   height: var(--header-height);
+  overflow: hidden;
 }
 
 .MessageList {
@@ -315,13 +316,14 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
+
 @media (max-width: 480px) {
   .App {
     padding-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
     height: calc(100vh - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
-  .app-header{
-    overflow-y: auto;
+  .MainContainer{
+    top: var(--header-height);
   }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
