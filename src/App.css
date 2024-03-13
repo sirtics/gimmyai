@@ -319,8 +319,8 @@ body {
 
 @media (max-width: 480px) {
   .MainContainer {
-    padding-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
-    height: calc(100vh - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
+    margin-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
+    height: calc(100% - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
   .MessageList{
     margin-top: 64px;
