@@ -80,6 +80,7 @@ button:focus-visible {
 
 html, body {
   height: -webkit-fill-available;
+  overflow: hidden;
 }
 
 
@@ -116,6 +117,17 @@ body {
 }
 
 @media (max-width: 480px) {
+  .ChatContainer {
+    margin-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
+    height: calc(100% - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
+  }
+
+  .MessageList {
+    margin-top: 4rem; /* Adjust margin top to accommodate the header */
+    margin-bottom: 64px;
+    height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + env(safe-area-inset-bottom) + var(--input-height))); /* Adjust height to fit header, message input, and safe areas */
+  }
+  
   .cs-message-input__content-editor-wrapper {
     width: 19rem;
   }
