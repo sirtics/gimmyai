@@ -257,7 +257,7 @@ html, body {
 .App {
   display: flex;
   flex-direction: column;
-  padding-top: 4rem; /* Adjusted from 64px to fit the header */
+  margin-top: 4rem; /* Adjusted from 64px to fit the header */
   flex: 1; /* Ensures the content takes up remaining space */
 }
 
@@ -276,6 +276,7 @@ html, body {
 .MessageList {
   flex-grow: 1;
   overflow-y: auto;
+  padding-top: 64px;
   margin-top: 64px; 
   margin-bottom: 64px; 
   height: calc(100% - (var(--header-height) + env(safe-area-inset-bottom) + var(--input-height)));
