@@ -114,3 +114,14 @@ body {
   z-index: 2;
   margin-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
 }
+
+@media (max-width: 480px) {
+  .cs-message-input__content-editor-wrapper {
+    width: 19rem;
+  }
+
+  .cs-button {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

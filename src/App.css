@@ -316,12 +316,12 @@ body {
 }
 
 @media (max-width: 480px){
-  .app-header{
-    top: 0;
+  .app-header {
+    top: env(safe-area-inset-top); /* Adjust the top position to accommodate the safe area */
   }
-  .App{
-    top: 64px;
-    
+
+  .App {
+    padding-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
   }
 }
   
