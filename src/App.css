@@ -317,20 +317,6 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  margin-top: 4rem; /* Adjusted from 64px to fit the header */
-  flex: 1; /* Ensures the content takes up remaining space */
-}
-
-/* Add the following CSS to override for smaller screens */
-@media (max-width: 480px) {
-  .App {
-    margin-top: calc(4rem + var(--header-height)); /* Adjust to include header height */
-  }
-}
-
 
 @media (max-width: 480px) {
   .ChatContainer {
@@ -344,9 +330,5 @@ body {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
     margin-bottom: 64px;
     height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + env(safe-area-inset-bottom) + var(--input-height))); /* Adjust height to fit header, message input, and safe areas */
-  }
-  @media (max-width: 480px) {
-  .App {
-    margin-top: calc(4rem + var(--header-height)); /* Adjust to include header height */
   }
 }
