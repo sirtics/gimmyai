@@ -319,16 +319,17 @@ body {
 
 
 @media (max-width: 480px) {
-  .ChatContainer {
+  body{
+    overflow: hidden;
+  }
+  .MessageList {
     margin-top: calc(4rem + env(safe-area-inset-top)); 
     padding-top: 4rem;
-    height: calc(100% - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
-  }
-  .MessageList{
-    margin-top: 64px;
+    overflow-y: auto;
+    height: calc((--webkit-fill-available) - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
   .app-header {
-    margin-top: env(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top);
   }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
