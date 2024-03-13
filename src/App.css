@@ -319,17 +319,12 @@ body {
 
 
 @media (max-width: 480px) {
-  body{
-    overflow: hidden;
+  .ChatContainer {
+    margin-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
+    height: calc(100% - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
-  .MessageList {
-    margin-top: calc(4rem + env(safe-area-inset-top)); 
-    padding-top: 4rem;
-    overflow-y: auto;
-    height: calc((--webkit-fill-available) - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
-  }
-  .app-header {
-    padding-top: env(safe-area-inset-top);
+  .MessageList{
+    margin-top: 64px;
   }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
@@ -337,4 +332,3 @@ body {
     height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + env(safe-area-inset-bottom) + var(--input-height))); /* Adjust height to fit header, message input, and safe areas */
   }
 }
-
