@@ -318,7 +318,7 @@ body {
 
 
 @media (max-width: 480px) {
-  .MainContainer {
+  .ChatContainer {
     margin-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
     height: calc(100% - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
