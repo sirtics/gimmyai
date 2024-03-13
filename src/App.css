@@ -323,7 +323,7 @@ body {
     height: calc(100vh - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
   .MessageList{
-    margin-top: var(--header-height);
+    margin-top: 64px;
   }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
