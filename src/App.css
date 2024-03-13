@@ -251,25 +251,33 @@ html, body {
 }
 
 :root {
+  --app-height: 100%;
   --app-height: -webkit-fill-available;
 }
 
 .App {
   display: flex;
   flex-direction: column;
-  padding-top: 4rem; /* Adjusted from 64px to fit the header */
+  padding-top: calc(4rem + env(safe-area-inset-top)); /* Adjusted to account for header height */
   flex: 1; /* Ensures the content takes up remaining space */
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
 }
 
 .app-header {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  z-index: 2;
-  --header-height: 64px; 
-  height: var(--header-height);
+  top: env(safe-area-inset-top);
+  left: env(safe-area-inset-left);
+  right: env(safe-area-inset-right);
+  height: 4rem; /* Your desired height */
+  z-index: 1000; /* Ensure it's above other content */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem; /* Adjusted padding */
+  background: #646cff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .MessageList {
