@@ -285,9 +285,9 @@ html, body {
   bottom: env(safe-area-inset-bottom);
   left: 0;
   right: 0;
-  height: 64px; /* Adjusted to the desired height */
+  height: 64px; 
   z-index: 2;
-  margin-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+  margin-bottom: env(safe-area-inset-bottom); 
 }
 
 .cs-message-input{
@@ -320,7 +320,9 @@ body {
     padding-top: calc(4rem + env(safe-area-inset-top)); /* Adjust the padding top to include safe area */
     height: calc(100vh - 4rem - env(safe-area-inset-top) - 64px); /* Calculate height to fit header and message input */
   }
-
+  .app-header{
+    overflow-y: auto;
+  }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
     height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + env(safe-area-inset-bottom) + var(--input-height))); /* Adjust height to fit header, message input, and safe areas */
