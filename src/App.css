@@ -283,7 +283,7 @@ html, body {
 
 .MessageInput {
   position: fixed;
-  bottom: env(safe-area-inset-bottom);
+  bottom: 0;
   left: 0;
   right: 0;
   height: 64px; 
@@ -327,6 +327,8 @@ body {
   }
   .MessageList {
     margin-top: 4rem; /* Adjust margin top to accommodate the header */
+    margin-bottom: 64px;
     height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + env(safe-area-inset-bottom) + var(--input-height))); /* Adjust height to fit header, message input, and safe areas */
   }
 }
+
