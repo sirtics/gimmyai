@@ -170,7 +170,7 @@
 }
 
 .app-header {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -323,7 +323,27 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-@media (max-width: 490px){
+@media (max-width: 490px) {
+  .app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    height: 4rem;
+    overflow: hidden;
+  }
+
+  .MessageList {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 8rem; 
+    padding-bottom: var(--input-height);
+    margin-top: 4rem; 
+    margin-bottom: 0;
+    height: calc(100% - (4rem + var(--input-height)));
+  }
+
   .MessageInput {
     position: fixed;
     bottom: 0;
@@ -331,17 +351,6 @@ body {
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    margin-bottom: env(safe-area-inset-bottom); 
-  }
-
-
-  .MessageList {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-top: 4rem; /* Adjusted to match the header height */
-    padding-bottom: var(--input-height); /* Ensure space for message input */
-    margin-top: 4rem; /* Ensure content starts below the header */
-    margin-bottom: 0; /* No bottom margin to allow content to reach the bottom of the screen */
-    height: calc(100% - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom))); /* Adjusted height to fit content */
+    margin-bottom: 0;
   }
 }
