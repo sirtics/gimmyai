@@ -281,6 +281,11 @@ html, body {
   height: calc(100vh - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom))); /* Adjusted height to fit content */
 }
 
+@media (max-width: 490px){
+.App{
+    height: calc(100vh - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom)));
+  }
+}
 .MessageInput {
   position: fixed;
   bottom: 0; /* might make this env(safe-area-inset-bottom) */
