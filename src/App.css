@@ -275,6 +275,7 @@ html, body {
 
 .MessageList {
   flex-grow: 1;
+  padding-top: 4rem;
   overflow-y: auto;
   margin-top: 4rem; /* Ensure content starts below the header */
   margin-bottom: var(--input-height); /* Ensure message list ends before the message input */
@@ -319,4 +320,24 @@ body {
   margin: 0;
   padding: 0;
   height: -webkit-fill-available; /* Fills the viewport height */
+}
+
+.MessageInput {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--input-height);
+  z-index: 2;
+  margin-bottom: env(safe-area-inset-bottom); /* Adjusted for safe area at the bottom */
+}
+
+.MessageList {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-top: 4rem; /* Adjusted to match the header height */
+  padding-bottom: var(--input-height); /* Ensure space for message input */
+  margin-top: 4rem; /* Ensure content starts below the header */
+  margin-bottom: 0; /* No bottom margin to allow content to reach the bottom of the screen */
+  height: calc(100% - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom))); /* Adjusted height to fit content */
 }
