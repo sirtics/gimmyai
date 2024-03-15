@@ -230,6 +230,9 @@
   box-sizing: border-box;
 }
 
+:root {
+  --input-height: 64px; 
+}
 
 #root {
   display: flex;
@@ -273,10 +276,10 @@ html, body {
 .MessageList {
   flex-grow: 1;
   overflow-y: auto;
-  padding-top: 4rem; 
-  margin-top: 4rem; 
+  padding-top: 4rem; /* Adjusted to match the header height */
+  margin-top: 4rem; /* Ensure content doesn't go under the header */
   margin-bottom: 64px;
-  height: calc(100% - (4rem + env(safe-area-inset-top) + 64px)); /* Adjusted height to fit content */
+  height: calc(100% - (4rem + env(safe-area-inset-top) + 64px + var(--input-height))); /* Adjusted height to fit content and input */
 }
 
 .MessageInput {
