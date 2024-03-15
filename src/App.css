@@ -266,20 +266,17 @@ html, body {
   top: env(safe-area-inset-top);
   left: 0;
   right: 0;
-  height: 64px;
   z-index: 2;
-  --header-height: 64px; 
-  height: var(--header-height);
-  overflow: hidden;
+  height: 4rem;
 }
 
 .MessageList {
   flex-grow: 1;
   overflow-y: auto;
-  padding-top: 64px;
-  margin-top: 64px; 
-  margin-bottom: 64px; 
-  height: calc(100% - (var(--header-height) + env(safe-area-inset-bottom) + var(--input-height)));
+  padding-top: 4rem; 
+  margin-top: 4rem; 
+  margin-bottom: 64px;
+  height: calc(100% - (4rem + env(safe-area-inset-top) + 64px)); /* Adjusted height to fit content */
 }
 
 .MessageInput {
