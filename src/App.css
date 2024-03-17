@@ -324,7 +324,7 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-@media (max-height: 800px) {
+@media (max-height: 900px) {
   .app-header {
     position: fixed;
     top: 0;
@@ -335,7 +335,7 @@ body {
     overflow: hidden;
   }
 
-  .MessageList {
+  .MainContainer {
     flex-grow: 1;
     overflow-y: auto;
     padding-top: 4rem; 
@@ -352,7 +352,7 @@ body {
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    margin-bottom: 0;
+    margin-bottom: env(safe-area-inset-bottom);
   }
 }
 
@@ -361,6 +361,7 @@ body {
   position: fixed; /* or 'absolute' */
   top: 0;
   width: 100%;
+  overflow-y: hidden;
 }
 
 .MessageList {
