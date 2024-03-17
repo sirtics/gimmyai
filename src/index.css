@@ -110,8 +110,3 @@ body {
 
 
 
-@media (max-height: 900px) {
-  .cs-main-container{
-    margin-top: 4rem;
-  }
-}
