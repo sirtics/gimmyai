@@ -278,9 +278,9 @@ html, body {
   flex-grow: 1;
   padding-top: 4rem;
   overflow-y: auto;
-  margin-top: 4rem; /* Ensure content starts below the header */
   margin-bottom: var(--input-height); /* Ensure message list ends before the message input */
-  height: calc(100vh - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom))); /* Adjusted height to fit content */
+  height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom)); /* Adjust the 4rem if header height changes */
+  
 }
 
 @media (max-width: 490px){
@@ -288,12 +288,13 @@ html, body {
     height: calc(95vh - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom)));
   }
 }
+
 .MessageInput {
   position: fixed;
   bottom: 0; /* might make this env(safe-area-inset-bottom) */
   left: 0;
   right: 0;
-  height: 64px; 
+  height: 4rem; 
   z-index: 2;
   margin-bottom: env(safe-area-inset-bottom); 
 }
@@ -337,7 +338,7 @@ body {
   .MessageList {
     flex-grow: 1;
     overflow-y: auto;
-    padding-top: 8rem; 
+    padding-top: 4rem; 
     padding-bottom: var(--input-height);
     margin-top: 4rem; 
     margin-bottom: 0;
@@ -362,20 +363,6 @@ body {
   width: 100%;
 }
 
-/* Adjust the top padding of the main content area to prevent overlap with the header */
-.MainContainer {
-  padding-top: 4rem; /* Adjust based on the actual height of your header */
-}
-
-/* Dynamic height for the message area */
 .MessageList {
-  height: calc(100vh - 8rem); /* Header height + message input height */
-  overflow-y: auto; /* For scrolling */
-}
-
-/* Media query example for iPhones */
-@media only screen and (max-width: 400px) {
-  .MessageList {
-      height: calc(100vh - 60px - 50px); 
-  }
+  padding-top: 4rem;
 }
