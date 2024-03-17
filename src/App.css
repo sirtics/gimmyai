@@ -283,7 +283,7 @@ html, body {
   
 }
 
-@media (max-width: 490px){
+@media (max-height: 800px){
 .App{
     height: calc(95vh - (4rem + env(safe-area-inset-top) + var(--input-height) + env(safe-area-inset-bottom)));
   }
@@ -324,7 +324,7 @@ body {
   height: -webkit-fill-available; /* Fills the viewport height */
 }
 
-@media (max-width: 490px) {
+@media (max-height: 800px) {
   .app-header {
     position: fixed;
     top: 0;
