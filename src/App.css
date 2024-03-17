@@ -292,13 +292,14 @@ html, body {
 
 .MessageInput {
   position: fixed;
-  bottom: 0; /* might make this env(safe-area-inset-bottom) */
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 4rem; 
+  height: var(--input-height);
   z-index: 2;
-  margin-bottom: env(safe-area-inset-bottom); 
+  margin-bottom: env(safe-area-inset-bottom);
 }
+
 
 .cs-message-input{
   position: fixed;
@@ -359,5 +360,12 @@ body {
 
 
 .MessageList {
-  padding-top: 4rem;
+  padding-top: 4rem; /* Adjust this value to the height of your header */
+  margin-bottom: var(--input-height);
+  height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
+}
+.App {
+  padding-top: 4rem; /* Adjust this value to the height of your header */
+  flex: 1;
+  overflow-y: auto;
 }
