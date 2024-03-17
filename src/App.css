@@ -354,3 +354,28 @@ body {
     margin-bottom: 0;
   }
 }
+
+.app-header {
+  z-index: 100; /* Ensure the header is above other content */
+  position: fixed; /* or 'absolute' */
+  top: 0;
+  width: 100%;
+}
+
+/* Adjust the top padding of the main content area to prevent overlap with the header */
+.MainContainer {
+  padding-top: 4rem; /* Adjust based on the actual height of your header */
+}
+
+/* Dynamic height for the message area */
+.MessageList {
+  height: calc(100vh - 8rem); /* Header height + message input height */
+  overflow-y: auto; /* For scrolling */
+}
+
+/* Media query example for iPhones */
+@media only screen and (max-width: 400px) {
+  .MessageList {
+      height: calc(100vh - 60px - 50px); 
+  }
+}
