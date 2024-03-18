@@ -306,11 +306,6 @@ html, body {
   }
 }
 
-.cs-message-input__content-editor-wrapper {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 .MessageInput input {
   text-align: left;
 }
@@ -349,7 +344,7 @@ body {
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    bottom: 4rem + env(safe-area-inset-bottom);
+    bottom: 4rem;
   }
 }
 
