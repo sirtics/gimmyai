@@ -19,7 +19,7 @@ html, body {
 #root {
   display: flex;
   flex-direction: column;
-  height: 100svh; /* Changed to 100% to fill the height */
+  height: 100vh; 
   width: 100vw;
   overflow-x: hidden;
 }
@@ -74,7 +74,6 @@ html, body {
   margin-top: var(--header-height); /* Ensure the top does not go under the header */
   margin-bottom: var(--input-height); /* Ensure the bottom does not go under the input */
 }
-
 /* Ensure the MessageInput is visible above any mobile browser UI */
 .MessageInput {
   position: fixed;
