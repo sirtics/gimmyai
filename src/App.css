@@ -69,8 +69,10 @@ html, body {
 
 /* Adjust the MessageList to account for the header and input field */
 .MessageList {
-  flex: 1; /* Take up all available space */
+  flex-grow: 1;
   overflow-y: auto; /* Allow scrolling */
+  margin-top: var(--header-height); /* Ensure the top does not go under the header */
+  margin-bottom: var(--input-height); /* Ensure the bottom does not go under the input */
 }
 
 /* Ensure the MessageInput is visible above any mobile browser UI */
@@ -85,16 +87,13 @@ html, body {
 
 /* Use safe-area-inset-bottom for devices with a bottom safe area */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
- 
-
-  .MessageInput {
-    bottom: env(safe-area-inset-bottom);
+  .MessageList {
+    margin-bottom: calc(var(--input-height) + env(safe-area-inset-bottom));
   }
 }
 
 @media (max-width: 400px) {
-  .App{
-    padding-top: 4rem;
-    padding-bottom: 0px;
+  .App {
+    padding-top: var(--header-height);
   }
 }
