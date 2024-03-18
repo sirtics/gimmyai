@@ -336,7 +336,7 @@ body {
     flex-grow: 1;
     overflow-y: auto;
     padding-top: 4rem; 
-    padding-bottom: var(--input-height);
+    padding-bottom: 4rem;
     margin-top: 4rem; 
     margin-bottom: 0;
     height: calc(100% - (4rem + var(--input-height)));
@@ -349,7 +349,7 @@ body {
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    bottom: env(safe-area-inset-bottom);
+    bottom: 4rem + env(safe-area-inset-bottom);
   }
 }
 
