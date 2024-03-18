@@ -261,7 +261,6 @@ html, body {
 .App {
   display: flex;
   flex-direction: column;
-  padding-top: 4rem; 
   flex: 1;
   overflow-y: auto;
 }
@@ -278,7 +277,6 @@ html, body {
 
 .MessageList {
   flex-grow: 1;
-  padding-top: 4rem;
   margin-bottom: var(--input-height); /* Ensure message list ends before the message input */
   height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom)); /* Adjust the 4rem if header height changes */
   
@@ -330,7 +328,6 @@ body {
   .App {
     flex-grow: 1;
     overflow-y: auto;
-    padding-top: 4rem; 
     padding-bottom: 4rem;
     margin-top: 4rem; 
     margin-bottom: 0;
@@ -341,16 +338,15 @@ body {
     position: fixed;
     left: 0;
     top: 0;
+    bottom: 4rem;
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    bottom: 4rem;
   }
 }
 
 
 .MessageList {
-  padding-top: 4em; /* Adjust this value to the height of your header */
   height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
 }
 
