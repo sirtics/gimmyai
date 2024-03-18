@@ -10,11 +10,14 @@ html, body {
   overflow: hidden; /* Hide overflow */
 }
 
+:root {
+  --input-height: 4rem; /* This should be the height of your MessageInput component */
+}
+
 /* Base styles for the app */
 #root {
   display: flex;
   flex-direction: column;
-  max-width: 1280px; /* Max width for larger screens */
   width: 100vw; /* Full viewport width */
   height: 100vh; /* Full viewport height */
   margin: 0 auto; /* Center the app if it's not full width */
@@ -60,13 +63,15 @@ html, body {
 .App {
   flex: 1;
   padding-top: 4rem; /* Make space for the fixed header */
+  padding-bottom: var(--input-height); /* Make space for the fixed MessageInput */
   overflow-y: auto; /* Scrollable content */
 }
 
 .MessageList {
   flex-grow: 1;
   margin-bottom: var(--input-height); /* Space for message input */
-  height: calc(100vh - 4rem - var(--input-height)); /* Full height minus header and input */
+  padding-top: 4rem; /* Same as header height to prevent overlap */
+  height: calc(100vh - 8rem); /* Full height minus header and input */
 }
 
 .cs-message__html-content {
@@ -89,11 +94,14 @@ html, body {
 
 /* Adjustments for iOS safe area */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .App {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .MessageInput {
     padding-bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
   }
 }
-
 
 /* Keyframes for logo spinning animation */
 @keyframes logo-spin {
@@ -113,10 +121,11 @@ html, body {
   }
 
   .MessageInput {
-    top: 0; /* Correct position for the message input */
+    bottom: env(safe-area-inset-bottom); /* Adjust for iPhone X and newer safe area */
+    top: auto; /* Override any previously set top property */
   }
 
   .MessageList {
-    height: calc(100vh - 4rem - var(--input-height)); /* Recalculate height for message list */
+    height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom)); /* Recalculate height for message list */
   }
 }
