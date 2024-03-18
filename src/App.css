@@ -115,7 +115,7 @@ html, body {
 
 /* Media query for smaller screens */
 @media (max-width: 480px) {
-  .App, .MessageInput, .MessageList {
+  .App, .MessageInput, .cs-message-list {
     padding: 0;
     margin-top: 4rem; /* Ensure content starts below fixed header */
   }

@@ -137,7 +137,7 @@ function App() {
         <h1>GimmyAI</h1>
       </header>
       
-      <div className="App">
+      <div className="App" style={{ marginTop: 'var(--header-height)' }}>
         <MainContainer>
           <ChatContainer>
             <MessageList
