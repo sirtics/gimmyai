@@ -344,19 +344,18 @@ body {
 
   .MessageInput {
     position: fixed;
-    bottom: 0;
     left: 0;
     right: 0;
     height: var(--input-height);
     z-index: 2;
-    margin-bottom: env(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
   }
 }
 
 
 .MessageList {
   padding-top: 4rem; /* Adjust this value to the height of your header */
-  margin-bottom: var(--input-height);
+  padding-bottom: var(--input-height);
   height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
 }
 
