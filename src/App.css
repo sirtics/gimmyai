@@ -345,6 +345,7 @@ body {
   .MessageInput {
     position: fixed;
     left: 0;
+    top: 0;
     right: 0;
     height: var(--input-height);
     z-index: 2;
@@ -354,13 +355,12 @@ body {
 
 
 .MessageList {
-  padding-top: 4rem; /* Adjust this value to the height of your header */
-  padding-bottom: var(--input-height);
+  padding-top: 4em; /* Adjust this value to the height of your header */
   height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
 }
 
 .App {
-  padding-top: 4rem; /* Adjust this value to the height of your header */
+  padding-top: 4em; /* Adjust this value to the height of your header */
   flex: 1;
   overflow-y: auto;
 }
