@@ -332,7 +332,7 @@ body {
     overflow: hidden;
   }
 
-  .MainContainer {
+  .App {
     flex-grow: 1;
     overflow-y: auto;
     padding-top: 4rem; 
