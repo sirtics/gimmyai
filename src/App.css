@@ -358,7 +358,10 @@ body {
   }
 }
 
-
+.MessageInput{
+  padding-bottom: env(safe-area-inset-bottom);
+  
+}
 .MessageList {
   padding-top: 4rem; /* Adjust this value to the height of your header */
   margin-bottom: var(--input-height);
