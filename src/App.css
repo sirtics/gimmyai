@@ -47,7 +47,8 @@ html, body {
 
 /* Logo styles */
 .logo {
-  width: 3rem; /* Set a fixed width for the logo */
+  width: 3rem; 
+  height: auto;
   max-width: 100%; /* Ensure logo is not bigger than its container */
   transition: transform 0.3s ease-in-out; /* Smooth transition for hover effects */
 }
@@ -64,7 +65,6 @@ html, body {
   flex-direction: column; /* Stack children vertically */
   overflow-y: auto; /* Allow vertical scrolling */
   padding-top: var(--header-height); /* Push content down below the header */
-  padding-bottom: var(--input-height); /* Make space for the input field */
 }
 
 /* Adjust the MessageList to account for the header and input field */
@@ -85,18 +85,16 @@ html, body {
 
 /* Use safe-area-inset-bottom for devices with a bottom safe area */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .App {
-    padding-bottom: calc(var(--input-height) + env(safe-area-inset-bottom));
-  }
+ 
 
   .MessageInput {
     bottom: env(safe-area-inset-bottom);
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 400px) {
   .App{
-    padding-top: 0px;
+    padding-top: 4rem;
     padding-bottom: 0px;
   }
 }
