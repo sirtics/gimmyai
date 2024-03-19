@@ -317,7 +317,7 @@ body {
 
 @media (max-width: 480px) {
   .app-header {
-    position: fixed;
+    position: fixed absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -333,17 +333,17 @@ body {
     margin-bottom: 0;
     height: calc(100% - (4rem + var(--input-height)));
   }
-
+  
   .MainContainer{
-    padding-top: 4rem + env(safe-area-inset-bottom);
+    margin-top: calc(4rem + env(safe-area-inset-bottom));
   }
-   
+
 
   .MessageInput {
     position: fixed;
     left: 0;
     top: 0;
-    padding-bottom: 4rem + env(safe-area-inset-bottom);
+    margin-bottom: calc(4rem + env(safe-area-inset-bottom));
     right: 0;
     height: var(--input-height);
     z-index: 2;
@@ -351,3 +351,6 @@ body {
 }
 
 
+.MessageList {
+  height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
+}
