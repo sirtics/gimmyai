@@ -345,6 +345,7 @@ body {
     top: 0;
     margin-bottom: calc(4rem + env(safe-area-inset-bottom));
     right: 0;
+    bottom: 8rem;
     height: var(--input-height);
     z-index: 2;
   }
