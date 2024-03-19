@@ -330,10 +330,14 @@ body {
     flex-grow: 1;
     overflow-y: auto;
     margin-top: 4rem;
-    padding-bottom: 4rem + env(safe-area-inset-bottom); 
     margin-bottom: 0;
     height: calc(100% - (4rem + var(--input-height)));
   }
+
+  .MainContainer{
+    padding-top: 4rem + env(safe-area-inset-bottom);
+  }
+   
 
   .MessageInput {
     position: fixed;
@@ -347,6 +351,3 @@ body {
 }
 
 
-.MessageList {
-  height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
-}
