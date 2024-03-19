@@ -334,9 +334,6 @@ body {
     height: calc(100% - (4rem + var(--input-height)));
   }
   
-  .MainContainer{
-    margin-top: calc(4rem + env(safe-area-inset-bottom));
-  }
 
 
   .MessageInput {
@@ -350,3 +347,7 @@ body {
   }
 }
 
+
+.MessageList {
+  height: calc(100vh - 4rem - var(--input-height) - env(safe-area-inset-bottom));
+}
