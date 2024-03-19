@@ -329,7 +329,8 @@ body {
   .App {
     flex-grow: 1;
     overflow-y: auto;
-    margin-top: 4rem; 
+    margin-top: 4rem;
+    padding-bottom: 4rem + env(safe-area-inset-bottom); 
     margin-bottom: 0;
     height: calc(100% - (4rem + var(--input-height)));
   }
@@ -338,7 +339,7 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    padding-bottom: 4rem;
+    padding-bottom: 4rem + env(safe-area-inset-bottom);
     right: 0;
     height: var(--input-height);
     z-index: 2;
