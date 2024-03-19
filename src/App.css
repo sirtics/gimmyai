@@ -327,11 +327,12 @@ body {
   }
 
   .App {
+    position: relative;
+    display: flex;
     flex-grow: 1;
     overflow-y: auto;
     margin-top: 4rem;
     margin-bottom: 0;
-    height: calc(100% - (4rem + var(--input-height)));
   }
   
 
