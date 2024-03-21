@@ -125,7 +125,11 @@ function App() {
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.shiftKey) {
+      // If Shift + Enter is pressed, add a newline character
+      setNewMessage(prevMessage => prevMessage + '\n');
+    } else if (event.key === 'Enter') {
+      // If only Enter is pressed, send the message
       handleSendMessage();
     }
   };
@@ -143,8 +147,12 @@ function App() {
       <div className="app-body">
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
-            {msg.message.split('\n').map((line, lineIndex) => (
-              <div key={lineIndex}>{line}</div>
+            {msg.message.split('\n\n').map((block, blockIndex) => (
+              <div key={blockIndex}>
+                {block.split('\n').map((line, lineIndex) => (
+                  <div key={lineIndex}>{line}</div>
+                ))}
+              </div>
             ))}
           </div>
         ))}
@@ -156,7 +164,6 @@ function App() {
       </div>
       <div className="input-container">
         <textarea
-          type="text"
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -171,3 +178,4 @@ function App() {
 }
 
 export default App;
+
