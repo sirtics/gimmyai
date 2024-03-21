@@ -124,11 +124,14 @@ function App() {
     await sendMessageToAPI(apiRequestBody);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      handleSendMessage();
-    }
-  };
+const handleKeyDown = (event) => {
+  if (event.key === 'Enter' && event.shiftKey) {
+    event.preventDefault(); // Prevent the default action of the Enter key
+    setNewMessage(prevMessage => prevMessage + '\n');
+  } else if (event.key === 'Enter') {
+    handleSendMessage();
+  }
+};
 
   const handlePaste = (event) => {
     setNewMessage(event.clipboardData.getData('text'));
@@ -153,7 +156,7 @@ function App() {
         )}
       </div>
       <div className="input-container">
-        <input
+        <textarea
           type="text"
           placeholder="Type a message..."
           value={newMessage}
