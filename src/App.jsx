@@ -118,6 +118,21 @@ const renderFormattedMessage = (message) => {
   return <>{formattedMessage}</>;
 };
 
+const [useTextArea, setUseTextArea] = useState(false);
+
+const handleMessageChange = (e) => {
+  const messageText = e.target.value;
+  setNewMessage(messageText);
+
+  // Update the useTextArea state based on the message length
+  const charLimitForTextarea = 150; // You can adjust this limit as needed
+  if (!useTextArea && messageText.length > charLimitForTextarea) {
+    setUseTextArea(true);
+  } else if (useTextArea && messageText.length <= charLimitForTextarea) {
+    setUseTextArea(false);
+  }
+};
+
 const sendMessageToAPI = async (apiRequestBody) => {
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -170,15 +185,26 @@ return (
       )}
     </div>
     <div className="input-container">
-      <textarea
-        type="text"
-        placeholder="Type a message..."
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        autoFocus
-      />
+      {useTextArea ? (
+        <textarea
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={handleMessageChange}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          autoFocus
+        />
+      ) : (
+        <input
+          type="text"
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={handleMessageChange}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          autoFocus
+        />
+      )}
       <button onClick={handleSendMessage}>Send</button>
     </div>
   </div>
