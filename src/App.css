@@ -93,13 +93,16 @@ body, html {
   margin-right: 1rem;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  font-family: 'Poppins', sans-serif; /* Set font-family to Poppins */
+  font-family: 'Poppins', sans-serif;
   border: none;
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
-  resize: none; /* Disable textarea resizing */
-  min-height: 2rem; /* Set minimum height to match input */
+  resize: none;
+  min-height: 2rem; /* Adjust to preferred initial height */
+  height: auto; /* Let the height adjust based on content */
+  max-height: 200px; /* Prevent it from becoming too large */
+  overflow-y: hidden; /* Hide the vertical scrollbar */
 }
 
 
