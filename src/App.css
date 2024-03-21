@@ -172,6 +172,7 @@ body, html {
   color: #a8a8a8; /* Lighter shade for placeholder text */
   font-style: italic; /* If you want it to be italic */
   font-size: 0.9em; /* Adjust the font size as needed */
+  font-family: 'Poppins', sans-serif;
 }
 
 
