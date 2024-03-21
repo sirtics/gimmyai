@@ -95,7 +95,6 @@ body, html {
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
-  resize: none; /* Prevent resizing of textarea */
 }
 
 
