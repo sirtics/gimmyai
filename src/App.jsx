@@ -1,23 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import logo from '../public/gaspface-logo.png';
-
-// Helper function to safely format messages to include HTML
-function createMarkup(content) {
-  // Ideally, you'd want to sanitize this content to prevent XSS if it includes user-generated content
-  return { __html: content };
-}
-
-// A component to render individual messages
-function Message({ msg }) {
-  return (
-    <div
-      className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
-      // If the message is from ChatGPT, it will render HTML content
-      dangerouslySetInnerHTML={msg.sender === "ChatGPT" ? createMarkup(msg.message) : { __html: msg.message }}
-    />
-  );
-}
+import logo from '../public/gaspface-logo.png'; // Make sure this is the correct relative path to the logo image
 
 const systemMessage = {
   role: "system",
@@ -70,7 +53,12 @@ const systemMessage = {
 const API_KEY = import.meta.env.VITE_API_KEY; // Ensure the API key is set in your environment variables
 
 function App() {
-  const [messages, setMessages] = useState([systemMessage]);
+  const [messages, setMessages] = useState([
+    {
+      message: "Hello, I'm GimmyAI! Ask me anything! To support and continue your use of me, cashapp $girmmy!",
+      sender: "ChatGPT"
+    }
+  ]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -111,12 +99,9 @@ function App() {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
-    
-    // Format the message to replace new lines with HTML <br> tags
-    const formattedMessage = newMessage.replace(/\n/g, '<br>');
 
     const outgoingMessage = {
-      message: formattedMessage,
+      message: newMessage,
       sender: 'user'
     };
 
@@ -135,19 +120,21 @@ function App() {
     };
 
     setIsTyping(true);
-    setNewMessage(''); // Clear the text area
+    setNewMessage(''); // Clear input field after sending the message
     await sendMessageToAPI(apiRequestBody);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Prevent the default action of the Enter key
-      handleSendMessage();
-    }
-  };
+const handleKeyDown = (event) => {
+  if (event.key === 'Enter' && event.shiftKey) {
+    event.preventDefault(); // Prevent the default action of the Enter key
+    setNewMessage(prevMessage => prevMessage + '\n');
+  } else if (event.key === 'Enter') {
+    handleSendMessage();
+  }
+};
 
-  const handleOnChange = (event) => {
-    setNewMessage(event.target.value);
+  const handlePaste = (event) => {
+    setNewMessage(event.clipboardData.getData('text'));
   };
 
   return (
@@ -158,7 +145,9 @@ function App() {
       </header>
       <div className="app-body">
         {messages.map((msg, index) => (
-          <Message key={index} msg={msg} />
+          <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
+            {msg.message}
+          </div>
         ))}
         {isTyping && (
           <div className="typing-indicator">
@@ -168,10 +157,12 @@ function App() {
       </div>
       <div className="input-container">
         <textarea
+          type="text"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={handleOnChange}
+          onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           autoFocus
         />
         <button onClick={handleSendMessage}>Send</button>
