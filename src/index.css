@@ -67,10 +67,7 @@ button:focus-visible {
   }
 }
 
-.cs-message-input__content-editor-wrapper {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
+
 
 @supports(padding-bottom: env(safe-area-inset-bottom)) {
   .MessageInput {
@@ -83,29 +80,10 @@ html, body {
 }
 
 
-.cs-button svg {
-  width: 30px;
-  height: 30px;
-}
-
 body {
   margin: 0;
   padding: 0;
   height: -webkit-fill-available; /* Fills the viewport height */
-}
-
-
-
-
-@media (max-width: 480px) {
-  .cs-message-input__content-editor-wrapper {
-    width: 19rem;
-  }
-
-  .cs-button {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
 }
 
 

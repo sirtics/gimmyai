@@ -31,8 +31,8 @@ body, html {
   align-items: center;
   background-color: var(--primary-color);
   color: var(--background-color);
-  height: 5rem;
-  font-size: 0.6rem;
+  height: 3rem;
+  font-size: 0.5rem;
   padding: 0.3rem 1rem;
   padding-left: 2rem;
   width: 100%; /* Full width header */
@@ -42,7 +42,7 @@ body, html {
   color: white;
 }
 .app-logo {
-  max-height: 3.5rem; /* Adjust logo size */
+  max-height: 3rem; /* Adjust logo size */
   margin-right: 0.8rem;
 }
 
@@ -68,9 +68,7 @@ body, html {
   color: var(--text-color);
   background-color: var(--message-background);
   word-break: break-word; /* Ensure long words do not overflow */
-  padding: 0.25rem 0.5rem; /* Reduce padding to decrease height */
-  margin: 0.25rem 0; /* Reduce margin to fit more messages */
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .incoming {
@@ -175,16 +173,8 @@ body, html {
 
 
 
-@media (max-width: 480px) {
-  
-  .app-body {
-    padding: 0.5rem; /* Reduced padding for the message area */
+@media (max-width: 480px){
+  #root{
+    height: -webkit-fill-available;
   }
-  
-  .message {
-    padding: 0.25rem 0.5rem; /* Even smaller padding for messages */
-    margin: 0.25rem 0; /* Smaller margin for messages */
-    font-size: 0.85rem; /* Smaller font size for message text */
-  }
-  
 }
