@@ -143,7 +143,9 @@ function App() {
       <div className="app-body">
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
-            {msg.message}
+            {msg.message.split('\n').map((line, lineIndex) => (
+              <div key={lineIndex}>{line}</div>
+            ))}
           </div>
         ))}
         {isTyping && (
@@ -153,7 +155,7 @@ function App() {
         )}
       </div>
       <div className="input-container">
-        <input
+        <textarea
           type="text"
           placeholder="Type a message..."
           value={newMessage}
