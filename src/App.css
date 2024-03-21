@@ -68,6 +68,9 @@ body, html {
   color: var(--text-color);
   background-color: var(--message-background);
   word-break: break-word; /* Ensure long words do not overflow */
+  padding: 0.25rem 0.5rem; /* Reduce padding to decrease height */
+  margin: 0.25rem 0; /* Reduce margin to fit more messages */
+  font-size: 0.9rem;
 }
 
 .incoming {
@@ -173,45 +176,15 @@ body, html {
 
 
 @media (max-width: 480px) {
-  .app-header {
-    justify-content: space-between; /* Adjust header content spacing */
-    height: 2rem; /* Smaller header on mobile devices */
-    margin-top: 5rem;
-  }
-
-  .app-logo {
-    max-height: 1.5rem; /* Smaller logo on mobile devices */
-  }
-
-  .app-header h1 {
-    font-size: 1.2rem; /* Adjust the font size for small devices */
-  }
-
+  
   .app-body {
-    padding: 0.5rem; /* Reduce padding on smaller screens */
-    margin-top: 4rem;
+    padding: 0.5rem; /* Reduced padding for the message area */
   }
-
-  .input-container {
-    padding: 0.5rem; /* Reduce padding for input container */
-  }
-
-  .input-container input, .input-container button {
-    padding: 0.4rem 0.8rem; /* Adjust padding for input and button */
-  }
-
-  .input-container input::placeholder {
-    font-size: 0.8em; /* Adjust placeholder font size for readability */
-  }
-}
-
-@media (max-width: 390px) {
-  /* Additional adjustments for even smaller screens */
-  .app-header h1 {
-    font-size: 1rem; /* Smaller font size for headers */
-  }
-
+  
   .message {
-    font-size: 0.9rem; /* Smaller font size for message text */
+    padding: 0.25rem 0.5rem; /* Even smaller padding for messages */
+    margin: 0.25rem 0; /* Smaller margin for messages */
+    font-size: 0.85rem; /* Smaller font size for message text */
   }
+  
 }
