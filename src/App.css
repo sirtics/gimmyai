@@ -105,12 +105,30 @@ body, html {
 
 /* Specific styles for input */
 .input-container input {
+  flex-grow: 1;
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  border-radius: 20px;
+  background-color: var(--background-color);
+  color: var(--input-text-color);
   height: 2rem; /* Fixed height for input */
-  max-height: 2rem; /* Ensure the input does not grow */
+  line-height: 2rem; /* Align text vertically in the center */
 }
 
 /* Specific styles for textarea */
 .input-container textarea {
+  flex-grow: 1;
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  border-radius: 20px;
+  background-color: var(--background-color);
+  color: var(--input-text-color);
   resize: none; /* Prevent manual resizing */
   min-height: 2rem; /* Minimum height for empty textarea */
   max-height: 200px; /* Maximum height before scrolling */
