@@ -95,8 +95,9 @@ body, html {
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
+  resize: none; /* Prevent resizing of textarea */
+  height: 2.5rem; /* Adjust the height as needed */
 }
-
 
 .input-container button {
   padding: 0.5rem 1rem;
