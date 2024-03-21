@@ -104,6 +104,20 @@ const processApiResponse = (apiResponse) => {
   }));
 };
 
+const renderFormattedMessage = (message) => {
+  // If the message contains markdown, render it as HTML
+  // For simplicity, this example only converts new lines to <br> elements.
+  // For full markdown support, you could use a library like marked or react-markdown.
+  const formattedMessage = message.split('\n').map((item, key) => (
+    <React.Fragment key={key}>
+      {item}
+      <br />
+    </React.Fragment>
+  ));
+  
+  return <>{formattedMessage}</>;
+};
+
 const sendMessageToAPI = async (apiRequestBody) => {
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -145,10 +159,10 @@ return (
     </header>
     <div className="app-body">
       {messages.map((msg, index) => (
-        <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
-          {msg.message}
-        </div>
-      ))}
+    <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
+      {renderFormattedMessage(msg.message)}
+    </div>
+  ))}
       {isTyping && (
         <div className="typing-indicator">
           <span></span><span></span><span></span> GimmyAI is typing...
