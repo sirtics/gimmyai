@@ -86,7 +86,7 @@ body, html {
   background-color: var(--input-color);
 }
 
-.input-container textarea {
+.input-container input {
   flex-grow: 1;
   margin-right: 1rem;
   padding: 0.5rem 1rem;
@@ -95,8 +95,6 @@ body, html {
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
-  resize: none; /* Prevent resizing of textarea */
-  height: 2.5rem; /* Adjust the height as needed */
 }
 
 .input-container button {
@@ -172,7 +170,6 @@ body, html {
   color: #a8a8a8; /* Lighter shade for placeholder text */
   font-style: italic; /* If you want it to be italic */
   font-size: 0.9em; /* Adjust the font size as needed */
-  font-family: 'Poppins', sans-serif;
 }
 
 
