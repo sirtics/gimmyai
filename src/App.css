@@ -100,7 +100,7 @@ body, html {
   background-color: var(--background-color);
   color: var(--input-text-color);
   resize: none; /* Applicable only to textarea */
-  min-height: 1rem; /* Adjust to preferred initial height */
+  min-height: 2rem; /* Adjust to preferred initial height */
   height: auto; /* Let the height adjust based on content */
   overflow-y: hidden; /* Hide the vertical scrollbar */
   /* For the input, we don't want it to become too large, this is mainly for textarea */
