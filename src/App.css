@@ -99,9 +99,9 @@ body, html {
   background-color: var(--background-color);
   color: var(--input-text-color);
   resize: none; /* Disable textarea resizing */
-  height: auto; /* Set textarea height to auto */
-  min-height: 1em; /* Set minimum height to one line of text */
+  min-height: 2rem; /* Set minimum height to match input */
 }
+
 
 
 .input-container button {
@@ -172,7 +172,7 @@ body, html {
 }
 
 
-.input-container input::placeholder {
+.input-container textarea::placeholder {
   color: #a8a8a8; /* Lighter shade for placeholder text */
   font-style: italic; /* If you want it to be italic */
   font-size: 0.9em; /* Adjust the font size as needed */
