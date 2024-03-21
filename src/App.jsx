@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import logo from './gaspface-logo.png'; // Make sure this is the correct relative path to the logo image
+import logo from '../public/gaspface-logo.png'; // Make sure this is the correct relative path to the logo image
 
 const systemMessage = {
   role: "system",
