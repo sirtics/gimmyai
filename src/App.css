@@ -93,12 +93,16 @@ body, html {
   margin-right: 1rem;
   padding: 0.5rem 1rem;
   font-size: 1rem;
+  font-family: 'Poppins', sans-serif; /* Set font-family to Poppins */
   border: none;
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
   resize: none; /* Disable textarea resizing */
+  height: auto; /* Set textarea height to auto */
+  min-height: 1em; /* Set minimum height to one line of text */
 }
+
 
 .input-container button {
   padding: 0.5rem 1rem;
