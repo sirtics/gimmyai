@@ -27,24 +27,24 @@ body, html {
 
 .app-header {
   display: flex;
-  justify-content: space-between; /* Adjusted to space-between */
+  justify-content: left;
   align-items: center;
   background-color: var(--primary-color);
   color: var(--background-color);
-  height: 4.5rem; /* Reduced from 5rem to 4rem for a smaller navbar */
-  padding: 0 1rem; /* Horizontal padding */
-}
-
-.app-logo {
-  max-height: 3rem; /* Adjusted for the smaller navbar height */
+  height: 5rem;
+  font-size: 0.6rem;
+  padding: 0.3rem 1rem;
+  padding-left: 2rem;
+  width: 100%; /* Full width header */
 }
 
 .app-header h1 {
-  margin-left: auto; /* This will push the h1 to the right */
   color: white;
-  font-size: 1.6rem; /* Adjust the font size as needed */
 }
-
+.app-logo {
+  max-height: 3.5rem; /* Adjust logo size */
+  margin-right: 0.8rem;
+}
 
 .app-header-text {
   font-size: 2rem;
@@ -104,29 +104,30 @@ body, html {
 }
 
 .input-container button:hover {
-  opacity: 0.9; 
+  opacity: 0.9; /* Slight opacity change on hover for feedback */
 }
 
+/* Ensure the layout is responsive */
 @media (max-width: 768px) {
   .message {
-    max-width: 85%; 
+    max-width: 85%; /* More width for smaller screens */
   }
 }
 
 @media (max-width: 480px) {
   .app-header-text {
-    font-size: 1.5rem; 
+    font-size: 1.5rem; /* Smaller font size for very small screens */
   }
 
   .input-container input, .input-container button {
-    padding: 0.4rem; 
+    padding: 0.4rem; /* Smaller padding for very small screens */
   }
   .input-container input {
     padding-left: 12px;
   }
 
   .input-container button {
-    font-size: 1rem; 
+    font-size: 1rem; /* Smaller font size for the button text */
   }
   
 }
@@ -165,5 +166,5 @@ body, html {
 .input-container input::placeholder {
   color: #a8a8a8; /* Lighter shade for placeholder text */
   font-style: italic; /* If you want it to be italic */
-  font-size: 1em; /* Adjust the font size as needed */
+  font-size: 0.9em; /* Adjust the font size as needed */
 }
