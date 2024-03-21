@@ -88,6 +88,7 @@ body, html {
   background-color: var(--input-color);
 }
 
+.input-container input,
 .input-container textarea {
   flex-grow: 1;
   margin-right: 1rem;
@@ -98,11 +99,23 @@ body, html {
   border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
-  resize: none;
+  resize: none; /* Applicable only to textarea */
   min-height: 2rem; /* Adjust to preferred initial height */
   height: auto; /* Let the height adjust based on content */
-  max-height: 200px; /* Prevent it from becoming too large */
   overflow-y: hidden; /* Hide the vertical scrollbar */
+  /* For the input, we don't want it to become too large, this is mainly for textarea */
+}
+
+/* For textarea specifically, when it becomes too large */
+.input-container textarea {
+  max-height: 200px;
+}
+
+.input-container input::placeholder,
+.input-container textarea::placeholder {
+  color: #a8a8a8; /* Lighter shade for placeholder text */
+  font-style: italic; /* If you want it to be italic */
+  font-size: 0.9em; /* Adjust the font size as needed */
 }
 
 
@@ -175,11 +188,6 @@ body, html {
 }
 
 
-.input-container textarea::placeholder {
-  color: #a8a8a8; /* Lighter shade for placeholder text */
-  font-style: italic; /* If you want it to be italic */
-  font-size: 0.9em; /* Adjust the font size as needed */
-}
 
 @media (max-width: 480px){
   #root{
