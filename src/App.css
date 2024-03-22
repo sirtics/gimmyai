@@ -56,6 +56,7 @@ body, html {
   flex-grow: 1;
   overflow-y: auto; /* Enable scroll if content is larger than screen */
   padding: 1rem;
+  padding-bottom: 3rem;
   padding-top: 0;
   flex-direction: column;
   display: flex;
@@ -87,6 +88,7 @@ body, html {
   left: 0; /* Align it to the left */
   width: 100%; /* Full viewport width */
   padding: 1rem; /* Maintain padding */
+  height: 3rem;
   background-color: var(--input-color);
   box-sizing: border-box; /* Padding included in width */
   display: flex; /* Use flexbox for alignment */
