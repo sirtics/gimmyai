@@ -102,6 +102,7 @@ body, html {
   padding: 0.5rem 1rem; /* Padding inside the textarea */
   font-size: 1rem; /* Font size of the text */
   border: none;
+  max-height: 4.5rem;
   font-family: 'Poppins', sans-serif;
   border-radius: 20px; /* Rounded corners */
   background-color: var(--background-color);
