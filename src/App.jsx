@@ -140,8 +140,11 @@ function App() {
   };
 
   const handlePaste = (event) => {
-    setNewMessage(event.clipboardData.getData('text'));
+    event.preventDefault(); // Prevent the default paste action
+    const pasteText = event.clipboardData.getData('text'); // Get the text content from the clipboard
+    setNewMessage(pasteText); // Set the new message state with the pasted text
   };
+  
 
   const handleTextareaChange = (e) => {
     const target = e.target;
