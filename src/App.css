@@ -102,14 +102,17 @@ body, html {
   padding: 0.5rem 1rem; /* Padding inside the textarea */
   font-size: 1rem; /* Font size of the text */
   border: none;
-  max-height: 4.5rem;
+  height: 3rem; /* Fixed height for the textarea */
+  max-height: 3rem; /* Prevent it from growing larger than the input container */
   font-family: 'Poppins', sans-serif;
   border-radius: 20px; /* Rounded corners */
   background-color: var(--background-color);
   color: var(--input-text-color);
   resize: none; /* Disable resizing */
-  
+  box-sizing: border-box; /* Include padding and border in the element's size */
+  overflow-y: auto; /* Introduce scrollbar when content overflows */
 }
+
 
 
 .input-container button {
