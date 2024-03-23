@@ -15,7 +15,7 @@ body, html {
   font-family: 'Poppins', sans-serif;
   background: var(--background-color);
   color: var(--text-color);
-  overflow: hidden; /* Hide scrollbars if the content fits in the viewport */
+  overflow-x: hidden; /* Hide scrollbars if the content fits in the viewport */
 }
 
 #root {
@@ -31,6 +31,7 @@ body, html {
   background-color: var(--primary-color);
   color: var(--background-color);
   height: 4rem;
+  overflow: hidden;
   font-size: 0.8rem;
   padding: 0.3rem 1rem;
   padding-left: 2rem;
@@ -199,4 +200,37 @@ body, html {
     position: fixed;
     bottom: env(safe-area-inset-bottom); /* Adjust for iPhone's bottom safe area */
   }
+
+  .app-body{
+    overflow-y: auto !important;
+
+  }
 }
+
+body {
+  --sb-track-color: #232E33;
+  --sb-thumb-color: #3c3e44;
+  --sb-size: 8px;
+}
+
+body::-webkit-scrollbar {
+  width: var(--sb-size) !important;
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color) !important;
+  border-radius: 14px !important;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color) !important;
+  border-radius: 14px !important;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color) !important;
+  }
+}
+

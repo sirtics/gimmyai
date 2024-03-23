@@ -22,3 +22,29 @@ a:hover {
   color: #535bf2;
 }
 
+body {
+  --sb-track-color: #232E33;
+  --sb-thumb-color: #3c3e44;
+  --sb-size: 8px;
+}
+
+body::-webkit-scrollbar {
+  width: var(--sb-size) !important;
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color) !important;
+  border-radius: 14px !important;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color) !important;
+  border-radius: 14px !important;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color) !important;
+  }
+}
