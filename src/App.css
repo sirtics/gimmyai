@@ -54,11 +54,13 @@ body, html {
 
 .app-body {
   flex-grow: 1;
-  overflow-y: auto; /* Enable scrolling if needed */
+  overflow-y: auto; /* Enable scrolling */
   padding: 1rem;
   padding-bottom: 100px; /* Increase bottom padding to ensure space for scrolling */
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
 }
 
 .message {
@@ -234,3 +236,17 @@ body::-webkit-scrollbar-thumb {
   }
 }
 
+.app-body::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+.app-body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 14px;
+}
+
+.app-body::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb-color);
+  border-radius: 14px;
+  border: 3px solid var(--sb-track-color);
+}
