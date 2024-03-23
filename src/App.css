@@ -21,7 +21,6 @@ body, html {
 #root {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100vw; /* Set width to 100% of the viewport width */
 }
 
@@ -54,11 +53,11 @@ body, html {
 
 .app-body {
   flex-grow: 1;
-  overflow-y: auto; /* Enable scroll if content is larger than screen */
+  overflow-y: auto; /* Enable scrolling if needed */
   padding: 1rem;
-  padding-top: 0;
-  flex-direction: column;
+  padding-bottom: 100px; /* Increase bottom padding to ensure space for scrolling */
   display: flex;
+  flex-direction: column;
 }
 
 .message {
@@ -66,6 +65,7 @@ body, html {
   padding: 0.5rem 1rem;
   margin: 0.5rem 0;
   margin-top: 1rem;
+  margin-bottom: 1rem;
   border-radius: 20px;
   color: var(--text-color);
   background-color: var(--message-background);
@@ -191,7 +191,12 @@ body, html {
 
 
 @media (max-width: 480px){
-  #root{
+  body, html, #root{
     height: -webkit-fill-available;
+  }
+
+  .input-container {
+    position: fixed;
+    bottom: env(safe-area-inset-bottom); /* Adjust for iPhone's bottom safe area */
   }
 }
