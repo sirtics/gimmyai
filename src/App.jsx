@@ -1,5 +1,5 @@
 import 'katex/dist/katex.min.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import logo from '../public/gaspface-logo.png'; // Make sure this is the correct relative path to the logo image
 
@@ -97,6 +97,24 @@ function App() {
       setIsTyping(false);
     }
   };
+  const [inputContainerHeight, setInputContainerHeight] = useState(0);
+
+  useEffect(() => {
+    // Function to calculate and update the input container height
+    const updateInputContainerHeight = () => {
+      const inputContainerElement = document.querySelector('.input-container');
+      if (inputContainerElement) {
+        setInputContainerHeight(inputContainerElement.offsetHeight);
+      }
+    };
+
+    // Call the function on mount and add event listeners if the input container height might change (e.g., window resize)
+    updateInputContainerHeight();
+    window.addEventListener('resize', updateInputContainerHeight);
+
+    // Cleanup event listener on unmount
+    return () => window.removeEventListener('resize', updateInputContainerHeight);
+  }, []);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
@@ -162,7 +180,7 @@ function App() {
         <a href="/"><img src={logo} alt="GimmyAI Logo" className="app-logo" /></a>
         <h1>GimmyAI</h1>
       </header>
-      <div className="app-body">
+      <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
             {msg.message}
