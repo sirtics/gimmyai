@@ -108,7 +108,7 @@ body, html {
   padding: 0.5rem 1rem; /* Padding inside the textarea */
   font-size: 1rem; /* Font size of the text */
   border: none;
-  overflow-y: auto;
+  overflow-y: scroll;
   font-family: 'Poppins', sans-serif;
   border-radius: 20px; /* Rounded corners */
   background-color: var(--background-color);
