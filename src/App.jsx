@@ -68,6 +68,8 @@ Operational Guidelines:
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
+
+
 function App() {
   const [messages, setMessages] = useState([
     {
@@ -174,6 +176,7 @@ function App() {
     await checkForKeywordAndSendMessage(newMessage);
   };
 
+  
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault(); // Prevent the default behavior of Enter key in a textarea
@@ -193,7 +196,24 @@ function App() {
     const pasteText = event.clipboardData.getData('text'); // Get the text content from the clipboard
     setNewMessage(pasteText); // Set the new message state with the pasted text
   };
+
+  const formatMessage = (message) => {
+    // Convert Markdown headings to bold tags
+    let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
+    // Convert bold Markdown to strong tags
+    formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Convert Markdown links to anchor tags
+    formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
+    formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
   
+    return { __html: formattedMessage };
+  };
+  
+  
+  
+
 
   const handleTextareaChange = (e) => {
     const target = e.target;
@@ -213,9 +233,12 @@ function App() {
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
         {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}>
-            {msg.message}
-          </div>
+          <div
+            key={index}
+            className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
+            // Use the dangerouslySetInnerHTML attribute to render formatted message
+            dangerouslySetInnerHTML={formatMessage(msg.message)}
+          />
         ))}
         {isTyping && (
           <div className="typing-indicator">

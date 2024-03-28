@@ -77,6 +77,7 @@ body, html {
   background-color: var(--message-background);
   word-break: break-word; /* Ensure long words do not overflow */
   font-size: 1rem;
+  white-space: pre-wrap;
 }
 
 .incoming {
