@@ -59,7 +59,8 @@ body, html {
   margin-bottom: calc(var(--input-container-height) + env(safe-area-inset-bottom));
   overflow-y: auto; /* Enable scrolling */
   padding: 1rem;
-  padding-bottom: 70px; /* Increase bottom padding to ensure space for scrolling */
+  padding-top: 0.25rem;
+  padding-bottom: 40px; /* Increase bottom padding to ensure space for scrolling */
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
