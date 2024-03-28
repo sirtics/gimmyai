@@ -100,6 +100,7 @@ body, html {
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Align items vertically */
   justify-content: space-between; /* Spacing between items */
+  align-items: flex-start;
 }
 
 .input-container textarea {
@@ -108,7 +109,8 @@ body, html {
   padding: 0.5rem 1rem; /* Padding inside the textarea */
   font-size: 1rem; /* Font size of the text */
   border: none;
-  overflow-y: scroll;
+  flex: 1;
+  overflow-y: auto;
   font-family: 'Poppins', sans-serif;
   border-radius: 20px; /* Rounded corners */
   background-color: var(--background-color);
@@ -116,6 +118,7 @@ body, html {
   resize: none; /* Disable resizing */
   
 }
+
 
 
 .input-container button {
@@ -127,6 +130,11 @@ body, html {
   font-family: 'Poppins', sans-serif;
   cursor: pointer; /* Cursor pointer for button hover */
   white-space: nowrap; /* Prevent wrapping of button text */
+  width: Xpx;
+  flex-shrink: 0;
+  height: auto;
+  align-self: stretch;
+  flex-grow: 0;
 }
 
 .input-container button:hover {
@@ -261,4 +269,30 @@ body::-webkit-scrollbar-thumb {
   height: auto;
   border-radius: 8px;
   margin-top: 0.5rem;
+}
+
+.handle {
+  height: 10px; /* Set a fixed height for the handle */
+  background-color: var(--primary-color); /* Use the primary color variable */
+  cursor: ns-resize; /* Set the cursor to indicate resizing */
+}
+
+.draggable-handle {
+  height: 10px; /* Height of the handle area */
+  width: 100%;
+  cursor: ns-resize;
+  position: absolute;
+  bottom: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.draggable-handle::before,
+.draggable-handle::after {
+  content: "";
+  height: 2px; /* Height of the lines */
+  width: 30px; /* Width of the lines */
+  background: var(--secondary-color);
+  margin: 2px 0; /* Space between the lines */
 }
