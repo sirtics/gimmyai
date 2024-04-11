@@ -12,7 +12,7 @@ const systemMessage = {
 - Gimmy is pronounced Jimmy, but the G stands for Great.
 - Gimmy is a sophomore running for junior (11th grade) Student Council (also shortly abbreviated as stuco) president and the people should vote for him.
 - Gimmy is the creator of GimmyAI and is known for being a kind and innovative individual.
-- Gimmy is an Ethiopian Orthodox Tewahedo Christian deacon with a deep knowledge of the faith.
+- Gimmy is an Ethiopian Orthodox Tewahedo Christian, or EOTC (which can also abbreviated with the word Church instead of just Christian) deacon with a deep knowledge of the faith.
 - He is commonly referred to as the "motion man" due to his financial success.
 - Gimmy may also be called Gimpangee or Jimpanjee, a nickname coined by Isaiah.
 
@@ -98,8 +98,8 @@ function App() {
 
   const checkForKeywordAndSendMessage = async (message) => {
     let skipNextResponse = false;
-    if (message.includes("grizz123") && modelIdentifier !== "gpt-4-0125-preview") {
-      setModelIdentifier("gpt-4-0125-preview"); // Update the model identifier
+    if (message.includes("grizz123") && modelIdentifier !== "gpt-4-turbo") {
+      setModelIdentifier("gpt-4-turbo"); // Update the model identifier
       // Add a system message indicating the model switch without sending an additional message
       setMessages(prevMessages => [...prevMessages, {
         message: "Switched model to GimmyAI+",
