@@ -1,8 +1,5 @@
-# React + Vite
+# GimmyAI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GimmyAI is an AI Chatbot designed by Gimmy that uses OpenAI's API. It has been personalized for Gimmy himself (for now), but still used for other purposes. GimmyAI+, activated by a certain keyword, is essentially GPT-4. Those who know the keyword are recommended to keep it private. 
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Please donate to $girmmy on CashApp for the continuous use of GimmyAI.
