@@ -263,7 +263,7 @@ const handleSendMessage = async () => {
             key={index}
             className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
             // Use the dangerouslySetInnerHTML attribute to render formatted message
-            dangerouslySetInnerHTML={formatMessage(msg.message)}
+            dangerouslySetInnerHTML={formatMessage(msg.message.replace(/mooseAnkle/g, '**KEYWORD USED**'))}
           />
         ))}
         {isTyping && (
