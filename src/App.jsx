@@ -191,20 +191,22 @@ function App() {
   const handleSendMessage = async () => {
   if (!newMessage.trim()) return;
 
+  setIsTyping(true);
+  
   const outgoingMessage = {
     message: newMessage,
     sender: 'user'
   };
 
-  // First update to add user's message
+  // Add the user's message to the state
   setMessages(prevMessages => [...prevMessages, outgoingMessage]);
-
-  setIsTyping(true);
-  setNewMessage('');
   
-  // Second update happens in checkForKeywordAndSendMessage
+  setNewMessage(''); // Clear the input field
+
   await checkForKeywordAndSendMessage(newMessage);
 };
+
+
 
 
   
