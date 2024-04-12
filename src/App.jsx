@@ -188,25 +188,19 @@ function App() {
   };
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
-  const handleSendMessage = async () => {
+ const handleSendMessage = async () => {
   if (!newMessage.trim()) return;
 
   setIsTyping(true);
-
+  
   const outgoingMessage = {
     message: newMessage,
     sender: 'user'
   };
 
-  // Add the user's message to the state if it's not a duplicate
-  setMessages(prevMessages => {
-    const lastMessage = prevMessages[prevMessages.length - 1];
-    if (lastMessage && lastMessage.message === newMessage && lastMessage.sender === 'user') {
-      return prevMessages; // Don't add duplicate
-    }
-    return [...prevMessages, outgoingMessage];
-  });
-
+  // Add the user's message to the state
+  setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+  
   setNewMessage(''); // Clear the input field
 
   await checkForKeywordAndSendMessage(newMessage);
