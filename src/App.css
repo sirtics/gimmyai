@@ -323,3 +323,16 @@ body::-webkit-scrollbar-thumb {
   align-items: center; /* This aligns the button to the center vertically */
   /* Other styles remain the same */
 }
+
+.message.image-message img {
+  max-width: 75%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+
+.message img {
+  max-width: 100%; 
+  height: auto; 
+  border-radius: 10px;
+}
