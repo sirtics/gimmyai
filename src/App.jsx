@@ -77,7 +77,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 function App() {
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I'm GimmyAI! Ask me anything! To support and continue your use of me, cashapp $girmmy!",
+      message: "Hello, I'm GimmyAI! Ask me anything! To support and continue your use of me, **cashapp $girmmy!**",
       sender: "ChatGPT"
     }
   ]);
