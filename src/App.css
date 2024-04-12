@@ -105,10 +105,14 @@ body, html {
 
 .input-container textarea {
   flex: 1; /* Let the textarea grow to fill space */
-  margin-right: 1rem; /* Maintain right margin for spacing to the button */
+  margin-right: 16px;
+  margin-left: 12px; 
   padding: 0.5rem 1rem; /* Padding inside the textarea */
   font-size: 1rem; /* Font size of the text */
   border: none;
+  max-height: 20rem;
+  scrollbar-width: thin; 
+  scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   flex: 1;
   overflow-y: auto;
   font-family: 'Poppins', sans-serif;
@@ -119,7 +123,19 @@ body, html {
   
 }
 
+.input-container textarea::-webkit-scrollbar {
+  width: var(--sb-size);
+}
 
+.input-container textarea::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 14px;
+}
+
+.input-container textarea::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb-color);
+  border-radius: 14px;
+}
 
 .input-container button {
   padding: 0.5rem 1rem; /* Padding inside the button */
@@ -135,6 +151,17 @@ body, html {
   height: auto;
   align-self: stretch;
   flex-grow: 0;
+}
+
+.input-container button {
+  background-color: var(--secondary-color);
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem; /* Match the font size with the send button */
+  /* Add any other properties to make them look similar */
 }
 
 .input-container button:hover {
@@ -271,28 +298,28 @@ body::-webkit-scrollbar-thumb {
   margin-top: 0.5rem;
 }
 
-.handle {
-  height: 10px; /* Set a fixed height for the handle */
-  background-color: var(--primary-color); /* Use the primary color variable */
-  cursor: ns-resize; /* Set the cursor to indicate resizing */
-}
 
-.draggable-handle {
-  height: 10px; /* Height of the handle area */
-  width: 100%;
-  cursor: ns-resize;
-  position: absolute;
-  bottom: 100%;
+/* Adjustments for the attachment button */
+.attachment-button {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  width: 30px; /* Decreased width */
+  height: 48px; /* Height to match the input field */
+  margin-right: 0.5rem;
+  cursor: pointer;
+  background: none; /* To ensure there is no background color */
+  border: none; /* Remove border if not needed */
 }
 
-.draggable-handle::before,
-.draggable-handle::after {
-  content: "";
-  height: 2px; /* Height of the lines */
-  width: 30px; /* Width of the lines */
-  background: var(--secondary-color);
-  margin: 2px 0; /* Space between the lines */
+/* Center the image within the button and adjust its size */
+.attachment-button img {
+  width: auto; /* Adjust this value to resize the image */
+  height: 62%; /* Keep this to maintain the aspect ratio */
+}
+
+/* Ensure the input container and its contents are aligned */
+.input-container {
+  align-items: center; /* This aligns the button to the center vertically */
+  /* Other styles remain the same */
 }

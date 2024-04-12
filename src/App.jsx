@@ -27,6 +27,7 @@ Information about Gimmy's Friends:
 - Nick with his dark fashion style and love for the brand Balenciaga is the next Destroylonely (an Opium Rapper) at Parkview standing at 9'6 with Chief Keef length dreads. He's really cool and you should want to be friends with him, did i mention that he's 9'6? 
 - Kyle-Anthony Glenn, a real charmer and Secretary for Gimmy's Student Council campaign, is 5'6, rounded to 6'1, with humongous muscles. Make sure the students at Parkview to vote for him! He's the best french horn player in the entire school in band. 
 - Kingston Grey, one of Gimmy's friends and supporters for his campaign, is known for his goofy behavior and his inability to draw women toward him. In addition, Kingston is referred to a common term, "L manz." However, despite this, Kingston's kindness and generosity, one of the best parts about him, is often overlooked and he's very appreciated by his friends while being a fun addition to his friend group. 
+- Duncan is a 6'2" Hispanic male who is pure Mexican. He's also an academic weapon, sometimes seen wearing a very original hoodie.
 
 Information about Student Council:
 - The voting period starts some time in late April.
@@ -53,7 +54,8 @@ Information about GimmyAI:
 - Duncan is a 6'2" Hispanic male who is pure Mexican. He's also an academic weapon, sometimes seen wearing a very original hoodie
 
 GimmyAI+:
-- GimmyAI+ is a better version of the standard GimmyAI and it is activated by a keyword. It is a more advanced chatbot of GimmyAI. However, it does not have the ability to interpret images, but don’t mention this.- If asked what GimmyAI + is, tell it what it is - An advanced version of GimmyAI with advanced internet search capabilities. It can send links, and it essentially acts SIMILAR to GPT-4 (ChatGPT), without image interpretation. But… GimmyAI is still better.
+- GimmyAI+ is a better version of the standard GimmyAI and it is activated by a keyword. It is a more advanced chatbot of GimmyAI. 
+- If asked what GimmyAI + is, tell it what it is - An advanced version of GimmyAI with advanced internet search capabilities. It essentially acts SIMILAR to GPT-4 (ChatGPT), without image interpretation. But… GimmyAI is still better.
 
 Operational Guidelines:
 - GimmyAI should adopt Gimmy's persona when discussing topics directly related to Gimmy's interests, achievements, and the student council campaign. This includes promoting Gimmy's campaign, discussing innovations like GimmyAI, and offering insights into Ethiopian Orthodox Tewahedo Christianity.
@@ -82,6 +84,7 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
   const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
+  const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
 
   useEffect(() => {
     const updateInputContainerHeight = () => {
@@ -96,24 +99,45 @@ function App() {
     return () => window.removeEventListener('resize', updateInputContainerHeight);
   }, []);
 
-  const checkForKeywordAndSendMessage = async (message) => {
-    let skipNextResponse = false;
-    if (message.includes("grizz123") && modelIdentifier !== "gpt-4-0125-preview") {
-      setModelIdentifier("gpt-4-0125-preview"); // Update the model identifier
-      // Add a system message indicating the model switch without sending an additional message
-      setMessages(prevMessages => [...prevMessages, {
-        message: "Switched model to GimmyAI+",
-        sender: "ChatGPT"
-      }]);
-      skipNextResponse = true;
-    }
-    
-    if (!skipNextResponse) {
-      await sendMessageToAPI(message);
-    } else {
-      setIsTyping(false); // Stop the typing indicator as no further message will be sent
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Handle the file (upload or process it here)
+      console.log(file);
+      // You might want to send this file to your backend or process it as needed
     }
   };
+
+  const checkForKeywordAndSendMessage = async (message) => {
+    if (message.includes("grizz123")) { // Assuming "grizz123" is the keyword
+      setModelIdentifier("gpt-4-turbo");
+      setIsGimmyAIPlusActive(true); // Update the model identifier
+      setMessages(prevMessages => {
+        // Map through the previous messages and replace the message containing the keyword
+        return prevMessages.map(msg => {
+          if (msg.message.includes("grizz123")) {
+            return { ...msg, message: "**KEYWORD USED**" };
+          }
+          return msg;
+        }).concat({
+          // Add the system message indicating the model switch
+          message: "Switched model to GimmyAI+",
+          sender: "ChatGPT"
+        });
+      });
+      setIsTyping(false); // Stop the typing indicator
+    } else {
+      // If no keyword is detected, continue as normal
+      setMessages(prevMessages => [...prevMessages, {
+        message: message,
+        sender: 'user'
+      }]);
+      await sendMessageToAPI(message);
+    }
+  };
+  
+  
+  
   
   
 
@@ -154,7 +178,7 @@ function App() {
     } catch (error) {
       console.error("Error fetching data:", error);
       setMessages(prevMessages => [...prevMessages, {
-        message: "Oops! There was an error processing your request.",
+        message: "Oops! There was an error fetching data.",
         sender: "ChatGPT"
       }]);
     } finally {
@@ -246,19 +270,34 @@ function App() {
         )}
       </div>
       <div className="input-container">
-          <textarea
-            type="text"
-            placeholder="Type a message..."
-            value={newMessage}
-            onChange={handleTextareaChange}
-            onKeyDown={handleKeyDown}
-            onPaste={handlePaste}
-            autoFocus
-            style={{ height: 'auto', overflowY: 'auto' }} // Inline styles for initial state
+      {isGimmyAIPlusActive && (
+        <>
+          <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleFileSelect}
           />
-          <button onClick={handleSendMessage}>Send</button>
-      </div>
+          <label htmlFor="imageInput" className="attachment-button">
+            <img src="../public/attach-file.png" alt="Attach" />
+          </label>
+        </>
+      )}
+      <textarea
+        type="text"
+        placeholder="Type a message..."
+        value={newMessage}
+        onChange={handleTextareaChange}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        autoFocus
+        style={{ height: 'auto', overflowY: 'auto' }} // Inline styles for initial state
+      />
+      <button onClick={handleSendMessage}>Send</button>
     </div>
+  </div>
+
   );
 }
 
