@@ -110,37 +110,24 @@ function App() {
   };
 
   const checkForKeywordAndSendMessage = async (message) => {
-    if (message.includes("mooseAnkle")) { 
-      setModelIdentifier("gpt-4-turbo");
-      setIsGimmyAIPlusActive(true); // Update the model identifier
-      setMessages(prevMessages => {
-        // Map through the previous messages and replace the message containing the keyword
-        return prevMessages.map(msg => {
-          if (msg.message.includes("mooseAnkle")) {
-            return { ...msg, message: "**KEYWORD USED**" };
-          }
-          return msg;
-        }).concat({
-          // Add the system message indicating the model switch
-          message: "Switched model to GimmyAI+",
-          sender: "ChatGPT"
-        });
-      });
-      setIsTyping(false); // Stop the typing indicator
-    } else {
-      // If no keyword is detected, continue as normal
-      setMessages(prevMessages => [...prevMessages, {
-        message: message,
-        sender: 'user'
-      }]);
-      await sendMessageToAPI(message);
-    }
-  };
-  
-  
-  
-  
-  
+  if (message.includes("mooseAnkle")) { 
+    setModelIdentifier("gpt-4-turbo");
+    setIsGimmyAIPlusActive(true); // Update the model identifier
+    setMessages(prevMessages => [
+      ...prevMessages,
+      {
+        // Add the system message indicating the model switch
+        message: "Switched model to GimmyAI+",
+        sender: "ChatGPT"
+      }
+    ]);
+    setIsTyping(false); // Stop the typing indicator
+  } else {
+    // If no keyword is detected or GimmyAI+ is not activated, continue as normal
+    await sendMessageToAPI(message);
+  }
+};
+
 
   const sendMessageToAPI = async (userMessage) => {
     const apiRequestBody = {
