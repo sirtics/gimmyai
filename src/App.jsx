@@ -110,13 +110,13 @@ function App() {
   };
 
   const checkForKeywordAndSendMessage = async (message) => {
-    if (message.includes("grizz123")) { // Assuming "grizz123" is the keyword
+    if (message.includes("mooseAnkle")) { 
       setModelIdentifier("gpt-4-turbo");
       setIsGimmyAIPlusActive(true); // Update the model identifier
       setMessages(prevMessages => {
         // Map through the previous messages and replace the message containing the keyword
         return prevMessages.map(msg => {
-          if (msg.message.includes("grizz123")) {
+          if (msg.message.includes("mooseAnkle")) {
             return { ...msg, message: "**KEYWORD USED**" };
           }
           return msg;
