@@ -189,23 +189,18 @@ function App() {
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
  const handleSendMessage = async () => {
-  if (!newMessage.trim()) return;
+    if (!newMessage.trim()) return;
 
-  setIsTyping(true);
-  
-  const outgoingMessage = {
-    message: newMessage,
-    sender: 'user'
+    const outgoingMessage = {
+      message: newMessage,
+      sender: 'user'
+    };
+
+    setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+    setIsTyping(true);
+    setNewMessage('');
+    await checkForKeywordAndSendMessage(newMessage);
   };
-
-  // Add the user's message to the state
-  setMessages(prevMessages => [...prevMessages, outgoingMessage]);
-  
-  setNewMessage(''); // Clear the input field
-
-  await checkForKeywordAndSendMessage(newMessage);
-};
-
 
   // Add the user's message to the state
   setMessages(prevMessages => [...prevMessages, outgoingMessage]);
