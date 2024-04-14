@@ -57,7 +57,7 @@ Information about GimmyAI:
 
 GimmyAI+:
 - GimmyAI+ is a better version of the standard GimmyAI and it is activated by a keyword. It is a more advanced chatbot of GimmyAI. 
-- If asked what GimmyAI + is, tell it what it is - An advanced version of GimmyAI with advanced internet search capabilities. It essentially acts SIMILAR to GPT-4 (ChatGPT), without image interpretation. But… GimmyAI is still better.
+- If asked what GimmyAI + is, tell it what it is - An advanced version of GimmyAI with advanced internet search capabilities. It essentially acts SIMILAR to GPT-4 (ChatGPT). But… GimmyAI is still better.
 
 Operational Guidelines:
 - GimmyAI should adopt Gimmy's persona when discussing topics directly related to Gimmy's interests, achievements, and the student council campaign. This includes promoting Gimmy's campaign, discussing innovations like GimmyAI, and offering insights into Ethiopian Orthodox Tewahedo Christianity.
@@ -74,6 +74,7 @@ Operational Guidelines:
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 
+
 function App() {
   const [messages, setMessages] = useState([
     {
@@ -86,6 +87,7 @@ function App() {
   const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(() => {
     const updateInputContainerHeight = () => {
@@ -101,107 +103,233 @@ function App() {
   }, []);
 
   const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Handle the file (upload or process it here)
-      console.log(file);
-      // You might want to send this file to your backend or process it as needed
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const imageFiles = Array.from(files).slice(0, 3); // Limit to 3 images
+      const imagePromises = imageFiles.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve({ file, preview: reader.result });
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+      });
+      Promise.all(imagePromises)
+        .then(images => {
+          setSelectedImages(images);
+        })
+        .catch(error => console.error("Error reading file:", error));
     }
   };
+  
 
-  const checkForKeywordAndSendMessage = async (message) => {
-  if (message.includes("mooseAnkle")) { 
-    setModelIdentifier("gpt-4-turbo");
-    setIsGimmyAIPlusActive(true); // Update the model identifier
-    setMessages(prevMessages => [
-      ...prevMessages,
-      {
-        // Add the system message indicating the model switch
-        message: "Switched model to GimmyAI+",
-        sender: "ChatGPT"
-      }
-    ]);
-    setIsTyping(false); // Stop the typing indicator
-  } else {
-    // If no keyword is detected or GimmyAI+ is not activated, continue as normal
-    await sendMessageToAPI(message);
-  }
-};
+  const displayImageMessage = (base64Image) => {
+    // Add the base64 image as a message from the user
+    setMessages(prevMessages => [...prevMessages, { message: base64Image, sender: 'user', image: true }]);
+  };
+  
+  
+  const displayErrorMessage = (errorMessage) => {
+    // Append the error message to the chat as a system message
+    setMessages(prevMessages => [...prevMessages, { message: errorMessage, sender: 'ChatGPT' }]);
+  };
 
 
-  const sendMessageToAPI = async (userMessage) => {
-    const apiRequestBody = {
-      model: modelIdentifier, // Use the modelIdentifier state
-      messages: [
-        systemMessage,
-        ...messages.map(msg => ({
-          role: msg.sender === "ChatGPT" ? "assistant" : "user",
-          content: msg.message
-        })),
-        { role: 'user', content: userMessage }
-      ]
-    };
+  const resizeImage = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Create a canvas and context for resizing the image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxSize = 512; // Max size for the longest side
+  
+          // Calculate the scaling factor and dimensions
+          const scalingFactor = Math.min(maxSize / img.width, maxSize / img.height);
+          const width = img.width * scalingFactor;
+          const height = img.height * scalingFactor;
+  
+          // Set the canvas dimensions and draw the resized image
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+  
+          // Convert canvas to base64 JPEG
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = reject;
+        img.src = event.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
+
+  
+
+  const sendImageToAPI = async (file) => {
     try {
+      const base64Image = await resizeImage(file);
+      // Display the image message in the UI
+      displayImageMessage(base64Image);
+      
+      // Clear the selected images after successful sending
+      setSelectedImages([]);
+  
+      const requestBody = {
+        model: "gpt-4-vision",
+        messages: [
+          systemMessage,
+          ...messages.map(msg => ({
+            role: msg.sender === "system" ? "system" : (msg.sender === "ChatGPT" ? "assistant" : "user"),
+            content: msg.message
+          })),
+          {
+            role: "user",
+            content: {
+              type: "image",
+              data: base64Image
+            }
+          }
+        ]
+      };
+  
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer " + API_KEY,
+          "Authorization": `Bearer ${API_KEY}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(apiRequestBody)
+        body: JSON.stringify(requestBody)
       });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to send image to API: ${response.statusText}`);
+      }
+  
       const data = await response.json();
-      if (response.ok) {
-        setMessages(prevMessages => [...prevMessages, {
-          message: data.choices[0].message.content,
-          sender: "ChatGPT"
-        }]);
-      } else {
-        setMessages(prevMessages => [...prevMessages, {
-          message: "Oops! There was an error processing your request (API ERROR).",
-          sender: "ChatGPT"
-        }]);
+  
+      if (data.error) {
+        displayErrorMessage(data.error.message || "An error occurred while processing the image.");
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setMessages(prevMessages => [...prevMessages, {
-        message: "Oops! There was an error fetching data.",
-        sender: "ChatGPT"
-      }]);
+      console.error("Error sending image to API:", error);
+      displayErrorMessage("An error occurred while sending the image to the API.");
     } finally {
       setIsTyping(false);
     }
   };
+  
+  
+  
+  
 
-  // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
-const handleSendMessage = async () => {
-  if (!newMessage.trim()) return;
+  const checkForKeywordAndSendMessage = async (message) => {
+    if (message.includes("mooseAnkle")) { 
+      setModelIdentifier("gpt-4-turbo");
+      setIsGimmyAIPlusActive(true);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          message: "Switched model to GimmyAI+",
+          sender: "ChatGPT"
+        }
+      ]);
+    } else {
+      // Send the text message to the API
+      await sendMessageToAPI(message);
+    }
+  };
+  
+  
 
-  const outgoingMessage = {
-    message: newMessage,
-    sender: 'user'
+
+const sendMessageToAPI = async (userMessage) => {
+  const apiRequestBody = {
+    model: modelIdentifier, // Use the current model identifier state
+    messages: [
+      systemMessage,
+      ...messages.map(msg => ({
+        role: msg.sender === "ChatGPT" ? "assistant" : "user",
+        content: msg.message
+      })),
+      { role: 'user', content: userMessage }
+    ]
   };
 
-  // Check if the new message is a duplicate of the last message sent by the user
-  const lastUserMessage = messages[messages.length - 1];
-  if (lastUserMessage && lastUserMessage.sender === 'user' && lastUserMessage.message === newMessage) {
-    // If it's a duplicate, don't add it to the state
-    return;
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(apiRequestBody)
+    });
+    const data = await response.json();
+    if (response.ok) {
+      setMessages(prevMessages => [...prevMessages, {
+        message: data.choices[0].message.content,
+        sender: "ChatGPT"
+      }]);
+    } else {
+      // Use the error message from the response if available, otherwise a generic error message
+      const errorMessage = data.error?.message || "Oops! There was an error processing your request.";
+      displayErrorMessage(errorMessage);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    displayErrorMessage("Oops! There was an error fetching data.");
+  } finally {
+    setIsTyping(false);
   }
-
-  // Add the user's message to the state
-  setMessages(prevMessages => [...prevMessages, outgoingMessage]);
-
-  setIsTyping(true);
-  setNewMessage(''); // Clear the input field
-
-  await checkForKeywordAndSendMessage(newMessage);
 };
 
-
-
-
+  // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() && selectedImages.length === 0) return;
+  
+    // Define outgoingMessage at the top so it's available in the entire scope
+    const outgoingMessage = {
+      message: newMessage,
+      sender: 'user'
+    };
+  
+    const isDuplicateMessage = messages.some(msg => 
+      msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
+    );
+  
+    if (isDuplicateMessage) {
+      // If it's a duplicate, don't proceed further
+      return;
+    }
+  
+    setIsTyping(true);
+  
+    // If there's a new text message, add it to the messages state
+    if (newMessage.trim()) {
+      setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+    }
+  
+    // Clear the input field immediately before doing any async operations
+    setNewMessage('');
+  
+    // Perform the async operations
+    if (selectedImages.length > 0) {
+      await Promise.all(selectedImages.map(image => sendImageToAPI(image.file)));
+      setSelectedImages([]); // Clear the selected images after sending
+    } else if (outgoingMessage.message.trim()) {
+      await checkForKeywordAndSendMessage(outgoingMessage.message);
+    }
+  
+    setIsTyping(false);
+  };
+  
+  
+  
 
   
   const handleKeyDown = (event) => {
@@ -219,10 +347,31 @@ const handleSendMessage = async () => {
   };
 
   const handlePaste = (event) => {
-    event.preventDefault(); // Prevent the default paste action
-    const pasteText = event.clipboardData.getData('text'); // Get the text content from the clipboard
-    setNewMessage(pasteText); // Set the new message state with the pasted text
+    // Prevent the default paste action
+    event.preventDefault();
+    // Use the Clipboard API to access the data directly
+    const items = event.clipboardData.items;
+  
+    // Find items of the type 'image'
+    const imageItem = Array.from(items).find(item => item.type.indexOf('image') === 0);
+  
+    if (imageItem && isGimmyAIPlusActive) {
+      // If there's an image and GimmyAI+ is active, read it and send to the API
+      const blob = imageItem.getAsFile();
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result;
+        displayImageMessage(base64Image); // Display it in the UI
+        sendImageToAPI(base64Image); // Send it to the API
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      // If it's not an image or GimmyAI+ isn't active, handle as a regular text paste
+      const pasteText = event.clipboardData.getData('text/plain');
+      setNewMessage(prevMessage => prevMessage + pasteText); // Append the pasted text
+    }
   };
+  
 
   const formatMessage = (message) => {
     // Convert Markdown headings to bold tags
@@ -257,14 +406,21 @@ const handleSendMessage = async () => {
         <h1>GimmyAI</h1>
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
-            // Use the dangerouslySetInnerHTML attribute to render formatted message
-            dangerouslySetInnerHTML={formatMessage(msg.message.replace(/mooseAnkle/g, '**KEYWORD USED**'))}
-          />
-        ))}
+      {messages.map((msg, index) => (
+        <div
+          key={index}
+          className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
+        >
+          {msg.image ? (
+            <img src={msg.message} alt="User upload" style={{ maxWidth: '100%', maxHeight: '400px' }} />
+          ) : (
+            <div
+              className={`message-content ${msg.sender}`}
+              dangerouslySetInnerHTML={formatMessage(msg.message.replace(/mooseAnkle/g, '**KEYWORD USED**'))}
+            />
+          )}
+        </div>
+      ))}
         {isTyping && (
           <div className="typing-indicator">
             <span></span><span></span><span></span> GimmyAI is typing...
@@ -286,15 +442,21 @@ const handleSendMessage = async () => {
           </label>
         </>
       )}
+      {selectedImages.map((image, index) => (
+        <div key={index} className="image-preview-container">
+          <img src={image.preview} alt={`Selected ${index + 1}`} className="image-preview" />
+        </div>
+      ))}
+
       <textarea
         type="text"
         placeholder="Type a message..."
-        value={newMessage}
+        value={newMessage} // This should be the state variable
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         autoFocus
-        style={{ height: 'auto', overflowY: 'auto' }} // Inline styles for initial state
+        style={{ height: 'auto', overflowY: 'auto' }}
       />
       <button onClick={handleSendMessage}>Send</button>
     </div>

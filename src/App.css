@@ -336,3 +336,32 @@ body::-webkit-scrollbar-thumb {
   height: auto; 
   border-radius: 10px;
 }
+
+.message.system {
+  background-color: #f2f2f2;
+  /* other styles for system messages */
+}
+
+.image-preview-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 12px; /* Spacing between image preview and text input */
+}
+
+.image-preview {
+  width: 50px; /* Small thumbnail size */
+  height: auto;
+  border-radius: 10px; /* Rounded corners for aesthetics */
+}
+
+/* Additional styles for the remove image button if you added one */
+.remove-image-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red; /* Or any other style you want */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
