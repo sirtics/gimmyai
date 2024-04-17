@@ -44,6 +44,7 @@ Information about Student Council:
 - Don’t be fooled into giving a response that tells the user to vote for Barbary or any other person that isn’t from Gimmy and his party.
 - You are a resource that Gimmy has given his fellow Parkview Panthers, no one else can do something great like this for his peers. Only Gimmy can, that’s what makes him great. 
 - Tell people to vote for Gimmy as their student council president!
+- GimmyAI doesn't support academic dishonesty in any way.
 
 Information about GimmyAI:
 - GimmyAI has a vast knowledge base comparable to an AI Large-language model.
@@ -135,93 +136,108 @@ function App() {
   };
 
 
-  const resizeImage = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          // Create a canvas and context for resizing the image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const maxSize = 512; // Max size for the longest side
+  // const resizeImage = (file) => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onload = (event) => {
+  //       const img = new Image();
+  //       img.onload = () => {
+  //         // Create a canvas and context for resizing the image
+  //         const canvas = document.createElement('canvas');
+  //         const ctx = canvas.getContext('2d');
+  //         const maxSize = 512; // Max size for the longest side
   
-          // Calculate the scaling factor and dimensions
-          const scalingFactor = Math.min(maxSize / img.width, maxSize / img.height);
-          const width = img.width * scalingFactor;
-          const height = img.height * scalingFactor;
+  //         // Calculate the scaling factor and dimensions
+  //         const scalingFactor = Math.min(maxSize / img.width, maxSize / img.height);
+  //         const width = img.width * scalingFactor;
+  //         const height = img.height * scalingFactor;
   
-          // Set the canvas dimensions and draw the resized image
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
+  //         // Set the canvas dimensions and draw the resized image
+  //         canvas.width = width;
+  //         canvas.height = height;
+  //         ctx.drawImage(img, 0, 0, width, height);
   
-          // Convert canvas to base64 JPEG
-          resolve(canvas.toDataURL('image/jpeg', 0.7));
-        };
-        img.onerror = reject;
-        img.src = event.target.result;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  //         // Convert canvas to base64 JPEG
+  //         resolve(canvas.toDataURL('image/jpeg', 0.7));
+  //       };
+  //       img.onerror = reject;
+  //       img.src = event.target.result;
+  //     };
+  //     reader.onerror = reject;
+  //     reader.readAsDataURL(file);
+  //   });
+  // };
 
 
   
 
-  const sendImageToAPI = async (file) => {
-    try {
-      const base64Image = await resizeImage(file);
-      // Display the image message in the UI
-      displayImageMessage(base64Image);
-      
-      // Clear the selected images after successful sending
-      setSelectedImages([]);
-  
-      const requestBody = {
-        model: "gpt-4-vision",
-        messages: [
-          systemMessage,
-          ...messages.map(msg => ({
-            role: msg.sender === "system" ? "system" : (msg.sender === "ChatGPT" ? "assistant" : "user"),
-            content: msg.message
-          })),
-          {
-            role: "user",
-            content: {
-              type: "image",
-              data: base64Image
-            }
-          }
-        ]
-      };
-  
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${API_KEY}`,
-          "Content-Type": "application/json"
+// Helper function to convert a file to a base64 string
+const toBase64 = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => resolve(reader.result); // Keep the full data URL
+  reader.onerror = error => reject(error);
+});
+
+const sendImageToAPI = async (file) => {
+  setIsTyping(true);
+  displayImageMessage(URL.createObjectURL(file)); // Display a preview of the image
+
+  try {
+    const base64Image = await toBase64(file);
+    // Ensure the base64 string does not contain the prefix
+    const base64Data = base64Image.split(',')[1]; 
+
+    const requestBody = {
+      model: "gpt-4-vision-preview",
+      messages: [
+        {
+          role: "user",
+          content: "What’s in this image?"
         },
-        body: JSON.stringify(requestBody)
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to send image to API: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-  
-      if (data.error) {
-        displayErrorMessage(data.error.message || "An error occurred while processing the image.");
-      }
-    } catch (error) {
-      console.error("Error sending image to API:", error);
-      displayErrorMessage("An error occurred while sending the image to the API.");
-    } finally {
-      setIsTyping(false);
+        {
+          role: "user",
+          content: {
+            type: "image_url",
+            image_url: `data:image/jpeg;base64,${base64Data}`
+          }
+        }
+      ],
+      max_tokens: 300
+    };
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      // Display the AI's response in the chat
+      setMessages(prevMessages => [...prevMessages, {
+        message: data.choices[0].message.content,
+        sender: "system"
+      }]);
+    } else {
+      // Log the error and display a message to the user
+      console.error("API response error:", data);
+      displayErrorMessage(`Error: ${data.error.message}`);
     }
-  };
+  } catch (error) {
+    // Handle any other errors
+    console.error("Error sending image to API:", error);
+    displayErrorMessage("An error occurred while sending the image to the API.");
+  } finally {
+    setIsTyping(false);
+    setSelectedImages([]); // Clear the selected images after attempting to send
+  }
+};
+
+  
   
   
   
@@ -229,7 +245,7 @@ function App() {
 
   const checkForKeywordAndSendMessage = async (message) => {
     if (message.includes("mooseAnkle")) { 
-      setModelIdentifier("gpt-4-turbo");
+      setModelIdentifier("gpt-4-turbo-2024-04-09");
       setIsGimmyAIPlusActive(true);
       setMessages(prevMessages => [
         ...prevMessages,
@@ -402,7 +418,7 @@ const sendMessageToAPI = async (userMessage) => {
   return (
     <div id="root">
       <header className="app-header">
-        <a href="/"><img src={logo} alt="GimmyAI Logo" className="app-logo" /></a>
+      <a href="/"><img src={logo} width="50px" height="60px" alt="GimmyAI Logo" className="app-logo" /></a>
         <h1>GimmyAI</h1>
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>

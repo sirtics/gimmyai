@@ -13,7 +13,6 @@ body, html {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
   background: var(--background-color);
   color: var(--text-color);
 }
@@ -46,6 +45,7 @@ body, html {
 .app-logo {
   max-height: 3.5rem; /* Adjust logo size */
   margin-right: 0.8rem;
+  padding-top: 3px;
 }
 
 .app-header-text {
@@ -182,10 +182,12 @@ body, html {
 
   .input-container input, .input-container button {
     padding: 0.4rem; /* Smaller padding for very small screens */
+    font-size: 16px;
   }
   .input-container textarea {
     padding: 0.4rem;
     padding-left: 12px; /* Consistent padding on the left */
+    font-size: 16px;
   }
 
   .input-container button {
