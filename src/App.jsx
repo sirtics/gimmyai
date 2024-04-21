@@ -72,7 +72,7 @@ Operational Guidelines:
 
 };
 
-const API_KEY = import.meta.env.API_KEY;
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 
 
@@ -264,10 +264,10 @@ const sendImageToAPI = async (file) => {
 
 
   const sendMessageToAPI = async (userMessage) => {
-    // Begin by assuming there will be no API error
+    setIsTyping(true);
     let apiErrorOccurred = false;
     let friendlyErrorMessage = "Oops! There was an unexpected hiccup.";
-  
+    
     const apiRequestBody = {
       model: modelIdentifier, // Use the current model identifier state
       messages: [
@@ -289,39 +289,38 @@ const sendImageToAPI = async (file) => {
         },
         body: JSON.stringify(apiRequestBody)
       });
-      
+  
       const data = await response.json();
       if (response.ok) {
-        // No issues, normal response handling here
         setMessages(prevMessages => [...prevMessages, {
           message: data.choices[0].message.content,
-          sender: "assistant"
+          sender: "ChatGPT"
         }]);
       } else {
-        // Handle API errors without exposing them
-        console.error("API response error:", data);
         apiErrorOccurred = true;
-        if (data.error?.message.includes('quota')) {
-          friendlyErrorMessage = "GimmyAI needs a quick break to refuel. Try again later.";
+        if (data.error) {
+          friendlyErrorMessage = `Error: ${data.error.message}`;
         } else {
-          friendlyErrorMessage = "GimmyAI might be on maintenance right now.  Please check back in a bit.";
+          friendlyErrorMessage = "GimmyAI might be on maintenance right now. Please check back in a bit.";
         }
       }
     } catch (error) {
-      // Handle non-API errors (network issues, etc.)
       console.error("Error fetching data:", error);
       apiErrorOccurred = true;
       if (error.message.includes('quota')) {
         friendlyErrorMessage = "Looks like GimmyAI's got too excited and needs a moment. Let's give it some space and try again after a short break.";
+      } else {
+        friendlyErrorMessage = "GimmyAI might be on maintenance right now. Please check back in a bit.";
       }
     } finally {
       setIsTyping(false);
       if (apiErrorOccurred) {
-        // Display a friendly error message
         displayErrorMessage(friendlyErrorMessage);
       }
     }
   };
+  
+  
   
   
 
