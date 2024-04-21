@@ -72,7 +72,7 @@ Operational Guidelines:
 
 };
 
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY = import.meta.env.API_KEY;
 
 
 
@@ -85,7 +85,7 @@ function App() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo");
+  const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo-0125");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -189,7 +189,7 @@ const sendImageToAPI = async (file) => {
     const base64Data = base64Image.split(',')[1]; 
 
     const requestBody = {
-      model: "gpt-4-vision-preview",
+      model: "gpt-4-turbo-2024-04-09",
       messages: [
         {
           role: "user",
@@ -322,6 +322,7 @@ const sendImageToAPI = async (file) => {
       }
     }
   };
+  
   
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
