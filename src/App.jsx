@@ -263,46 +263,66 @@ const sendImageToAPI = async (file) => {
   
 
 
-const sendMessageToAPI = async (userMessage) => {
-  const apiRequestBody = {
-    model: modelIdentifier, // Use the current model identifier state
-    messages: [
-      systemMessage,
-      ...messages.map(msg => ({
-        role: msg.sender === "ChatGPT" ? "assistant" : "user",
-        content: msg.message
-      })),
-      { role: 'user', content: userMessage }
-    ]
-  };
-
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + API_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(apiRequestBody)
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setMessages(prevMessages => [...prevMessages, {
-        message: data.choices[0].message.content,
-        sender: "ChatGPT"
-      }]);
-    } else {
-      // Use the error message from the response if available, otherwise a generic error message
-      const errorMessage = data.error?.message || "Oops! There was an error processing your request.";
-      displayErrorMessage(errorMessage);
+  const sendMessageToAPI = async (userMessage) => {
+    // Begin by assuming there will be no API error
+    let apiErrorOccurred = false;
+    let friendlyErrorMessage = "Oops! There was an unexpected hiccup.";
+  
+    const apiRequestBody = {
+      model: modelIdentifier, // Use the current model identifier state
+      messages: [
+        systemMessage,
+        ...messages.map(msg => ({
+          role: msg.sender === "ChatGPT" ? "assistant" : "user",
+          content: msg.message
+        })),
+        { role: 'user', content: userMessage }
+      ]
+    };
+  
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + API_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(apiRequestBody)
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        // No issues, normal response handling here
+        setMessages(prevMessages => [...prevMessages, {
+          message: data.choices[0].message.content,
+          sender: "assistant"
+        }]);
+      } else {
+        // Handle API errors without exposing them
+        console.error("API response error:", data);
+        apiErrorOccurred = true;
+        if (data.error?.message.includes('quota')) {
+          friendlyErrorMessage = "GimmyAI needs a quick break to refuel. Try again later.";
+        } else {
+          friendlyErrorMessage = "GimmyAI might be on maintenance right now.  Please check back in a bit.";
+        }
+      }
+    } catch (error) {
+      // Handle non-API errors (network issues, etc.)
+      console.error("Error fetching data:", error);
+      apiErrorOccurred = true;
+      if (error.message.includes('quota')) {
+        friendlyErrorMessage = "Looks like GimmyAI's got too excited and needs a moment. Let's give it some space and try again after a short break.";
+      }
+    } finally {
+      setIsTyping(false);
+      if (apiErrorOccurred) {
+        // Display a friendly error message
+        displayErrorMessage(friendlyErrorMessage);
+      }
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    displayErrorMessage("Oops! There was an error fetching data.");
-  } finally {
-    setIsTyping(false);
-  }
-};
+  };
+  
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
   const handleSendMessage = async () => {
