@@ -105,6 +105,7 @@ function App() {
 
   const handleFileSelect = (event) => {
     const files = event.target.files;
+    
     if (files && files.length > 0) {
       const imageFiles = Array.from(files).slice(0, 3); // Limit to 3 images
       const imagePromises = imageFiles.map(file => {
@@ -125,9 +126,17 @@ function App() {
   
 
   const displayImageMessage = (base64Image) => {
-    // Add the base64 image as a message from the user
-    setMessages(prevMessages => [...prevMessages, { message: base64Image, sender: 'user', image: true }]);
+    setMessages(prevMessages => [
+      ...prevMessages,
+      {
+        // Include the data URI prefix with the base64 string
+        message: `data:image/png;base64,${base64Image}`,
+        sender: 'user', // Set to 'user' if this is the sender for outgoing messages
+        image: true
+      }
+    ]);
   };
+  
   
   
   const displayErrorMessage = (errorMessage) => {
@@ -174,36 +183,33 @@ function App() {
 // Helper function to convert a file to a base64 string
 const toBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = () => resolve(reader.result); // Keep the full data URL
+  reader.onload = () => {
+    const base64String = reader.result.split(',')[1]; // Remove the data URL prefix
+    resolve(base64String);
+  };
   reader.onerror = error => reject(error);
+  reader.readAsDataURL(file);
 });
 
+// Function to send image data to the OpenAI API
 const sendImageToAPI = async (file) => {
   setIsTyping(true);
-  displayImageMessage(URL.createObjectURL(file)); // Display a preview of the image
 
   try {
     const base64Image = await toBase64(file);
-    // Ensure the base64 string does not contain the prefix
-    const base64Data = base64Image.split(',')[1]; 
 
-    const requestBody = {
-      model: "gpt-4-vision-preview",
+    // Construct the payload
+    const payload = {
+      model: modelIdentifier,
       messages: [
         {
-          role: "user",
-          content: "What’s in this image?"
-        },
-        {
-          role: "user",
-          content: {
-            type: "image_url",
-            image_url: `data:image/jpeg;base64,${base64Data}`
+          role: "assistant",
+          data: {
+            type: "image",
+            data: base64Image
           }
         }
-      ],
-      max_tokens: 300
+      ]
     };
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -212,35 +218,49 @@ const sendImageToAPI = async (file) => {
         "Authorization": `Bearer ${API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
+
     if (response.ok) {
-      // Display the AI's response in the chat
-      setMessages(prevMessages => [...prevMessages, {
-        message: data.choices[0].message.content,
-        sender: "system"
-      }]);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          message: data.choices[0].message.content,
+          sender: "assistant"
+        }
+      ]);
+    } else if (data.error.code === 'insufficient_quota') {
+      // Handle the API quota limit error
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          message: "Unavailable. Please try again later.",
+          sender: "system"
+        }
+      ]);
     } else {
-      // Log the error and display a message to the user
-      console.error("API response error:", data);
-      displayErrorMessage(`Error: ${data.error.message}`);
+      // Handle other errors from the API
+      throw new Error(data.error.message);
     }
   } catch (error) {
-    // Handle any other errors
-    console.error("Error sending image to API:", error);
-    displayErrorMessage("An error occurred while sending the image to the API.");
+    setMessages(prevMessages => [
+      ...prevMessages,
+      {
+        message: `An error occurred while sending the image to the API: ${error.message}`,
+        sender: "system"
+      }
+    ]);
   } finally {
     setIsTyping(false);
-    setSelectedImages([]); // Clear the selected images after attempting to send
   }
 };
 
+
+
   
-  
-  
-  
+
   
 
   const checkForKeywordAndSendMessage = async (message) => {
@@ -263,52 +283,56 @@ const sendImageToAPI = async (file) => {
   
 
 
-const sendMessageToAPI = async (userMessage) => {
-  const apiRequestBody = {
-    model: modelIdentifier, // Use the current model identifier state
-    messages: [
-      systemMessage,
-      ...messages.map(msg => ({
-        role: msg.sender === "ChatGPT" ? "assistant" : "user",
-        content: msg.message
-      })),
-      { role: 'user', content: userMessage }
-    ]
-  };
-
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + API_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(apiRequestBody)
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setMessages(prevMessages => [...prevMessages, {
-        message: data.choices[0].message.content,
-        sender: "ChatGPT"
-      }]);
-    } else {
-      // Use the error message from the response if available, otherwise a generic error message
-      const errorMessage = data.error?.message || "Oops! There was an error processing your request.";
-      displayErrorMessage(errorMessage);
+  const sendMessageToAPI = async (userMessage, isImage = false) => {
+    // Prepare the request body
+    const apiRequestBody = {
+      model: modelIdentifier,
+      messages: [
+        systemMessage,
+        ...messages.map(msg => ({ // Don't destructure msg here as it's already an object
+          role: msg.sender === "ChatGPT" ? "assistant" : "user",
+          content: msg.image ? { type: "image", data: msg.message } : msg.message // Check if the message has an 'image' property to send as image data
+        })),
+        {
+          role: isImage ? "assistant" : "user", // Use the isImage flag to determine the role
+          content: isImage ? { type: "image", data: userMessage } : userMessage
+        }
+      ]
+    };
+  
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(apiRequestBody)
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setMessages(prevMessages => [...prevMessages, {
+          message: data.choices[0].message.content,
+          sender: "assistant"
+        }]);
+      } else {
+        displayErrorMessage(`Error: ${data.error.message}`);
+      }
+    } catch (error) {
+      displayErrorMessage(`An error occurred while sending the message to the API: ${error.message}`);
+    } finally {
+      setIsTyping(false);
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    displayErrorMessage("Oops! There was an error fetching data.");
-  } finally {
-    setIsTyping(false);
-  }
-};
+  };
+  
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
   const handleSendMessage = async () => {
     if (!newMessage.trim() && selectedImages.length === 0) return;
   
-    // Define outgoingMessage at the top so it's available in the entire scope
+    
     const outgoingMessage = {
       message: newMessage,
       sender: 'user'
@@ -319,7 +343,7 @@ const sendMessageToAPI = async (userMessage) => {
     );
   
     if (isDuplicateMessage) {
-      // If it's a duplicate, don't proceed further
+      // If it's a duplicate, don't go further
       return;
     }
   
@@ -335,8 +359,11 @@ const sendMessageToAPI = async (userMessage) => {
   
     // Perform the async operations
     if (selectedImages.length > 0) {
-      await Promise.all(selectedImages.map(image => sendImageToAPI(image.file)));
-      setSelectedImages([]); // Clear the selected images after sending
+      await Promise.all(selectedImages.map(image => {
+        // Pass true for the isImage parameter when sending an image
+        sendMessageToAPI(image.file, true);
+      }));
+      setSelectedImages([]);
     } else if (outgoingMessage.message.trim()) {
       await checkForKeywordAndSendMessage(outgoingMessage.message);
     }

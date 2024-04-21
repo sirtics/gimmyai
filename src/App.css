@@ -228,9 +228,9 @@ body, html {
 
 
 .input-container input::placeholder {
-  color: #a8a8a8; /* Lighter shade for placeholder text */
-  font-style: italic; /* If you want it to be italic */
-  font-size: 0.9em; /* Adjust the font size as needed */
+  color: #a8a8a8; 
+  font-style: italic; 
+  font-size: 0.9em; 
 }
 
 
@@ -243,7 +243,7 @@ body, html {
 
   .input-container {
     position: fixed;
-    bottom: env(safe-area-inset-bottom); /* Adjust for iPhone's bottom safe area */
+    bottom: env(safe-area-inset-bottom); /* iphone's bottom safe area */
   }
 
   .app-body{
