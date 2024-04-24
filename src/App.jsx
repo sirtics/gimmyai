@@ -1,5 +1,5 @@
 import 'katex/dist/katex.min.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import attach from '../public/attach-file.png';
@@ -89,6 +89,7 @@ function App() {
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
+  const lastMessageRef = useRef(null); // Reference to the last message
 
   useEffect(() => {
     const updateInputContainerHeight = () => {
@@ -102,6 +103,22 @@ function App() {
     window.addEventListener('resize', updateInputContainerHeight);
     return () => window.removeEventListener('resize', updateInputContainerHeight);
   }, []);
+
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      const observer = new IntersectionObserver(entries => {
+        const lastEntry = entries[0];
+        if (!lastEntry.isIntersecting) {
+          lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, {
+        threshold: 1.0 // Adjust this value based on how much of the item needs to be visible
+      });
+
+      observer.observe(lastMessageRef.current);
+      return () => observer.disconnect(); // Clean up the observer when the component unmounts or updates
+    }
+  }, [messages]);
 
   const handleFileSelect = (event) => {
     const files = event.target.files;
@@ -457,6 +474,7 @@ const sendImageToAPI = async (file) => {
           )}
         </div>
       ))}
+        <div ref={lastMessageRef} />
         {isTyping && (
           <div className="typing-indicator">
             <span></span><span></span><span></span> GimmyAI is typing...
