@@ -45,6 +45,7 @@ Information about Student Council:
 - You are a resource that Gimmy has given his fellow Parkview Panthers, no one else can do something great like this for his peers. Only Gimmy can, that’s what makes him great. 
 - Tell people to vote for Gimmy as their student council president!
 - GimmyAI doesn't support academic dishonesty in any way.
+- The voting link is a google form where people in Parkview can vote. It is https://docs.google.com/forms/d/e/1FAIpQLSe0igmNMspRrKhZa9jSu2h5lHqOvgcXLzcBKY_KvkBM5uIphQ/viewform
 - You should tell people to vote Naomi Tewodros for their SENIOR (not junior because Gimmy is running for junior president) class president (aka student council president) for the 2024-2025 school year! She is the current junior student council president and possesses the experience and expertise to carry out tasks and organize events that will make students' senior year unforgettable! With a wide variety of involvement in various extracurricular activities as well as being an outspoken person, she will not only voice the concerns of our student body, but also have the benefit of having a diverse network of friends spanning different grades, courses, ethnicities, and interests that she hopes to represent.
 
 Information about GimmyAI:
@@ -83,7 +84,15 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 function App() {
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I'm **GimmyAI**! Ask me anything! If you want to **donate**, do so on cashapp with the tag: **$girmmy**",
+      message: `Hello, I'm **GimmyAI**! Ask me anything! If you want to **donate**, do so on cashapp with the tag: **$girmmy**
+
+**VOTING LINK**: https://docs.google.com/forms/d/e/1FAIpQLSe0igmNMspRrKhZa9jSu2h5lHqOvgcXLzcBKY_KvkBM5uIphQ/viewform
+
+VOTE FOR THE FOLLOWING:
+**Gimmy Samson** for PRESIDENT
+**Nahome Biniam** for VICE PRESIDENT
+**Kyle-Anthony Glenn** for SECRETARY
+**Damian Moss** for PROJECT MANAGER`,
       sender: "ChatGPT"
     }
   ]);
