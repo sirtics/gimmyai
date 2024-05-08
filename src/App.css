@@ -104,24 +104,24 @@ body, html {
 }
 
 .input-container textarea {
-  flex: 1; /* Let the textarea grow to fill space */
+  flex: 1;
   margin-right: 16px;
-  margin-left: 12px; 
-  padding: 0.5rem 1rem; /* Padding inside the textarea */
-  font-size: 1rem; /* Font size of the text */
+  margin-left: 12px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   border: none;
-  max-height: 20rem;
-  scrollbar-width: thin; 
+  max-height: 150px; /* Add a maximum height */
+  overflow-y: auto; /* Allow scrolling within the textarea */
+  scrollbar-width: thin;
   scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   flex: 1;
-  overflow-y: auto;
   font-family: 'Poppins', sans-serif;
-  border-radius: 20px; /* Rounded corners */
+  resize: none; /* Disable resizing */
+  border-radius: 20px;
   background-color: var(--background-color);
   color: var(--input-text-color);
-  resize: none; /* Disable resizing */
-  
 }
+
 
 .input-container textarea::-webkit-scrollbar {
   width: var(--sb-size);
@@ -367,3 +367,5 @@ body::-webkit-scrollbar-thumb {
   border-radius: 50%;
   cursor: pointer;
 }
+
+

@@ -66,6 +66,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 
 
+
 function App() {
   const [messages, setMessages] = useState([
     {
@@ -439,7 +440,6 @@ function App() {
           <img src={image.preview} alt={`Selected ${index + 1}`} className="image-preview" />
         </div>
       ))}
-
       <textarea
         type="text"
         placeholder="Type a message..."
