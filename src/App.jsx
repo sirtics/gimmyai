@@ -71,7 +71,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       message: `Hello, I'm **GimmyAI**, an AI large language model with the purpose of assisting you with your tasks. Ask me anything! 
-      If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
+If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
       sender: "ChatGPT"
     }
   ]);
