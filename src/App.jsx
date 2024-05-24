@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import attach from '../public/attach-file.png';
+import axios from 'axios';
 
 const systemMessage = {
   role: "system",
@@ -80,8 +81,8 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
   const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo-0125");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const lastMessageRef = useRef(null); // Reference to the last message
+  const [selectedImage, setSelectedImage] = useState(null);
+  const lastMessageRef = useRef(null);
 
   useEffect(() => {
     const updateInputContainerHeight = () => {
@@ -113,73 +114,68 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
   }, [messages]);
 
   const handleFileSelect = (event) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const imageFiles = Array.from(files).slice(0, 3); // Limit to 3 images
-      const imagePromises = imageFiles.map(file => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve({ file, preview: reader.result });
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
-      });
-      Promise.all(imagePromises)
-        .then(images => {
-          setSelectedImages(images);
+    const imageFile = event.target.files[0];
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+
+      // Upload the image to the server or cloud storage
+      axios.post('https://gimmyai.com/interpret-images', formData)
+        .then(response => {
+          const imageUrl = response.data.imageUrl; // Assuming the server response includes the image URL
+          setSelectedImage(imageUrl);
         })
-        .catch(error => console.error("Error reading file:", error));
+        .catch(error => {
+          console.error("Error uploading image:", error);
+          displayErrorMessage("An error occurred while uploading the image.");
+        });
     }
   };
   
   
 
-  const displayImageMessage = (base64Image) => {
-    setMessages(prevMessages => [...prevMessages, { message: base64Image, sender: 'user', image: true }]);
+  const displayImageMessage = (imageUrl) => {
+    setMessages(prevMessages => [...prevMessages, { message: imageUrl, sender: 'user', image: true }]);
   };
-  
-  
-  
+
   const displayErrorMessage = (errorMessage) => {
-    // Append the error message to the chat as a system message
     setMessages(prevMessages => [...prevMessages, { message: errorMessage, sender: 'ChatGPT' }]);
   };
 
 
-  const toBase64 = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.split(',')[1]); // Remove the data URL prefix
-    reader.onerror = error => reject(error);
-  });
+  // const toBase64 = (file) => new Promise((resolve, reject) => {
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onload = () => resolve(reader.result);
+  //   reader.onerror = error => reject(error);
+  // });
   
-  const sendImageToAPI = async (file) => {
+  const sendImageToAPI = async (imageUrl) => {
     setIsTyping(true);
     try {
-      const base64Image = await toBase64(file);
-      displayImageMessage(base64Image);
-
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
-        body: JSON.stringify({ image: base64Image }),
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: imageUrl,
+          model: 'gpt-4o' // Specify the desired model (e.g., davinci, curie, babbage)
+        })
       });
-
+  
       const data = await response.json();
       if (response.ok) {
+        const interpretation = data.data.objects.map(obj => obj.description).join(', ');
         setMessages(prevMessages => [...prevMessages, {
-          message: data.choices[0].message.content,
+          message: `AI interpretation: ${interpretation}`,
           sender: "ChatGPT"
         }]);
       } else {
-        console.error("API response error:", data);
         displayErrorMessage(`Error: ${data.error.message}`);
       }
     } catch (error) {
-      console.error("Error sending image to API:", error);
       displayErrorMessage("An error occurred while sending the image to the API.");
     } finally {
       setIsTyping(false);
@@ -272,14 +268,14 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
 
   // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
   const handleSendMessage = async () => {
-    if (!newMessage.trim() && selectedImages.length === 0) return;
-  
+    if (!newMessage.trim() && selectedImage === null) return;
+
     const outgoingMessage = {
       message: newMessage,
       sender: 'user'
     };
   
-    const isDuplicateMessage = messages.some(msg => 
+    const isDuplicateMessage = messages.some(msg =>
       msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
     );
   
@@ -288,23 +284,22 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
     }
   
     setIsTyping(true);
-  
+
     if (newMessage.trim()) {
       setMessages(prevMessages => [...prevMessages, outgoingMessage]);
     }
-  
+
     setNewMessage('');
-  
-    if (selectedImages.length > 0) {
-      await Promise.all(selectedImages.map(image => sendImageToAPI(image.file)));
-      setSelectedImages([]);
+
+    if (selectedImage) {
+      await sendImageToAPI(selectedImage);
+      setSelectedImage(null);
     } else if (outgoingMessage.message.trim()) {
       await checkForKeywordAndSendMessage(outgoingMessage.message);
     }
-  
+
     setIsTyping(false);
   };
-  
   
   
   
@@ -360,11 +355,16 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
     formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     
     // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
-    formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  
+    if (message.image) {
+      return {
+        __html: `<img src="data:image/png;base64,${message.message}" alt="User upload" style="max-width: 100%; max-height: 400px;" />`,
+      };
+    }
   
     return { __html: formattedMessage };
   };
-  
   
 
   const handleTextareaChange = (e) => {
@@ -422,11 +422,11 @@ If you want to **donate**, do so on cashapp with the tag: **$girmmy**`,
           </label>
         </>
       )}
-      {selectedImages.map((image, index) => (
-        <div key={index} className="image-preview-container">
-          <img src={image.preview} alt={`Selected ${index + 1}`} className="image-preview" />
-        </div>
-      ))}
+       {selectedImage && (
+          <div className="image-preview-container">
+            <img src={selectedImage} alt="Selected Image" className="image-preview" />
+          </div>
+        )}
       <textarea
         type="text"
         placeholder="Type a message..."
