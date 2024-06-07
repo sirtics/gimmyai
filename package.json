@@ -11,6 +11,11 @@
   },
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^1.10.1",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-brands-svg-icons": "^6.5.2",
+    "@fortawesome/free-regular-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@google-cloud/vision": "^4.2.1",
     "axios": "^1.7.2",
     "dompurify": "^3.0.11",
@@ -19,10 +24,12 @@
     "googleapis": "^137.1.0",
     "katex": "^0.16.9",
     "multer": "^1.4.5-lts.1",
+    "next": "^14.2.3",
     "node": "^21.6.1",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
     "sharp": "^0.33.3"
   },
   "devDependencies": {
