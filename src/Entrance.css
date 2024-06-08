@@ -1,84 +1,90 @@
 .entrance {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    background-image: url(../public/gimmyaibg.png); /* Use background-image for the background */
-    background-size: cover; /* Make sure the image covers the entire background */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-image: url(../public/gimmyaibg.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  background-color: rgba(60, 60, 60, 0.8);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 150px;
+  height: 170px;
+  margin-bottom: 2rem;
+}
+
+.icon-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3rem;
+}
+
+.icon-links a {
+  font-size: 3rem;
+  margin: 0 30px;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.icon-links a:hover {
+  color: #5e74d6;
+}
+
+.start-button {
+  background-color: #667eea;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  padding: 1.5rem 3rem;
+  font-size: 2rem;
+  cursor: pointer;
+  margin-top: 3rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.start-button:hover {
+  background-color: #fff;
+  color: #667eea;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Media query for small screens */
+@media only screen and (max-width: 767px) {
+ .logo {
+      width: 100px;
+      height: 120px;
   }
-  
-  
-  
-  .entrance h1 {
-    color: white;
-    text-align: center;
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+ .icon-links a {
+      font-size: 2rem;
+      margin: 0 20px;
   }
-  
-  .container {
-    background-color: rgba(60, 60, 60, 0.8); /* Grey translucent background */
-    border-radius: 1rem; /* Curved edges */
-    padding: 2rem; /* Add some padding for content */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+ .start-button {
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
   }
-  
-  .logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .logo {
-    width: 150px;
-    height: 170px;
-    margin-bottom: 2rem;
-  }
-  
-  .icon-links {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 3rem;
-    justify-content: space-between;
-  }
-  
-  .icon-links a {
-    margin: 0 30px;
-    font-size: 3rem;
-    justify-content: space-between;
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .icon-links a:hover {
-    color: #5e74d6;
-  }
-  
-  .start-button {
-    background-color: #667eea;
-    color: #fff;
-    font-weight: 700;
-    border: none;
-    padding: 1.5rem 3rem;
-    font-size: 2rem;
-    cursor: pointer;
-    margin-top: 3rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-  }
-  
-  .start-button:hover {
-    background-color: #fff;
-    color: #667eea;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  }
+}
