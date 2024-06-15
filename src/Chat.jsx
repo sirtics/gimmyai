@@ -20,7 +20,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 function Chat() {
   const [messages, setMessages] = useState([
     {
-      message: `Hello, I'm **GimmyAI**! What can I help you with? \nIf you want to donate, do so on cashapp here: **$girmmy**`,
+      message: `Hello, I'm **GimmyAI**! What can I help you with?`,
       sender: "ChatGPT"
     }
   ]);
