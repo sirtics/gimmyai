@@ -1,15 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Entrance from './Entrance';
 import Chat from './Chat';
+import NoMatch from "./NoMatch"
 
 const App = () => {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Entrance />} />
         <Route path="chat" element={<Chat />} />
+        <Route path="*" element={<NoMatch />} />
       </Routes>
-    </BrowserRouter>
   );
 };
 

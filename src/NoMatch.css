@@ -1,0 +1,87 @@
+.no-match-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+    font-family: 'Poppins', sans-serif;
+    padding: 0 20px; /* add some horizontal padding to prevent content from getting too close to the edges */
+  }
+  
+  .no-match-container img {
+    width: 100%;
+    max-width: 150px; /* limit the maximum width of the image to prevent it from getting too large on small screens */
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  .no-match-container h1 {
+    font-size: 2.5rem; /* use rem units for font sizes to make them scalable */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .no-match-container p {
+    font-size: 1.2rem; /* use rem units for font sizes to make them scalable */
+    color: #666;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .no-match-container button {
+    background-color: #667eea;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem; /* use rem units for font sizes to make them scalable */
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+  }
+  
+  .no-match-container button:hover {
+    background-color: #778beb;
+  }
+  
+  .no-match-container button:active {
+    background-color: #778beb;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  
+  @media (max-width: 768px) {
+    .no-match-container {
+      padding: 0 10px; /* reduce horizontal padding for smaller screens */
+    }
+    .no-match-container img {
+        max-width: 120px;
+    }
+    .no-match-container h1 {
+      font-size: 2rem; /* adjust font size for smaller screens */
+    }
+    .no-match-container p {
+      font-size: 1rem; /* adjust font size for smaller screens */
+    }
+    .no-match-container button {
+      font-size: 1rem; /* adjust font size for smaller screens */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .no-match-container {
+      padding: 0 5px; /* reduce horizontal padding for very small screens */
+    }
+    .no-match-container h1 {
+      font-size: 1.5rem; /* adjust font size for very small screens */
+    }
+    .no-match-container p {
+      font-size: 0.8rem; /* adjust font size for very small screens */
+    }
+    .no-match-container button {
+      font-size: 0.8rem; /* adjust font size for very small screens */
+    }
+  }
