@@ -60,9 +60,11 @@
     overflow-y: auto; /* Enable scrolling */
     padding: 1rem;
     padding-top: 0.25rem;
-    padding-bottom: 40px; /* Increase bottom padding to ensure space for scrolling */
+    padding-bottom: 40px; 
     display: flex;
     flex-direction: column;
+    position: relative; 
+    overflow-y: auto; 
     scrollbar-width: thin;
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
@@ -320,10 +322,10 @@
     height: 62%; /* Keep this to maintain the aspect ratio */
   }
   
-  /* Ensure the input container and its contents are aligned */
+ 
   .input-container {
-    align-items: center; /* This aligns the button to the center vertically */
-    /* Other styles remain the same */
+    align-items: center; 
+    
   }
   
   .message.image-message img {
@@ -341,27 +343,27 @@
   
   .message.system {
     background-color: #f2f2f2;
-    /* other styles for system messages */
+   
   }
   
   .image-preview-container {
     position: relative;
     display: inline-block;
-    margin-right: 12px; /* Spacing between image preview and text input */
+    margin-right: 12px;
   }
   
   .image-preview {
-    width: 50px; /* Small thumbnail size */
+    width: 50px; 
     height: auto;
-    border-radius: 10px; /* Rounded corners for aesthetics */
+    border-radius: 10px;
   }
   
-  /* Additional styles for the remove image button if you added one */
+  
   .remove-image-button {
     position: absolute;
     top: 0;
     right: 0;
-    background: red; /* Or any other style you want */
+    background: red; 
     color: white;
     border: none;
     border-radius: 50%;

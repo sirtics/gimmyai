@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import attach from '../public/attach-file.png';
-import axios from 'axios';
+// import axios from 'axios';
 import content from "./aicontent.js";
 
 const systemMessage = {
@@ -64,26 +64,23 @@ function Chat() {
   const handleFileSelect = (event) => {
     const imageFile = event.target.files[0];
     if (imageFile) {
-      const formData = new FormData();
-      formData.append('image', imageFile);
-
-      // Upload the image to the server or cloud storage
-      axios.post('https://gimmyai.com/interpret-images', formData)
-        .then(response => {
-          const imageUrl = response.data.imageUrl; // Assuming the server response includes the image URL
-          setSelectedImage(imageUrl);
-        })
-        .catch(error => {
-          console.error("Error uploading image:", error);
-          displayErrorMessage("An error occurred while uploading the image.");
-        });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(imageFile);
     }
   };
   
   
-
-  const displayImageMessage = (imageUrl) => {
-    setMessages(prevMessages => [...prevMessages, { message: imageUrl, sender: 'user', image: true }]);
+  
+  const displayImageMessage = (base64Image) => {
+    const imageMessage = {
+      message: base64Image,
+      sender: 'user',
+      image: true
+    };
+    setMessages(prevMessages => [...prevMessages, imageMessage]);
   };
 
   const displayErrorMessage = (errorMessage) => {
@@ -98,7 +95,7 @@ function Chat() {
   //   reader.onerror = error => reject(error);
   // });
   
-  const sendImageToAPI = async (imageUrl) => {
+  const sendImageToAPI = async (base64Image) => {
     setIsTyping(true);
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -108,7 +105,7 @@ function Chat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          image: imageUrl,
+          image: base64Image,
           model: 'gpt-4o' // Specify the desired model (e.g., davinci, curie, babbage)
         })
       });
@@ -131,22 +128,26 @@ function Chat() {
   };
   
   
-  
 
   const checkForKeywordAndSendMessage = async (message) => {
-    if (message.includes("mooseAnkle")) { 
-      setModelIdentifier("gpt-4o");
-      setIsGimmyAIPlusActive(true);
-      setMessages(prevMessages => [
-        ...prevMessages,
-        {
-          message: "Switched model to GimmyAI+",
-          sender: "ChatGPT"
-        }
-      ]);
-    } else {
-      // Send the text message to the API
-      await sendMessageToAPI(message);
+    try {
+      if (message.includes("mooseAnkle")) {
+        setModelIdentifier("gpt-4o");
+        setIsGimmyAIPlusActive(true);
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            message: "Switched model to GimmyAI+",
+            sender: "ChatGPT"
+          }
+        ]);
+      } else {
+        // Send the text message to the API
+        await sendMessageToAPI(message);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      displayErrorMessage("Oops! There was an unexpected hiccup. Let's try again.");
     }
   };
   
@@ -158,18 +159,6 @@ function Chat() {
     let apiErrorOccurred = false;
     let friendlyErrorMessage = "Oops! There was an unexpected hiccup.";
 
-    const apiRequestBody = {
-      model: modelIdentifier,
-      messages: [
-        systemMessage,
-        ...messages.map(msg => ({
-          role: msg.sender === "ChatGPT" ? "assistant" : "user",
-          content: msg.message
-        })),
-        { role: 'user', content: userMessage }
-      ]
-    };
-
     try {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -177,9 +166,19 @@ function Chat() {
           "Authorization": "Bearer " + API_KEY,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(apiRequestBody)
+        body: JSON.stringify({
+          model: modelIdentifier,
+          messages: [
+            systemMessage,
+            ...messages.map(msg => ({
+              role: msg.sender === "ChatGPT" ? "assistant" : "user",
+              content: msg.message
+            })),
+            { role: 'user', content: userMessage }
+          ]
+        })
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         setMessages(prevMessages => [...prevMessages, {
@@ -197,11 +196,7 @@ function Chat() {
     } catch (error) {
       console.error("Error fetching data:", error);
       apiErrorOccurred = true;
-      if (error.message.includes('quota')) {
-        friendlyErrorMessage = "Looks like GimmyAI's got too excited and needs a moment. Let's give it some space and try again after a short break.";
-      } else {
-        friendlyErrorMessage = "GimmyAI might be on maintenance right now. Please check back in a bit.";
-      }
+      friendlyErrorMessage = "Looks like GimmyAI's got too excited and needs a moment. Let's give it some space and try again after a short break.";
     } finally {
       setIsTyping(false);
       if (apiErrorOccurred) {
@@ -213,11 +208,9 @@ function Chat() {
   
   
   
-
-  // Modify handleSendMessage to use the new checkForKeywordAndSendMessage function
   const handleSendMessage = async () => {
     if (!newMessage.trim() && selectedImage === null) return;
-
+  
     const outgoingMessage = {
       message: newMessage,
       sender: 'user'
@@ -232,21 +225,25 @@ function Chat() {
     }
   
     setIsTyping(true);
-
-    if (newMessage.trim()) {
-      setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+  
+    try {
+      if (newMessage.trim()) {
+        setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+      }
+  
+      if (selectedImage) {
+        await sendImageToAPI(selectedImage);
+        setSelectedImage(null);
+      } else if (outgoingMessage.message.trim()) {
+        await checkForKeywordAndSendMessage(outgoingMessage.message);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      displayErrorMessage("GimmyAI ran out of juice, come back later!");
+    } finally {
+      setIsTyping(false);
+      setNewMessage(''); // Clear the text input
     }
-
-    setNewMessage('');
-
-    if (selectedImage) {
-      await sendImageToAPI(selectedImage);
-      setSelectedImage(null);
-    } else if (outgoingMessage.message.trim()) {
-      await checkForKeywordAndSendMessage(outgoingMessage.message);
-    }
-
-    setIsTyping(false);
   };
   
   
@@ -295,21 +292,21 @@ function Chat() {
   
 
   const formatMessage = (message) => {
+    if (message.image) {
+      return {
+        __html: `<img src="data:image/png;base64,${message.message}" alt="User upload" style="max-width: 100%; max-height: 400px;" />`,
+      };
+    }
+  
     // Convert Markdown headings to bold tags
     let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
     // Convert bold Markdown to strong tags
     formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     // Convert Markdown links to anchor tags
     formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    
+  
     // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
     formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-  
-    if (message.image) {
-      return {
-        __html: `<img src="data:image/png;base64,${message.message}" alt="User upload" style="max-width: 100%; max-height: 400px;" />`,
-      };
-    }
   
     return { __html: formattedMessage };
   };
@@ -334,19 +331,18 @@ function Chat() {
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
       {messages.map((msg, index) => (
         <div
-        key={index}
-        className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
-      >
-        {msg.image ? (
-          <img src={`data:image/png;base64,${msg.message}`} alt="User upload" style={{ maxWidth: '100%', maxHeight: '400px' }} />
-        ) : (
-          <div
-            className={`message-content ${msg.sender}`}
-            dangerouslySetInnerHTML={formatMessage(msg.message.replace(/mooseAnkle/g, '**KEYWORD USED**'))}
-          />
-        )}
-      </div>
-      
+          key={index}
+          className={`message ${msg.sender === "ChatGPT" ? 'incoming' : 'outgoing'}`}
+        >
+          {msg.image ? (
+            <img src={msg.message} alt="User upload" style={{ maxWidth: '100%', maxHeight: '400px' }} />
+          ) : (
+            <div
+              className={`message-content ${msg.sender}`}
+              dangerouslySetInnerHTML={formatMessage(msg.message)}
+            />
+          )}
+        </div>
       ))}
         <div ref={lastMessageRef} />
         {isTyping && (
