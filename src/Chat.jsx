@@ -3,7 +3,9 @@ import { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import attach from '../public/attach-file.png';
-// import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+
 import content from "./aicontent.js";
 
 const systemMessage = {
@@ -13,7 +15,7 @@ const systemMessage = {
 };
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-
+const GAIPLUS = import.meta.env.GIMMYAIPLUSKEY;
 
 
 
@@ -53,7 +55,7 @@ function Chat() {
           lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, {
-        threshold: 1.0 // Adjust this value based on how much of the item needs to be visible
+        threshold: 1.0 
       });
 
       observer.observe(lastMessageRef.current);
@@ -71,9 +73,7 @@ function Chat() {
       reader.readAsDataURL(imageFile);
     }
   };
-  
-  
-  
+
   const displayImageMessage = (base64Image) => {
     const imageMessage = {
       message: base64Image,
@@ -86,6 +86,7 @@ function Chat() {
   const displayErrorMessage = (errorMessage) => {
     setMessages(prevMessages => [...prevMessages, { message: errorMessage, sender: 'ChatGPT' }]);
   };
+
 
 
   // const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -131,7 +132,7 @@ function Chat() {
 
   const checkForKeywordAndSendMessage = async (message) => {
     try {
-      if (message.includes("mooseAnkle")) {
+      if (message.includes(GAIPLUS)) {
         setModelIdentifier("gpt-4o");
         setIsGimmyAIPlusActive(true);
         setMessages(prevMessages => [
@@ -150,6 +151,7 @@ function Chat() {
       displayErrorMessage("Oops! There was an unexpected hiccup. Let's try again.");
     }
   };
+
   
   
 
@@ -327,6 +329,7 @@ function Chat() {
       <header className="app-header">
       <a href="/"><img src={logo} width="50px" height="60px" alt="GimmyAI Logo" className="app-logo" /></a>
         <h1>GimmyAI</h1>
+        <FontAwesomeIcon className="info-icon" icon={faCircleInfo} />
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
       {messages.map((msg, index) => (
@@ -371,6 +374,7 @@ function Chat() {
             <img src={selectedImage} alt="Selected Image" className="image-preview" />
           </div>
         )}
+        
       <textarea
         type="text"
         placeholder="Type a message..."

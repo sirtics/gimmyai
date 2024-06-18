@@ -13,36 +13,38 @@ const Entrance = () => {
     setShowChat(true);
   };
 
-  if (showChat) {
-    return (
-      <div className={`chat-container ${showChat? 'fade-in' : ''}`}>
-        <Chat />
-      </div>
-    );
-  }
-
   return (
-    <div className="entrance">
-        <div className="container">
-            <div className="logo-container">
-                <a href="/" alt="GimmyAI logo"><img src={logo} alt="GimmyAI Logo" className="logo" /></a>
-                <h1>GimmyAI</h1>
+    <> {/* Wrap everything in a fragment */}
+      {!showChat && (
+        <div className="entrance">
+          <div className="container">
+            <div className="title-container">
+              <img src={logo} alt="GimmyAI Logo" className="logo" />
+              <h1>
+                Unlock the Power <br /> of AI with GimmyAI
+              </h1>
+              <p>Your AI companion for everyday tasks and engaging conversations.</p>
+              <p className="donate">$girmmy to donate!</p>
             </div>
-        <div className="icon-links">
-            <a href="https://instagram.com/@gimmified" target="_blank" rel="noopener noreferrer">
+            <button className="start-button" onClick={handleStartChatting}>
+              Start Chatting!
+            </button>
+            <div className="social-links">
+              <a href="https://instagram.com/@gimmified" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faInstagram} />
-            </a>
-            <a href="mailto:gimmys943@gmail.com">
+              </a>
+              <a href="mailto:gimmys943@gmail.com">
                 <FontAwesomeIcon icon={faEnvelopeSolid} />
-            </a>
-            <a href="https://github.com/sirtics" target="_blank" rel="noopener noreferrer">
+              </a>
+              <a href="https://github.com/sirtics" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faGithub} />
-            </a>
+              </a>
+            </div>
+          </div>
         </div>
-        <button className="start-button" onClick={handleStartChatting}>Start Chatting</button>
-        </div>
-      
-    </div>
+      )}
+      {showChat && <Chat />}
+    </>
   );
 };
 
