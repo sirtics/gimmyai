@@ -7,6 +7,7 @@
   --input-color: #3c3e44; /* Slightly lighter input background for contrast */
   --input-text-color: #dcdcdc; /* Input text color for visibility */
   --message-background: #4a4e69; /* Dark message bubble background */
+  font-family: 'Poppins', sans-serif;
 }
 
 body, html {
@@ -386,7 +387,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 .tooltip {
-  visibility: hidden;
+  opacity: 0;
   width: 160px;
   height: auto;
   background-color: #555;
@@ -395,18 +396,19 @@ body::-webkit-scrollbar-thumb {
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
-  z-index: 0;
+  z-index: 10;
   left: 1%;
   margin-left: -60px;
 }
 
 .tooltip-container:hover .tooltip {
-  visibility: visible;
+  transition: opacity 0.8s;
+  opacity: 100%;
   cursor: pointer
 }
 
 .info-icon {
   height: 30px;
   width: 30px;
-  cursor: pointer; /* Add a pointer cursor on hover */
+  cursor: pointer;
 }

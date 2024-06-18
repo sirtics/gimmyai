@@ -331,7 +331,7 @@ function Chat() {
         <h1>GimmyAI</h1>
         <div className="tooltip-container">
           <FontAwesomeIcon className="info-icon" icon={faCircleInfo} />
-          <span className="tooltip">GimmyAI is powered by better models of GPT</span>
+          <span className="tooltip w3-animate-opacity">GimmyAI is powered by better models of GPT</span>
         </div>
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
