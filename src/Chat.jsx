@@ -329,7 +329,10 @@ function Chat() {
       <header className="app-header">
       <a href="/"><img src={logo} width="50px" height="60px" alt="GimmyAI Logo" className="app-logo" /></a>
         <h1>GimmyAI</h1>
-        <FontAwesomeIcon className="info-icon" icon={faCircleInfo} />
+        <div className="tooltip-container">
+          <FontAwesomeIcon className="info-icon" icon={faCircleInfo} />
+          <span className="tooltip">GimmyAI is powered by better models of GPT</span>
+        </div>
       </header>
       <div className="app-body" style={{ marginBottom: `${inputContainerHeight}px`}}>
       {messages.map((msg, index) => (
