@@ -211,42 +211,43 @@ function Chat() {
   
   
   const handleSendMessage = async () => {
-    if (!newMessage.trim() && selectedImage === null) return;
-  
-    const outgoingMessage = {
-      message: newMessage,
-      sender: 'user'
-    };
-  
-    const isDuplicateMessage = messages.some(msg =>
-      msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
-    );
-  
-    if (isDuplicateMessage) {
-      return;
-    }
-  
-    setIsTyping(true);
-  
-    try {
-      if (newMessage.trim()) {
-        setMessages(prevMessages => [...prevMessages, outgoingMessage]);
-      }
-  
-      if (selectedImage) {
-        await sendImageToAPI(selectedImage);
-        setSelectedImage(null);
-      } else if (outgoingMessage.message.trim()) {
-        await checkForKeywordAndSendMessage(outgoingMessage.message);
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      displayErrorMessage("GimmyAI ran out of juice, come back later!");
-    } finally {
-      setIsTyping(false);
-      setNewMessage(''); // Clear the text input
-    }
+  if (!newMessage.trim() && selectedImage === null) return;
+
+  const outgoingMessage = {
+    message: newMessage,
+    sender: 'user'
   };
+
+  const isDuplicateMessage = messages.some(msg =>
+    msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
+  );
+
+  if (isDuplicateMessage) {
+    return;
+  }
+
+  setIsTyping(true);
+
+  try {
+    if (newMessage.trim()) {
+      setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+    }
+
+    if (selectedImage) {
+      await sendImageToAPI(selectedImage);
+      setSelectedImage(null);
+    } else if (outgoingMessage.message.trim()) {
+      await checkForKeywordAndSendMessage(outgoingMessage.message);
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+    displayErrorMessage("GimmyAI ran out of juice, come back later!");
+  } finally {
+    setIsTyping(false);
+    setNewMessage(''); // Clear the text input
+  }
+};
+
   
   
   
@@ -318,9 +319,7 @@ function Chat() {
     const target = e.target;
     setNewMessage(target.value);
   
-    // Reset the height to auto to get the correct scrollHeight
     target.style.height = 'auto';
-    // Set the height to scrollHeight to accommodate all the content
     target.style.height = `${target.scrollHeight}px`;
   };
 
@@ -381,13 +380,14 @@ function Chat() {
       <textarea
         type="text"
         placeholder="Type a message..."
-        value={newMessage} // This should be the state variable
+        value={newMessage} 
         onChange={handleTextareaChange}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         autoFocus
         style={{ height: 'auto', overflowY: 'auto' }}
       />
+
       <button onClick={handleSendMessage}>Send</button>
     </div>
   </div>
