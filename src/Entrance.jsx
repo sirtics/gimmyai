@@ -3,8 +3,8 @@ import './Entrance.css';
 import Chat from "./Chat";
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInstagram, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope as faEnvelopeSolid } from '@fortawesome/free-solid-svg-icons';
+import { faInstagram, faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+// import { faEnvelope as faEnvelopeSolid } from '@fortawesome/free-solid-svg-icons';
 
 const Entrance = () => {
   const [showChat, setShowChat] = useState(false);
@@ -33,8 +33,8 @@ const Entrance = () => {
               <a href="https://instagram.com/@gimmified" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
-              <a href="mailto:gimmys943@gmail.com">
-                <FontAwesomeIcon icon={faEnvelopeSolid} />
+              <a href="https://www.linkedin.com/in/girmachew-samson-42a695314" target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon icon={faLinkedin} />
               </a>
               <a href="https://github.com/sirtics" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faGithub} />
