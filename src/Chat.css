@@ -7,7 +7,6 @@
   --input-color: #3c3e44; /* Slightly lighter input background for contrast */
   --input-text-color: #dcdcdc; /* Input text color for visibility */
   --message-background: #4a4e69; /* Dark message bubble background */
-  font-family: 'Poppins', sans-serif;
 }
 
 body, html {
@@ -15,6 +14,7 @@ body, html {
   margin: 0;
   overflow-x: hidden;
   background: var(--background-color);
+  font-family: 'Poppins', sans-serif;
   color: var(--text-color);
 }
 

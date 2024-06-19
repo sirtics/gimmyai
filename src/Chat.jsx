@@ -226,6 +226,7 @@ function Chat() {
       return;
     }
   
+    setNewMessage(''); // Clear the textarea immediately
     setIsTyping(true);
   
     try {
@@ -244,7 +245,6 @@ function Chat() {
       displayErrorMessage("GimmyAI ran out of juice, come back later!");
     } finally {
       setIsTyping(false);
-      setNewMessage(''); // Clear the text input
     }
   };
   
