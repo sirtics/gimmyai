@@ -3,8 +3,8 @@ import './Entrance.css';
 import Chat from "./Chat";
 import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInstagram, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope as faEnvelopeSolid } from '@fortawesome/free-solid-svg-icons';
+import { faInstagram, faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+// import { faEnvelope as faEnvelopeSolid } from '@fortawesome/free-solid-svg-icons';
 
 const Entrance = () => {
   const [showChat, setShowChat] = useState(false);
