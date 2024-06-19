@@ -33,7 +33,7 @@ const Entrance = () => {
               <a href="https://instagram.com/@gimmified" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
-              <a href="https://www.linkedin.com/in/girmachew-samson-42a695314">
+              <a href="https://www.linkedin.com/in/girmachew-samson-42a695314" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faLinkedin} />
               </a>
               <a href="https://github.com/sirtics" target="_blank" rel="noopener noreferrer">
