@@ -1,3 +1,4 @@
+import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { useState, useEffect, useRef } from 'react';
 import './Chat.css';
@@ -251,7 +252,17 @@ function Chat() {
   
   
   
-  
+  const formatMathEquation = (equation) => {
+    try {
+      return katex.renderToString(equation, {
+        throwOnError: false,
+        displayMode: true,
+      });
+    } catch (error) {
+      console.error('Error formatting equation:', error);
+      return equation;
+    }
+  };
 
   
   const handleKeyDown = (event) => {
@@ -308,9 +319,13 @@ function Chat() {
     formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     // Convert Markdown links to anchor tags
     formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-  
     // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
     formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  
+    // Format mathematical equations
+    formattedMessage = formattedMessage.replace(/`([^`]+)`/g, (match, equation) => {
+      return `<span>${formatMathEquation(equation)}</span>`;
+    });
   
     return { __html: formattedMessage };
   };
