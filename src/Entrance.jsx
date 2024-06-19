@@ -33,8 +33,8 @@ const Entrance = () => {
               <a href="https://instagram.com/@gimmified" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
-              <a href="mailto:gimmys943@gmail.com">
-                <FontAwesomeIcon icon={faEnvelopeSolid} />
+              <a href="https://www.linkedin.com/in/girmachew-samson-42a695314">
+                <FontAwesomeIcon icon={faLinkedin} />
               </a>
               <a href="https://github.com/sirtics" target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon={faGithub} />
