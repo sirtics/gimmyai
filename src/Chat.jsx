@@ -6,7 +6,6 @@ import logo from '../public/gaspface-logo.png'; // Adjust the path if necessary
 import attach from '../public/attach-file.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-
 import content from "./aicontent.js";
 
 const systemMessage = {
@@ -16,7 +15,7 @@ const systemMessage = {
 };
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-const GAIPLUS = import.meta.env.GIMMYAIPLUSKEY;
+const GAIPLUS = import.meta.env.VITE_GIMMYAIPLUSKEY;
 
 
 
@@ -323,7 +322,7 @@ function Chat() {
     formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
   
     // Format mathematical equations
-    formattedMessage = formattedMessage.replace(/`([^`]+)`/g, (match, equation) => {
+    formattedMessage = formattedMessage.replace(/(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)([^$]+)(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)/g, (match, equation) => {
       return `<span>${formatMathEquation(equation)}</span>`;
     });
   
@@ -360,7 +359,9 @@ function Chat() {
           ) : (
             <div
               className={`message-content ${msg.sender}`}
-              dangerouslySetInnerHTML={formatMessage(msg.message)}
+              dangerouslySetInnerHTML={formatMessage(
+                msg.message.replace(new RegExp(import.meta.env.VITE_GIMMYAIPLUSKEY, 'g'), '**KEYWORD USED**')
+              )}
             />
           )}
         </div>
