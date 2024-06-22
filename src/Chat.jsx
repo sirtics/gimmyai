@@ -10,7 +10,7 @@ import content from "./aicontent.js";
 
 const systemMessage = {
   role: "system",
-  content: content // Context for AI with background knowledge
+  content: content // Context for AI with background knowledge of me and some rules and stuff
 
 };
 
@@ -218,8 +218,9 @@ function Chat() {
       sender: 'user'
     };
   
-    // Check for duplicate message (improved implementation)
-    const isDuplicateMessage = messages.some((msg) => msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim() && msg.image === outgoingMessage.image);
+    const isDuplicateMessage = messages.some(msg =>
+      msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
+    );
   
     if (isDuplicateMessage) {
       return;
@@ -230,7 +231,7 @@ function Chat() {
   
     try {
       if (newMessage.trim()) {
-        setMessages((prevMessages) => [...prevMessages, outgoingMessage]);
+        setMessages(prevMessages => [...prevMessages, outgoingMessage]);
       }
   
       if (selectedImage) {
@@ -280,13 +281,11 @@ function Chat() {
   const handlePaste = (event) => {
     // Prevent the default paste action
     event.preventDefault();
-  
-    // Use a fallback for older browsers that don't support the Clipboard API
-    const clipboardData = event.clipboardData || window.clipboardData;
-    const items = clipboardData.items;
+    // Use the Clipboard API to access the data directly
+    const items = event.clipboardData.items;
   
     // Find items of the type 'image'
-    const imageItem = Array.from(items).find((item) => item.type.indexOf('image') === 0);
+    const imageItem = Array.from(items).find(item => item.type.indexOf('image') === 0);
   
     if (imageItem && isGimmyAIPlusActive) {
       // If there's an image and GimmyAI+ is active, read it and send to the API
@@ -300,8 +299,8 @@ function Chat() {
       reader.readAsDataURL(blob);
     } else {
       // If it's not an image or GimmyAI+ isn't active, handle as a regular text paste
-      const pasteText = clipboardData.getData('text/plain');
-      setNewMessage((prevMessage) => prevMessage + pasteText); // Append the pasted text
+      const pasteText = event.clipboardData.getData('text/plain');
+      setNewMessage(prevMessage => prevMessage + pasteText); // Append the pasted text
     }
   };
   
@@ -323,7 +322,7 @@ function Chat() {
     formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
   
     // Format mathematical equations
-    formattedMessage = formattedMessage.replace(/(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)([^$]+)(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)/g, (match, equation) => {
+    formattedMessage = formattedMessage.replace(/`([^`]+)`/g, (match, equation) => {
       return `<span>${formatMathEquation(equation)}</span>`;
     });
   
@@ -360,9 +359,7 @@ function Chat() {
           ) : (
             <div
               className={`message-content ${msg.sender}`}
-              dangerouslySetInnerHTML={formatMessage(
-                msg.message.replace(new RegExp(import.meta.env.VITE_GIMMYAIPLUSKEY, 'g'), '**KEYWORD USED**')
-              )}
+              dangerouslySetInnerHTML={formatMessage(msg.message)}
             />
           )}
         </div>
