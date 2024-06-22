@@ -359,9 +359,7 @@ function Chat() {
           ) : (
             <div
               className={`message-content ${msg.sender}`}
-              dangerouslySetInnerHTML={{
-                __html: formatMessage(msg.message.replace(new RegExp(GAIPLUS, 'g'), '**KEYWORD USED**')),
-              }}
+              dangerouslySetInnerHTML={formatMessage(msg.message.replace(new RegExp(GAIPLUS, 'g'), '**KEYWORD USED**'))}
             />
           )}
         </div>
