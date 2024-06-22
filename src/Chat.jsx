@@ -250,17 +250,17 @@ function Chat() {
   
   
   
-  // const formatMathEquation = (equation) => {
-  //   try {
-  //     return katex.renderToString(equation, {
-  //       throwOnError: false,
-  //       displayMode: true,
-  //     });
-  //   } catch (error) {
-  //     console.error('Error formatting equation:', error);
-  //     return equation;
-  //   }
-  // };
+  const formatMathEquation = (equation) => {
+    try {
+      return katex.renderToString(equation, {
+        throwOnError: false,
+        displayMode: true,
+      });
+    } catch (error) {
+      console.error('Error formatting equation:', error);
+      return equation;
+    }
+  };
 
   
   const handleKeyDown = (event) => {
@@ -306,37 +306,29 @@ function Chat() {
   };
   
 
-const formatMessage = (message) => {
-  if (message.image) {
-    return {
-      __html: `<img src="data:image/png;base64,${message.message}" alt="User upload" style="max-width: 100%; max-height: 400px;" />`,
-    };
-  }
-
-  let formattedMessage = message.message;
-
-  // Convert Markdown headings to bold tags
-  formattedMessage = formattedMessage.replace(/^(#+) (.*)$/gm, (match, level, text) => {
-    const headerLevel = level.length;
-    return `<h${headerLevel}>${text}</h${headerLevel}>`;
-  });
-
-  // Convert bold Markdown to strong tags
-  formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-  // Convert Markdown links to anchor tags
-  formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-  // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
-  formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-
-  // Format mathematical equations using KaTeX
-  formattedMessage = formattedMessage.replace(/(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)([^$]+)(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)/g, (match, equation) => {
-    return `<span>${katex.renderToString(equation, { throwOnError: false, displayMode: true })}</span>`;
-  });
-
-  return { __html: formattedMessage };
-};
+  const formatMessage = (message) => {
+    if (message.image) {
+      return {
+        __html: `<img src="data:image/png;base64,${message.message}" alt="User upload" style="max-width: 100%; max-height: 400px;" />`,
+      };
+    }
+  
+    // Convert Markdown headings to bold tags
+    let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
+    // Convert bold Markdown to strong tags
+    formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Convert Markdown links to anchor tags
+    formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
+    formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  
+    // Format mathematical equations
+    formattedMessage = formattedMessage.replace(/(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)([^$]+)(?:\$|\\[|\\(|\\)|\\[|\\]|\\{|\\}|\\|\\~|\\`|\\^|\\_|\\%)/g, (match, equation) => {
+      return `<span>${formatMathEquation(equation)}</span>`;
+    });
+  
+    return { __html: formattedMessage };
+  };
   
 
   const handleTextareaChange = (e) => {
