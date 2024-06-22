@@ -10,7 +10,7 @@ import content from "./aicontent.js";
 
 const systemMessage = {
   role: "system",
-  content: content // Context for AI with background knowledge of me and some rules and stuff
+  content: content // Context for AI with background knowledge
 
 };
 
@@ -218,9 +218,8 @@ function Chat() {
       sender: 'user'
     };
   
-    const isDuplicateMessage = messages.some(msg =>
-      msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
-    );
+    // Check for duplicate message (improved implementation)
+    const isDuplicateMessage = messages.some((msg) => msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim() && msg.image === outgoingMessage.image);
   
     if (isDuplicateMessage) {
       return;
@@ -231,7 +230,7 @@ function Chat() {
   
     try {
       if (newMessage.trim()) {
-        setMessages(prevMessages => [...prevMessages, outgoingMessage]);
+        setMessages((prevMessages) => [...prevMessages, outgoingMessage]);
       }
   
       if (selectedImage) {
@@ -281,11 +280,13 @@ function Chat() {
   const handlePaste = (event) => {
     // Prevent the default paste action
     event.preventDefault();
-    // Use the Clipboard API to access the data directly
-    const items = event.clipboardData.items;
+  
+    // Use a fallback for older browsers that don't support the Clipboard API
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const items = clipboardData.items;
   
     // Find items of the type 'image'
-    const imageItem = Array.from(items).find(item => item.type.indexOf('image') === 0);
+    const imageItem = Array.from(items).find((item) => item.type.indexOf('image') === 0);
   
     if (imageItem && isGimmyAIPlusActive) {
       // If there's an image and GimmyAI+ is active, read it and send to the API
@@ -299,8 +300,8 @@ function Chat() {
       reader.readAsDataURL(blob);
     } else {
       // If it's not an image or GimmyAI+ isn't active, handle as a regular text paste
-      const pasteText = event.clipboardData.getData('text/plain');
-      setNewMessage(prevMessage => prevMessage + pasteText); // Append the pasted text
+      const pasteText = clipboardData.getData('text/plain');
+      setNewMessage((prevMessage) => prevMessage + pasteText); // Append the pasted text
     }
   };
   
