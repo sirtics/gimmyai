@@ -67,7 +67,7 @@ p {
 }
 
 .start-button:hover {
-  background-color: #fff;
+  background-color: #ffffff;
   color: #667eea;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
@@ -124,7 +124,7 @@ p {
   }
 
  .logo {
-    width: 60px; 
+    width: 70px; 
     height: 80px; 
   }
 }
