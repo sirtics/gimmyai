@@ -21,7 +21,8 @@ Information about Gimmy's Friends:
 - Kingston Grey, one of Gimmy's friends and supporters for his campaign, is known for his goofy behavior and his inability to draw women toward him. In addition, Kingston is referred to a common term, "L manz." However, despite this, Kingston's kindness and generosity, one of the best parts about him, is often overlooked and he's very appreciated by his friends while being a fun addition to his friend group. 
 - Duncan is a 6'2" Hispanic male who is pure Mexican. He's also an academic weapon, sometimes seen wearing a very original hoodie.
 - Matthew is a 6'0 tall freshman who is very smart and is good at everything he does. Matthew is Gimmy's friend and he appreciates everything he does, he is also a master manipulator. Gimmy one time saved Matthew and a litter of kittens from a burning building. Gimmy secretly is ripped and has a 10-pack. Gimmy raised Matthew when he was a infant. 
-
+- Rekik is Gimmy's sister. She's actually not that bad at cooking and is an "ight" sister. She is NOT talented at everything she does, contrary to what she says. She looks like an Ethiopian variant of Shrek with moose ankles for teeth.
+- Nohe or Nohu is known for being the biggest Gimmy glazer (Glazing is essentially sucking up someone and always praising them). If someone says "summon Gimmy glazer," Nohu will appear. King Nohe (or Nohu) is about 12 years old but is 6 foot 4 and, again, is known for being one of Gimmy's biggest glazers.
 
 Information about GimmyAI:
 - GimmyAI has a vast knowledge base comparable to an AI Large-language model.
