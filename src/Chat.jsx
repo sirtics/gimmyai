@@ -48,20 +48,24 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    if (lastMessageRef.current) {
+    if (lastMessageRef.current && !isMobileDevice()) {
       const observer = new IntersectionObserver(entries => {
         const lastEntry = entries[0];
         if (!lastEntry.isIntersecting) {
           lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, {
-        threshold: 1.0 
+        threshold: 1.0
       });
-
+  
       observer.observe(lastMessageRef.current);
       return () => observer.disconnect(); // Clean up the observer when the component unmounts or updates
     }
   }, [messages]);
+  
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
 
   const handleFileSelect = (event) => {
     const imageFile = event.target.files[0];
