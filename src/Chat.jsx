@@ -32,20 +32,16 @@ function Chat() {
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [originalInputContainerHeight, setOriginalInputContainerHeight] = useState(null);
   const lastMessageRef = useRef(null);
 
   useEffect(() => {
-    const updateInputContainerHeight = () => {
-      const inputContainerElement = document.querySelector('.input-container');
-      if (inputContainerElement) {
-        setInputContainerHeight(inputContainerElement.offsetHeight);
-      }
-    };
-
-    updateInputContainerHeight();
-    window.addEventListener('resize', updateInputContainerHeight);
-    return () => window.removeEventListener('resize', updateInputContainerHeight);
+    const inputContainerElement = document.querySelector('.input-container');
+    if (inputContainerElement) {
+      setOriginalInputContainerHeight(inputContainerElement.offsetHeight);
+    }
   }, []);
+  
 
   useEffect(() => {
     if (lastMessageRef.current && !isMobileDevice()) {
@@ -66,6 +62,8 @@ function Chat() {
   const isMobileDevice = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
+
+  
 
   const handleFileSelect = (event) => {
     const imageFile = event.target.files[0];
@@ -249,6 +247,7 @@ function Chat() {
       displayErrorMessage("GimmyAI ran out of juice, come back later!");
     } finally {
       setIsTyping(false);
+      setInputContainerHeight(originalInputContainerHeight);
     }
   };
   
