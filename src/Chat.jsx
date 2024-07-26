@@ -28,7 +28,7 @@ function Chat() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [modelIdentifier, setModelIdentifier] = useState("gpt-3.5-turbo-0125");
+  const [modelIdentifier, setModelIdentifier] = useState("gpt-4o-mini");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -316,7 +316,8 @@ function Chat() {
     }
   
     // Convert Markdown headings to bold tags
-    let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
+      let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
+
     // Convert bold Markdown to strong tags
     formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     // Convert Markdown links to anchor tags
