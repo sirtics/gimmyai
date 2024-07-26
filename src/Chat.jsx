@@ -28,7 +28,7 @@ function Chat() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [modelIdentifier, setModelIdentifier] = useState("gpt-4o-mini");
+  const [modelIdentifier, setModelIdentifier] = useState("gpt-4o-mini-2024-07-18");
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [isGimmyAIPlusActive, setIsGimmyAIPlusActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -77,12 +77,11 @@ function Chat() {
   };
 
   const displayImageMessage = (base64Image) => {
-    const imageMessage = {
+    setMessages(prevMessages => [...prevMessages, {
       message: base64Image,
       sender: 'user',
       image: true
-    };
-    setMessages(prevMessages => [...prevMessages, imageMessage]);
+    }]);
   };
 
   const displayErrorMessage = (errorMessage) => {
@@ -101,6 +100,9 @@ function Chat() {
   const sendImageToAPI = async (base64Image) => {
     setIsTyping(true);
     try {
+      // Display the image sent by the user as a message in the chat
+      displayImageMessage(base64Image);
+  
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -108,16 +110,23 @@ function Chat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          image: base64Image,
-          model: 'gpt-4o' // Specify the desired model (e.g., davinci, curie, babbage)
+          model: 'gpt-4o', // Specify the desired model (e.g., davinci, curie, babbage)
+          messages: [
+            systemMessage,
+            ...messages.map(msg => ({
+              role: msg.sender === "ChatGPT" ? "assistant" : "user",
+              content: msg.message
+            })),
+            { role: 'user', content: base64Image }
+          ]
         })
       });
   
       const data = await response.json();
       if (response.ok) {
-        const interpretation = data.data.objects.map(obj => obj.description).join(', ');
+        // Display the AI's response as a message in the chat
         setMessages(prevMessages => [...prevMessages, {
-          message: `AI interpretation: ${interpretation}`,
+          message: data.choices[0].message.content,
           sender: "ChatGPT"
         }]);
       } else {
