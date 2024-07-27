@@ -267,13 +267,14 @@ function Chat() {
     try {
       return katex.renderToString(equation, {
         throwOnError: false,
-        displayMode: true,
+        displayMode: equation.startsWith('$$') && equation.endsWith('$$')
       });
     } catch (error) {
       console.error('Error formatting equation:', error);
       return equation;
     }
   };
+  
 
   
   const handleKeyDown = (event) => {
@@ -325,22 +326,32 @@ function Chat() {
     }
   
     // Convert Markdown headings to bold tags
-      let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
-
+    let formattedMessage = message.replace(/###\s?(.*)/g, '<strong>$1</strong>');
+  
     // Convert bold Markdown to strong tags
     formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+    // Convert italic Markdown to em tags
+    formattedMessage = formattedMessage.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
     // Convert Markdown links to anchor tags
     formattedMessage = formattedMessage.replace(/\[([^\]]+)\]\((http[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  
     // Convert plain text URLs to anchor tags, but skip ones already in anchor tags
     formattedMessage = formattedMessage.replace(/(\bhttps?:\/\/[^\s<]+)(?![^<]*>)(?!<\/a>)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
   
     // Format mathematical equations
-    formattedMessage = formattedMessage.replace(/`([^`]+)`/g, (match, equation) => {
-      return `<span>${formatMathEquation(equation)}</span>`;
+    formattedMessage = formattedMessage.replace(/\$\$(.*?)\$\$/g, (match, equation) => {
+      return `<span>${formatMathEquation(`$$${equation}$$`)}</span>`;
+    });
+  
+    formattedMessage = formattedMessage.replace(/\$(.*?)\$/g, (match, equation) => {
+      return `<span>${formatMathEquation(`$${equation}$`)}</span>`;
     });
   
     return { __html: formattedMessage };
   };
+  
   
 
   const handleTextareaChange = (e) => {
