@@ -95,15 +95,15 @@ body, html {
 
 .input-container {
   position: fixed; /* Fix the entire input container at the bottom */
-  bottom: 0; /* Align it to the bottom */
-  left: 0; /* Align it to the left */
-  width: 100%; /* Full viewport width */
-  padding: 1rem; /* Maintain padding */
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+  padding: 1rem; 
   background-color: var(--input-color);
-  box-sizing: border-box; /* Padding included in width */
-  display: flex; /* Use flexbox for alignment */
-  align-items: center; /* Align items vertically */
-  justify-content: space-between; /* Spacing between items */
+  box-sizing: border-box; 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
   align-items: flex-start;
 }
 
@@ -114,8 +114,8 @@ body, html {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   border: none;
-  max-height: 150px; /* Add a maximum height */
-  overflow-y: auto; /* Allow scrolling within the textarea */
+  max-height: 90px; /* Add a maximum height */
+  overflow-y: auto; 
   scrollbar-width: thin;
   scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   flex: 1;

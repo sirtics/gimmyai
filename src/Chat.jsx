@@ -267,6 +267,8 @@ function Chat() {
     if (!isScrollingUp) {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
+    const textarea = document.querySelector('textarea');
+  textarea.style.height = `${originalInputContainerHeight}px`;
   };
   
   
@@ -367,8 +369,12 @@ function Chat() {
     const target = e.target;
     setNewMessage(target.value);
   
-    target.style.height = 'auto';
-    target.style.height = `${target.scrollHeight}px`;
+    if (target.value.trim()) {
+      target.style.height = 'auto';
+      target.style.height = `${target.scrollHeight}px`;
+    } else {
+      target.style.height = `${66}px`;
+    }
   };
 
   return (
