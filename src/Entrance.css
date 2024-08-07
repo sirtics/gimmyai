@@ -23,7 +23,7 @@
   border-radius: 1rem;
   padding: 4rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+  max-width: 700px;
   text-align: center;
   margin: 0 auto; 
 }
@@ -36,8 +36,8 @@
   width: 120px;
   height: 140px;
   margin-bottom: 1rem;
-  max-width: 100%; /* Add max-width: 100% for responsive image */
-  height: auto; /* Add height: auto for responsive image */
+  max-width: 100%; 
+  height: auto; 
 }
 
 h1 {
@@ -79,7 +79,7 @@ p {
 
 /* Media query for small screens */
 @media only screen and (max-width: 767px) {
- .container {
+  .container {
     max-width: 90%;
     padding: 2rem; 
   }
@@ -92,20 +92,20 @@ p {
     font-size: 0.9rem; 
   }
 
- .start-button {
+  .start-button {
     padding: 1rem 1.5rem; 
     font-size: 1rem; 
   }
 
- .logo {
+  .logo {
     width: 80px; 
     height: 100px; 
   }
 }
 
-
+/* Media query for extra small screens */
 @media only screen and (max-width: 480px) {
- .container {
+  .container {
     max-width: 95%;
     padding: 1.5rem; 
   }
@@ -118,14 +118,40 @@ p {
     font-size: 0.8rem; 
   }
 
- .start-button {
+  .start-button {
     padding: 0.8rem 1.2rem; 
     font-size: 0.9rem; 
   }
 
- .logo {
+  .logo {
     width: 70px; 
     height: 80px; 
+  }
+}
+
+/* Media query for smaller height screens */
+@media only screen and (max-height: 900px) {
+  .container {
+    max-width: 70%;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  .start-button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+  }
+
+  .logo {
+    width: 100px;
+    height: 120px;
   }
 }
 
