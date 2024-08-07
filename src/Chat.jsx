@@ -45,9 +45,10 @@ function Chat() {
 
   useEffect(() => {
     if (lastMessageRef.current && !isMobileDevice()) {
+      const chatContainer = document.querySelector('.app-body');
       const observer = new IntersectionObserver(entries => {
         const lastEntry = entries[0];
-        if (!lastEntry.isIntersecting) {
+        if (!lastEntry.isIntersecting && chatContainer.scrollTop + chatContainer.offsetHeight >= chatContainer.scrollHeight) {
           lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, {
@@ -222,6 +223,11 @@ function Chat() {
   
   
   const handleSendMessage = async () => {
+
+    const chatContainer = document.querySelector('.app-body');
+    const isScrollingUp = chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.offsetHeight;
+  
+
     if (!newMessage.trim() && selectedImage === null) return;
   
     const outgoingMessage = {
@@ -257,6 +263,9 @@ function Chat() {
     } finally {
       setIsTyping(false);
       setInputContainerHeight(originalInputContainerHeight);
+    }
+    if (!isScrollingUp) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
   
