@@ -60,11 +60,15 @@ function Chat() {
     }
   }, [messages]);
   
+  
   const isMobileDevice = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
 
   
+  const handleImagePreviewClick = () => {
+    setSelectedImage(null);
+  };
 
   const handleFileSelect = (event) => {
     const imageFile = event.target.files[0];
@@ -76,6 +80,7 @@ function Chat() {
       reader.readAsDataURL(imageFile);
     }
   };
+  
 
   const displayImageMessage = (base64Image) => {
     setMessages(prevMessages => [...prevMessages, {
@@ -98,47 +103,61 @@ function Chat() {
   //   reader.onerror = error => reject(error);
   // });
   
-  const sendImageToAPI = async (base64Image) => {
-    setIsTyping(true);
-    try {
-      // Display the image sent by the user as a message in the chat
-      displayImageMessage(base64Image);
-  
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o', // Specify the desired model (e.g., davinci, curie, babbage)
-          messages: [
-            systemMessage,
-            ...messages.map(msg => ({
-              role: msg.sender === "ChatGPT" ? "assistant" : "user",
-              content: msg.message
-            })),
-            { role: 'user', content: base64Image }
-          ]
-        })
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        // Display the AI's response as a message in the chat
-        setMessages(prevMessages => [...prevMessages, {
-          message: data.choices[0].message.content,
-          sender: "ChatGPT"
-        }]);
-      } else {
-        displayErrorMessage(`Error: ${data.error.message}`);
-      }
-    } catch (error) {
-      displayErrorMessage("An error occurred while sending the image to the API.");
-    } finally {
+  const MAX_IMAGE_SIZE_MB = 1; // Set a maximum size limit for images (in MB)
+
+const sendImageToAPI = async (base64Image) => {
+  setIsTyping(true);
+  try {
+    // Validate image size
+    const imageSize = base64Image.length * (3 / 4) / (1024 * 1024); // Convert base64 length to MB
+    if (imageSize > MAX_IMAGE_SIZE_MB) {
+      displayErrorMessage(`The image is too large (${imageSize.toFixed(2)} MB). Please upload an image smaller than ${MAX_IMAGE_SIZE_MB} MB.`);
       setIsTyping(false);
+      return;
     }
-  };
+
+    // Display the image sent by the user as a message in the chat
+    displayImageMessage(base64Image);
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o', // Specify the desired model
+        messages: [
+          systemMessage,
+          ...messages.map(msg => ({
+            role: msg.sender === "ChatGPT" ? "assistant" : "user",
+            content: msg.message
+          })),
+          { role: 'user', content: base64Image }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      // Display the AI's response as a message in the chat
+      setMessages(prevMessages => [...prevMessages, {
+        message: data.choices[0].message.content,
+        sender: "ChatGPT"
+      }]);
+    } else {
+      displayErrorMessage(`Error: ${data.error.message}`);
+    }
+  } catch (error) {
+    console.error("Error sending image to API:", error);
+    displayErrorMessage("An error occurred while sending the image to the API.");
+  } finally {
+    setIsTyping(false);
+  }
+};
+
+
+  
   
   
 
@@ -172,7 +191,7 @@ function Chat() {
     setIsTyping(true);
     let apiErrorOccurred = false;
     let friendlyErrorMessage = "Oops! There was an unexpected hiccup.";
-
+  
     try {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -192,7 +211,7 @@ function Chat() {
           ]
         })
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         setMessages(prevMessages => [...prevMessages, {
@@ -221,31 +240,21 @@ function Chat() {
   
   
   
-  
   const handleSendMessage = async () => {
-
     const chatContainer = document.querySelector('.app-body');
     const isScrollingUp = chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.offsetHeight;
-  
 
     if (!newMessage.trim() && selectedImage === null) return;
-  
     const outgoingMessage = {
       message: newMessage,
       sender: 'user'
     };
-  
-    const isDuplicateMessage = messages.some(msg =>
-      msg.sender === 'user' && msg.message.trim() === outgoingMessage.message.trim()
-    );
-  
+    const isDuplicateMessage = messages.length > 0 && messages[messages.length - 1].message.trim() === outgoingMessage.message.trim();
     if (isDuplicateMessage) {
       return;
     }
-  
     setNewMessage(''); // Clear the textarea immediately
     setIsTyping(true);
-  
     try {
       if (newMessage.trim()) {
         setMessages(prevMessages => [...prevMessages, outgoingMessage]);
@@ -264,12 +273,15 @@ function Chat() {
       setIsTyping(false);
       setInputContainerHeight(originalInputContainerHeight);
     }
+  
     if (!isScrollingUp) {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
+  
     const textarea = document.querySelector('textarea');
-  textarea.style.height = `${originalInputContainerHeight}px`;
+    textarea.style.height = `${originalInputContainerHeight}px`;
   };
+  
   
   
   
@@ -373,9 +385,10 @@ function Chat() {
       target.style.height = 'auto';
       target.style.height = `${target.scrollHeight}px`;
     } else {
-      target.style.height = `${66}px`;
+      target.style.height = `${originalInputContainerHeight}px`;
     }
   };
+  
 
   return (
     <div id="root">
@@ -426,11 +439,11 @@ function Chat() {
         </>
       )}
        {selectedImage && (
-          <div className="image-preview-container">
-            <img src={selectedImage} alt="Selected Image" className="image-preview" />
-          </div>
-        )}
-        
+        <div className="image-preview-container" onClick={handleImagePreviewClick}>
+          <img src={selectedImage} alt="Selected Image" className="image-preview" />
+        </div>
+      )}
+              
       <textarea
         type="text"
         placeholder="Type a message..."
