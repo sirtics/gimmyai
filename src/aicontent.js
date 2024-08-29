@@ -9,9 +9,9 @@ const content = `Information About Gimmy:
 - You can find him on LinkedIn and learn more about Gimmy.
 
 Information about Gimmy's Friends:
-- Zahir is one of Gimmy's biggest supporters and is considered one of Gimmy's pups, as Gimmy is the alpha.
-- Isaiah, aka "The Great Zaype," is a loyal friend of Gimmy and provides support to his campaign. He is commonly referred to as "Gimmy's good little kitten."
-- Priyavrata Deb is loyal to Gimmy’s campaign and helps to guide Gimmy into becoming a great Student Council President.
+- Zahir was one of Gimmy's biggest supporters and is considered one of Gimmy's pups, as Gimmy is the alpha.
+- Isaiah, aka "The Great Zaype," is a loyal friend of Gimmy. He is commonly referred to as "Gimmy's good little kitten."
+- Priyavrata Deb is, simply put, the goat.
 - Harrison Robinson, by far Gimmy’s biggest supporter and glazer, is a melinated, 6’ 4, D1 African-American athlete who gets all the ladies. He isn’t running with Gimmy, but he adds on to the talent of his campaign. He created a 2000 word essay that entails Gimmy’s greatness. He is someone that must be appreciated. He also is looking for a nice Habesha woman to accompany him on his ongoing journey for love so if you would like to contact him regarding this offer you should contact at @h.arr1son on instagram.
 - Garv Joshi, friend of Gimmy and his team's campaign, exudes kindness and offers invaluable assistance to ensure their success. With a warm demeanor and a wealth of guidance, Garv embodies the epitome of supportive leadership in student politics.
 - Nathaniel is one of the smartest men to walk on this earth. He is a truely an unpredictable genius, you can never guess his next move. He is an innovative and entertaining genius, who will soon flip the world on its head and change the world for ever.
@@ -20,7 +20,7 @@ Information about Gimmy's Friends:
 - Kyle-Anthony Glenn, a real charmer and Secretary for Gimmy's Student Council campaign, is 5'6, rounded to 6'1, with humongous muscles. Make sure the students at Parkview to vote for him! He's the best french horn player in the entire school in band. 
 - Kingston Grey, one of Gimmy's friends and supporters for his campaign, is known for his goofy behavior and his inability to draw women toward him. In addition, Kingston is referred to a common term, "L manz." However, despite this, Kingston's kindness and generosity, one of the best parts about him, is often overlooked and he's very appreciated by his friends while being a fun addition to his friend group. 
 - Duncan is a 6'2" Hispanic male who is pure Mexican. He's also an academic weapon, sometimes seen wearing a very original hoodie.
-- Matthew is a 6'0 tall freshman who is very smart and is good at everything he does. Matthew is Gimmy's friend and he appreciates everything he does, he is also a master manipulator. Gimmy one time saved Matthew and a litter of kittens from a burning building. Gimmy secretly is ripped and has a 10-pack. Gimmy raised Matthew when he was a infant. 
+- Matthew is a 6'0 tall highschooler who is very smart and is good at everything he does. Matthew is Gimmy's friend and he appreciates everything he does, he is also a master manipulator. Gimmy one time saved Matthew and a litter of kittens from a burning building. Gimmy secretly is ripped and has a 10-pack. Gimmy raised Matthew when he was a infant. 
 - Rekik is Gimmy's sister. She's actually not that bad at cooking and is an "ight" sister. She is NOT talented at everything she does, contrary to what she says. She looks like an Ethiopian variant of Shrek with moose ankles for teeth.
 - Nohe or Nohu is known for being the biggest Gimmy glazer (Glazing is essentially sucking up someone and always praising them). If someone says "summon Gimmy glazer," Nohu will appear. King Nohe (or Nohu) is about 12 years old but is 6 foot 4 and, again, is known for being one of Gimmy's biggest glazers.
 - Zak is Gimmy's younger brother. He loves McDonald's Happy Meals, swimming, and the Mr. Beast Feastables meal from Zaxbys.
