@@ -126,7 +126,7 @@ const sendImageToAPI = async (base64Image) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o', // Specify the desired model
+        model: 'gpt-4o-mini-2024-07-18', // Specify the desired model
         messages: [
           systemMessage,
           ...messages.map(msg => ({
@@ -164,7 +164,7 @@ const sendImageToAPI = async (base64Image) => {
   const checkForKeywordAndSendMessage = async (message) => {
     try {
       if (message.includes(GAIPLUS)) {
-        setModelIdentifier("gpt-4o");
+        setModelIdentifier("gpt-4o-2024-08-06");
         setIsGimmyAIPlusActive(true);
         setMessages(prevMessages => [
           ...prevMessages,
