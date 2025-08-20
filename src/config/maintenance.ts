@@ -1,6 +1,6 @@
 // Maintenance Mode Configuration
 // Set this to true when you need to show the maintenance page
-export const MAINTENANCE_MODE = true;
+export const MAINTENANCE_MODE = false;
 
 // Maintenance page configuration
 export const maintenanceConfig = {
