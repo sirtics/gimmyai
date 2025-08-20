@@ -18,6 +18,7 @@ import {
 import OpenAI from "openai";
 
 import InputArea from "./InputArea";
+import MathRenderer from "./MathRenderer";
 
 import Navbar from "./Navbar";
 import { aicontent } from "../aicontent";
@@ -85,7 +86,7 @@ const Message = ({ msg }: { msg: Message }) => (
       />
     )}
     <div
-      className={`max-w-[80%] rounded-lg p-4 whitespace-pre-wrap ${
+      className={`max-w-[80%] rounded-lg p-4 ${
         msg.role === "user"
           ? "bg-blue-600 text-white"
           : "bg-slate-800 text-slate-200"
@@ -115,7 +116,7 @@ const Message = ({ msg }: { msg: Message }) => (
           )}
         </div>
       )}
-      {msg.content}
+      <MathRenderer content={msg.content} />
     </div>
   </div>
 );
@@ -542,6 +543,7 @@ export default function ChatInterface() {
       <div className="fixed top-0 left-0 right-0 z-40">
         <Navbar onSidebarToggle={() => setShowSidebar((s) => !s)} />
       </div>
+
       {/* Sidebar */}
       {/* Mobile sidebar overlay and backdrop */}
       {showSidebar && window.innerWidth < 768 && (

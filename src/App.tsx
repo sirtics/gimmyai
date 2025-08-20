@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
 import ChatInterface from "./components/ChatInterface";
@@ -38,35 +39,39 @@ function App() {
   }
 
   return (
-    <Router>
-      <AuthProvider>
-        <div className="min-h-screen bg-slate-900 text-white">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/signin" element={<SignInForm />} />
-            <Route path="/signup" element={<SignUpForm />} />
-            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-            <Route
-              path="/chat"
-              element={
-                <PrivateRoute>
-                  <ChatInterface />
-                </PrivateRoute>
-              }
-            />
-            {/* Maintenance route for testing */}
-            <Route
-              path="/maintenance"
-              element={
-                <MaintenancePage {...getMaintenanceConfig("reconstruction")} />
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
+    <HelmetProvider>
+      <Router>
+        <AuthProvider>
+          <div className="min-h-screen bg-slate-900 text-white">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/signin" element={<SignInForm />} />
+              <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+              <Route
+                path="/chat"
+                element={
+                  <PrivateRoute>
+                    <ChatInterface />
+                  </PrivateRoute>
+                }
+              />
+              {/* Maintenance route for testing */}
+              <Route
+                path="/maintenance"
+                element={
+                  <MaintenancePage
+                    {...getMaintenanceConfig("reconstruction")}
+                  />
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </AuthProvider>
+      </Router>
+    </HelmetProvider>
   );
 }
 

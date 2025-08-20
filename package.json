@@ -17,10 +17,13 @@
     "express": "^5.1.0",
     "firebase": "^10.8.0",
     "framer-motion": "^12.18.1",
+    "katex": "^0.16.22",
     "openai": "^4.28.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.8",
+    "react-helmet-async": "^2.0.5",
+    "react-katex": "^3.1.0",
     "react-router-dom": "^7.6.2",
     "sonner": "^1.4.0",
     "uploadthing": "^5.7.0"
@@ -28,6 +31,7 @@
   "devDependencies": {
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "@types/react-katex": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",

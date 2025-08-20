@@ -1,7 +1,7 @@
 {
-  "name": "GimmyAI - Your AI Homework Helper",
+  "name": "GimmyAI - AI Homework Helper | Get Instant Help with Math, Science & More",
   "short_name": "GimmyAI",
-  "description": "Get instant help with math, science, english, and more. Upload images of your problems for detailed explanations.",
+  "description": "GimmyAI (Gimmy AI) is your intelligent homework helper. Upload images of math problems, get step-by-step solutions, and instant help with science, english, and all subjects. Try GimmyAI today!",
   "icons": [
     {
       "src": "/favicon/favicon-16x16.png",
@@ -32,14 +32,49 @@
   "start_url": "/",
   "orientation": "portrait",
   "scope": "/",
-  "categories": ["education", "productivity", "utilities"],
+  "categories": [
+    "education",
+    "productivity",
+    "utilities",
+    "ai",
+    "homework",
+    "tutoring"
+  ],
+  "keywords": [
+    "gimmy ai",
+    "gimmyai",
+    "jimmyai",
+    "ai homework helper",
+    "artificial intelligence",
+    "math solver",
+    "science tutor",
+    "homework assistance"
+  ],
   "screenshots": [
     {
       "src": "/favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "platform": "wide",
-      "label": "GimmyAI Homework Helper"
+      "label": "GimmyAI - AI Homework Helper"
+    }
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Start Chat",
+      "short_name": "Chat",
+      "description": "Start a new chat session with GimmyAI",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/favicon/favicon-32x32.png",
+          "sizes": "32x32"
+        }
+      ]
     }
   ]
 }
