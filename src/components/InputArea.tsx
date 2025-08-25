@@ -10,6 +10,9 @@ type InputAreaProps = {
   isLoading: boolean;
 };
 
+// Character limit constant
+const MAX_CHARACTERS = 1000;
+
 const InputArea: React.FC<InputAreaProps> = ({
   message,
   setMessage,
@@ -30,13 +33,44 @@ const InputArea: React.FC<InputAreaProps> = ({
   }, [message]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+    const newValue = e.target.value;
+
+    // Only allow changes if under character limit
+    if (newValue.length <= MAX_CHARACTERS) {
+      setMessage(newValue);
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.height =
+          textareaRef.current.scrollHeight + "px";
+      }
     }
   };
+
+  const handleKeyDownLocal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Prevent typing if at character limit (except for backspace, delete, etc.)
+    if (
+      message.length >= MAX_CHARACTERS &&
+      ![
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "Home",
+        "End",
+      ].includes(e.key)
+    ) {
+      e.preventDefault();
+      return;
+    }
+
+    // Call the original handleKeyDown
+    handleKeyDown(e);
+  };
+
+  const isAtLimit = message.length >= MAX_CHARACTERS;
+  const characterCount = message.length;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
@@ -45,10 +79,14 @@ const InputArea: React.FC<InputAreaProps> = ({
           ref={textareaRef}
           value={message}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleKeyDownLocal}
           placeholder="Type your message..."
           rows={1}
-          className="flex-1 resize-none rounded-md p-2 bg-slate-800 text-white border border-slate-600 focus:outline-none focus:border-blue-500 max-h-40 min-h-[2.5rem]"
+          className={`flex-1 resize-none rounded-md p-2 bg-slate-800 text-white border focus:outline-none max-h-40 min-h-[2.5rem] ${
+            isAtLimit
+              ? "border-red-500 focus:border-red-500"
+              : "border-slate-600 focus:border-blue-500"
+          }`}
           style={{ overflow: "auto" }}
         />
 
@@ -80,6 +118,22 @@ const InputArea: React.FC<InputAreaProps> = ({
             </svg>
           )}
         </button>
+      </div>
+
+      {/* Character Counter */}
+      <div className="flex justify-between items-center text-sm">
+        <div className="text-slate-400">
+          {isInCooldown && (
+            <span>Cooldown: {cooldownRemaining}s remaining</span>
+          )}
+        </div>
+        <div
+          className={`text-sm ${
+            isAtLimit ? "text-red-500 font-medium" : "text-slate-400"
+          }`}
+        >
+          {characterCount}/{MAX_CHARACTERS}
+        </div>
       </div>
     </form>
   );

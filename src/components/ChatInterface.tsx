@@ -14,6 +14,7 @@ import {
   deleteDoc,
   where,
   getDoc,
+  getDocs,
 } from "firebase/firestore";
 import OpenAI from "openai";
 
@@ -35,6 +36,9 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
+// Conversation limit constant
+const MAX_CONVERSATIONS = 10;
+
 type Message = {
   id: string;
   role: "user" | "assistant";
@@ -43,34 +47,12 @@ type Message = {
   timestamp?: any;
 };
 
-const Sidebar = ({
-  showSidebar,
-  setCurrentConversationId,
-  setShowSidebar,
-}: {
-  showSidebar: boolean;
-  setCurrentConversationId: (id: string | null) => void;
-  setShowSidebar: (show: boolean) => void;
-}) => (
-  <div
-    className={`fixed top-16 left-0 bottom-0 w-64 bg-slate-800 transform ${
-      showSidebar ? "translate-x-0" : "-translate-x-full"
-    } md:translate-x-0 transition-transform duration-200 ease-in-out z-10 border-r border-slate-700`}
-  >
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Conversations</h2>
-      <button
-        onClick={() => {
-          setCurrentConversationId(null);
-          setShowSidebar(false);
-        }}
-        className="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-      >
-        New Chat
-      </button>
-    </div>
-  </div>
-);
+type Conversation = {
+  id: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const Message = ({ msg }: { msg: Message }) => (
   <div
@@ -130,8 +112,6 @@ const TypingIndicator = () => (
   </div>
 );
 
-// InputArea component unchanged (omitted for brevity)
-
 export default function ChatInterface() {
   const [currentConversationId, setCurrentConversationId] = useState<
     string | null
@@ -143,14 +123,8 @@ export default function ChatInterface() {
   const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 768);
   const [messages, setMessages] = useState<Message[]>([]);
   const [showTyping, setShowTyping] = useState(false);
-  const [conversations, setConversations] = useState([
-    {
-      id: "initial",
-      title: "How may I help you today?",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
 
   // Confirmation dialog state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -159,9 +133,43 @@ export default function ChatInterface() {
   >(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const { user, loading } = useAuth();
 
+  // Load conversations when component mounts or user changes
+  useEffect(() => {
+    if (!user) {
+      setConversations([]);
+      return;
+    }
+
+    const conversationsRef = collection(db, "conversations");
+    const q = query(
+      conversationsRef,
+      where("userId", "==", user.uid),
+      orderBy("updatedAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newConversations = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        title: doc.data().title || "New Chat",
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      }));
+      setConversations(newConversations);
+
+      // Set current conversation to the most recent one if none is selected
+      if (!currentConversationId && newConversations.length > 0) {
+        setCurrentConversationId(newConversations[0].id);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user, currentConversationId]);
+
+  // Load messages for current conversation
   useEffect(() => {
     if (!currentConversationId) {
       setMessages([
@@ -209,12 +217,31 @@ export default function ChatInterface() {
     return () => unsubscribe();
   }, [currentConversationId]);
 
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
   }, [messages, showTyping]);
+
+  // Update conversation title after AI responds (not after user message)
+  const updateConversationTitle = useCallback(
+    async (conversationId: string, aiResponse: string) => {
+      try {
+        const conversationRef = doc(db, "conversations", conversationId);
+        const title =
+          aiResponse.slice(0, 50) + (aiResponse.length > 50 ? "..." : "");
+        await updateDoc(conversationRef, {
+          title,
+          updatedAt: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error("Error updating conversation title:", error);
+      }
+    },
+    []
+  );
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -229,6 +256,12 @@ export default function ChatInterface() {
 
         let conversationId = currentConversationId;
         if (!conversationId) {
+          // Check conversation limit before creating new one
+          if (conversations.length >= MAX_CONVERSATIONS) {
+            setShowLimitDialog(true);
+            return;
+          }
+
           const newConversationRef = await addDoc(
             collection(db, "conversations"),
             {
@@ -250,7 +283,12 @@ export default function ChatInterface() {
               !conversationDoc.exists() ||
               conversationDoc.data().userId !== user.uid
             ) {
-              // Create a new conversation if the current one doesn't belong to the user
+              // Check conversation limit before creating new one
+              if (conversations.length >= MAX_CONVERSATIONS) {
+                setShowLimitDialog(true);
+                return;
+              }
+
               const newConversationRef = await addDoc(
                 collection(db, "conversations"),
                 {
@@ -265,7 +303,12 @@ export default function ChatInterface() {
             }
           } catch (error) {
             showErrorToast(error, "firebase");
-            // Create a new conversation as fallback
+            // Check conversation limit before creating new one
+            if (conversations.length >= MAX_CONVERSATIONS) {
+              setShowLimitDialog(true);
+              return;
+            }
+
             const newConversationRef = await addDoc(
               collection(db, "conversations"),
               {
@@ -329,6 +372,9 @@ export default function ChatInterface() {
           }
         );
 
+        // Update conversation title after AI responds
+        await updateConversationTitle(conversationId, aiResponse);
+
         setShowTyping(false);
       } catch (error: any) {
         setShowTyping(false);
@@ -368,7 +414,16 @@ export default function ChatInterface() {
         setIsSubmitting(false);
       }
     },
-    [user, message, isLoading, isSubmitting, currentConversationId, messages]
+    [
+      user,
+      message,
+      isLoading,
+      isSubmitting,
+      currentConversationId,
+      messages,
+      conversations.length,
+      updateConversationTitle,
+    ]
   );
 
   const handleKeyDown = useCallback(
@@ -393,13 +448,14 @@ export default function ChatInterface() {
 
   const handleNewChat = async () => {
     if (!user) return;
+
+    // Check conversation limit
+    if (conversations.length >= MAX_CONVERSATIONS) {
+      setShowLimitDialog(true);
+      return;
+    }
+
     try {
-      if (conversations.length >= 8) {
-        toast.error(
-          "You've reached the maximum limit of 8 conversations. Please delete an existing conversation to create a new one."
-        );
-        return;
-      }
       const newConversationRef = await addDoc(collection(db, "conversations"), {
         userId: user.uid,
         title: "New Chat",
@@ -413,15 +469,6 @@ export default function ChatInterface() {
           role: "assistant",
           content: "How may I help you today?",
         },
-      ]);
-      setConversations((prev) => [
-        {
-          id: newConversationRef.id,
-          title: "New Chat",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        ...prev,
       ]);
       if (window.innerWidth < 768) {
         setShowSidebar(false);
@@ -449,16 +496,23 @@ export default function ChatInterface() {
       // Delete the conversation from Firebase
       await deleteDoc(doc(db, "conversations", conversationToDelete));
 
-      // If the deleted conversation was the current one, clear the current conversation
+      // If the deleted conversation was the current one, switch to the most recent conversation
       if (conversationToDelete === currentConversationId) {
-        setCurrentConversationId(null);
-        setMessages([
-          {
-            id: "initial",
-            role: "assistant",
-            content: "How may I help you today?",
-          },
-        ]);
+        const remainingConversations = conversations.filter(
+          (c) => c.id !== conversationToDelete
+        );
+        if (remainingConversations.length > 0) {
+          setCurrentConversationId(remainingConversations[0].id);
+        } else {
+          setCurrentConversationId(null);
+          setMessages([
+            {
+              id: "initial",
+              role: "assistant",
+              content: "How may I help you today?",
+            },
+          ]);
+        }
       }
     } catch (error) {
       showErrorToast(error, "firebase");
@@ -468,59 +522,6 @@ export default function ChatInterface() {
       setConversationToDelete(null);
     }
   };
-
-  // Load conversations when component mounts or user changes
-  useEffect(() => {
-    if (!user) {
-      setConversations([
-        {
-          id: "initial",
-          title: "How may I help you today?",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ]);
-      return;
-    }
-    const conversationsRef = collection(db, "conversations");
-    const q = query(
-      conversationsRef,
-      where("userId", "==", user.uid),
-      orderBy("updatedAt", "desc")
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newConversations = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        title: doc.data().title || "New Chat",
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-      }));
-      setConversations(newConversations);
-    });
-    return () => unsubscribe();
-  }, [user]);
-
-  // Update conversation title when messages change
-  useEffect(() => {
-    const updateConversationTitle = async () => {
-      if (!currentConversationId || messages.length <= 1) return;
-
-      try {
-        const conversationRef = doc(db, "conversations", currentConversationId);
-        await updateDoc(conversationRef, {
-          title:
-            messages[1].content.slice(0, 50) +
-            (messages[1].content.length > 50 ? "..." : ""),
-          updatedAt: serverTimestamp(),
-        });
-      } catch (error) {
-        // Silently log title update errors as they're not critical
-        console.error("Error updating conversation title:", error);
-      }
-    };
-
-    updateConversationTitle();
-  }, [messages, currentConversationId]);
 
   // Handle window resize to auto-show sidebar on desktop
   useEffect(() => {
@@ -544,7 +545,7 @@ export default function ChatInterface() {
         <Navbar onSidebarToggle={() => setShowSidebar((s) => !s)} />
       </div>
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed position */}
       {/* Mobile sidebar overlay and backdrop */}
       {showSidebar && window.innerWidth < 768 && (
         <div
@@ -552,92 +553,66 @@ export default function ChatInterface() {
           onClick={() => setShowSidebar(false)}
         />
       )}
+
       <div
-        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] z-50 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out
+        ref={sidebarRef}
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] z-50 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out flex flex-col
           ${
             showSidebar || window.innerWidth >= 768
               ? "translate-x-0"
               : "-translate-x-full"
           }
-          md:translate-x-0 md:static md:h-auto md:z-0 md:w-64 md:bg-slate-800 md:border-r md:border-slate-700 flex-shrink-0`}
-        style={{ position: window.innerWidth >= 768 ? "static" : "fixed" }}
+          md:translate-x-0`}
       >
-        <div className="flex flex-col h-full">
-          {/* New Chat Button */}
-          <div className="p-4 border-b border-slate-700">
-            <button
-              onClick={handleNewChat}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+        {/* New Chat Button */}
+        <div className="p-4 border-b border-slate-700 flex-shrink-0">
+          <button
+            onClick={handleNewChat}
+            disabled={conversations.length >= MAX_CONVERSATIONS}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              conversations.length >= MAX_CONVERSATIONS
+                ? "bg-slate-600 text-slate-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              New Chat
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            New Chat
+          </button>
+        </div>
 
-          {/* Conversations List */}
-          <div className="flex-1">
-            {conversations.length === 0 ? (
-              <div className="p-4 text-center text-slate-400">
-                No conversations yet
-              </div>
-            ) : (
-              conversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  className={`group relative border-b border-slate-700 ${
-                    currentConversationId === conv.id ? "bg-slate-700" : ""
-                  }`}
+        {/* Conversations List - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          {conversations.length === 0 ? (
+            <div className="p-4 text-center text-slate-400">
+              No conversations yet
+            </div>
+          ) : (
+            conversations.map((conv) => (
+              <div
+                key={conv.id}
+                className={`group relative border-b border-slate-700 ${
+                  currentConversationId === conv.id ? "bg-slate-700" : ""
+                }`}
+              >
+                <button
+                  onClick={() => setCurrentConversationId(conv.id)}
+                  className="w-full text-left p-4 hover:bg-slate-700 transition-colors"
                 >
-                  <button
-                    onClick={() => setCurrentConversationId(conv.id)}
-                    className="w-full text-left p-4 hover:bg-slate-700 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-slate-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                        />
-                      </svg>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate">{conv.title}</div>
-                        <div className="text-sm text-slate-400 truncate">
-                          {new Date(conv.updatedAt).toLocaleString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={(e) => handleDeleteConversation(conv.id, e)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Delete conversation"
-                  >
+                  <div className="flex items-center gap-2">
                     <svg
-                      className="w-4 h-4"
+                      className="w-4 h-4 text-slate-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -646,19 +621,62 @@ export default function ChatInterface() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                       />
                     </svg>
-                  </button>
-                </div>
-              ))
-            )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium truncate">{conv.title}</div>
+                      <div className="text-sm text-slate-400 truncate">
+                        {new Date(conv.updatedAt).toLocaleString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => handleDeleteConversation(conv.id, e)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Delete conversation"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Conversation Counter - Fixed at bottom */}
+        <div className="p-4 border-t border-slate-700 flex-shrink-0">
+          <div
+            className={`text-sm text-center ${
+              conversations.length >= MAX_CONVERSATIONS
+                ? "text-red-400 font-medium"
+                : "text-slate-400"
+            }`}
+          >
+            {conversations.length}/{MAX_CONVERSATIONS} conversations
           </div>
         </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 ml-0 h-full">
+      <div className="flex-1 flex flex-col min-w-0 ml-0 md:ml-64 h-full">
         <div
           ref={chatContainerRef}
           className="flex-1 overflow-y-auto px-4 py-2 space-y-4"
@@ -721,6 +739,17 @@ export default function ChatInterface() {
         message="Are you sure you want to delete this conversation? This action cannot be undone."
         confirmText="Delete"
         cancelText="Cancel"
+      />
+
+      {/* Conversation Limit Dialog */}
+      <ConfirmationDialog
+        isOpen={showLimitDialog}
+        onClose={() => setShowLimitDialog(false)}
+        onConfirm={() => setShowLimitDialog(false)}
+        title="Conversation Limit Reached"
+        message={`You've reached the maximum limit of ${MAX_CONVERSATIONS} conversations. Please delete an existing conversation to create a new one.`}
+        confirmText="OK"
+        cancelText=""
       />
     </div>
   );

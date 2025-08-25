@@ -13,9 +13,9 @@
     "@uploadthing/react": "^5.7.0",
     "@uploadthing/shared": "^6.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
-    "firebase": "^10.8.0",
+    "firebase": "^10.14.1",
     "framer-motion": "^12.18.1",
     "katex": "^0.16.22",
     "openai": "^4.28.0",
@@ -26,6 +26,7 @@
     "react-katex": "^3.1.0",
     "react-router-dom": "^7.6.2",
     "sonner": "^1.4.0",
+    "stripe": "^18.4.0",
     "uploadthing": "^5.7.0"
   },
   "devDependencies": {

@@ -45,3 +45,10 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /temp/
 Disallow: /test/
+Disallow: /chat
+Disallow: /maintenance
+
+# Allow important pages
+Allow: /signin
+Allow: /signup
+Allow: /forgot-password

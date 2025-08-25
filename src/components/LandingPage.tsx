@@ -299,6 +299,61 @@ export default function LandingPage() {
           </motion.div>
         </section>
 
+        {/* Humanized Learning Support Section */}
+        <section className="py-20 px-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-800/50" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative z-10"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 bg-clip-text text-transparent bg-size-200 animate-gradient leading-tight pb-2">
+              Humanized Learning Support
+            </h2>
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 p-8 shadow-xl"
+              >
+                <div className="text-6xl mb-6">💬</div>
+                <h3 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Natural Conversations, Real Learning
+                </h3>
+                <p className="text-slate-300 leading-relaxed text-lg mb-6">
+                  Unlike rigid tutoring systems and other chatbots, GimmyAI
+                  provides humanized feedback that feels like talking to a
+                  knowledgeable friend, making drafts sound more human. Get
+                  personalized explanations, ask follow-up questions, and
+                  receive guidance that adapts to your learning style.
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-400">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-blue-400">✓</span>
+                    <span>Conversational</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-blue-400">✓</span>
+                    <span>Personalized</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-blue-400">✓</span>
+                    <span>Adaptive</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-blue-400">✓</span>
+                    <span>Supportive</span>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+
         {/* Privacy & Integrity Section */}
         <section className="py-20 px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-800/50" />

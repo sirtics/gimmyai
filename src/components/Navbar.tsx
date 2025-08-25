@@ -101,7 +101,7 @@ export default function Navbar({
                     />
                   </svg>
                 </summary>
-                <div className="absolute right-0 mt-2 w-40 bg-slate-800 rounded-lg shadow-lg z-20 py-2 border border-slate-700">
+                <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg z-20 py-2 border border-slate-700">
                   {user ? (
                     <>
                       <div className="px-4 py-2 text-slate-300 truncate">
