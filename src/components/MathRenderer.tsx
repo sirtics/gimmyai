@@ -1,6 +1,7 @@
 import React from "react";
 import "katex/dist/katex.min.css";
 import { InlineMath, BlockMath } from "react-katex";
+import ReactMarkdown from "react-markdown";
 
 interface MathRendererProps {
   content: string;
@@ -11,48 +12,31 @@ const MathRenderer: React.FC<MathRendererProps> = ({
   content,
   className = "",
 }) => {
-  // Test function to verify MathRenderer is working
-  const testMathRendering = () => {
-    console.log("MathRenderer test:");
-    console.log("Input:", "$x^2$");
-    console.log("Should render as superscript");
+  // Function to preprocess content to fix list formatting issues
+  const preprocessContent = (text: string): string => {
+    // Debug: Log the original content to see what we're dealing with
+    console.log("Original content:", JSON.stringify(text));
 
-    // Test various LaTeX expressions
-    const testExpressions = [
-      "$x^2$",
-      "$\\int x^2 + 2x - 1 \\, dx$",
-      "$\\frac{1}{2}$",
-      "$\\sqrt{16}$",
-      "$\\pi$",
-    ];
+    // Fix common list formatting issues
+    // Replace patterns like "1.\nContent" with "1. Content"
+    const processed = text
+      .replace(/(\d+\.)\s*\n\s*/g, "$1 ") // Fix numbered lists with line breaks
+      .replace(/(\d+\.)\s*\r\s*/g, "$1 ") // Fix numbered lists with carriage returns
+      .replace(/(\d+\.)\s*\r\n\s*/g, "$1 "); // Fix numbered lists with Windows line breaks
 
-    console.log("Testing LaTeX expressions:", testExpressions);
-  };
+    // Debug: Log the processed content
+    console.log("Processed content:", JSON.stringify(processed));
 
-  // Function to detect and convert common math expressions to LaTeX
-  const convertMathExpressions = (text: string): string => {
-    // DISABLED: Let the AI handle all math formatting
-    // The AI should provide properly formatted LaTeX
-    return text;
-  };
-
-  // Function to identify and wrap mathematical expressions inline
-  const wrapMathExpressions = (text: string): string => {
-    // DISABLED: No automatic math detection
-    // The AI should format its responses with proper LaTeX delimiters
-    return text;
+    return processed;
   };
 
   // Function to split content into text and math parts
   const parseContent = (text: string): React.ReactNode[] => {
-    // First, identify and wrap mathematical expressions
-    const wrappedText = wrapMathExpressions(text);
+    // Preprocess the content first
+    const processedText = preprocessContent(text);
 
-    // Convert common math expressions to LaTeX
-    const convertedText = convertMathExpressions(wrappedText);
-
-    // Split by math delimiters
-    const parts = convertedText.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
+    // Split by math delimiters first
+    const parts = processedText.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
 
     return parts.map((part, index) => {
       // Inline math: $...$
@@ -91,19 +75,55 @@ const MathRenderer: React.FC<MathRendererProps> = ({
         }
       }
 
-      // Regular text
+      // Regular text - render with markdown
       return (
-        <span key={index} className="whitespace-pre-wrap">
-          {part}
-        </span>
+        <div key={index}>
+          <ReactMarkdown
+            components={{
+              // Customize markdown components
+              p: ({ children }) => <div className="mb-2">{children}</div>,
+              strong: ({ children }) => (
+                <strong className="font-bold text-white">{children}</strong>
+              ),
+              em: ({ children }) => (
+                <em className="italic text-slate-300">{children}</em>
+              ),
+              code: ({ children }) => (
+                <code className="bg-slate-700 px-1 py-0.5 rounded text-sm font-mono">
+                  {children}
+                </code>
+              ),
+              pre: ({ children }) => (
+                <pre className="bg-slate-800 p-2 rounded text-sm font-mono overflow-x-auto">
+                  {children}
+                </pre>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc list-inside space-y-2 ml-4 mb-2">
+                  {children}
+                </ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal list-inside space-y-2 ml-4 mb-2">
+                  {children}
+                </ol>
+              ),
+              li: ({ children }) => (
+                <li className="text-slate-300 leading-relaxed">{children}</li>
+              ),
+              blockquote: ({ children }) => (
+                <blockquote className="border-l-4 border-blue-500 pl-4 italic text-slate-300 mb-2">
+                  {children}
+                </blockquote>
+              ),
+            }}
+          >
+            {part}
+          </ReactMarkdown>
+        </div>
       );
     });
   };
-
-  // Test on component mount
-  React.useEffect(() => {
-    testMathRendering();
-  }, []);
 
   return (
     <div className={`${className} break-words overflow-wrap-anywhere`}>

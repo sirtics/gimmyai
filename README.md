@@ -27,7 +27,7 @@ Get instant help with math, science, english, and more. Upload images of your pr
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/gimmyai.git
+   git clone https://github.com/girmmy/gimmyai.git
    cd gimmyai
    ```
 
@@ -75,103 +75,22 @@ src/
 
 - Get instant answers to your questions
 - Upload images of problems for detailed explanations
-- Support for multiple subjects including math, science, and english
+- Step-by-step solutions with explanations
+- Support for multiple subjects (math, science, english, etc.)
 
-### File Upload Support
+### Real-time Chat Interface
 
-- Images (PNG, JPG, JPEG, GIF)
-- PDF documents
-- Word documents (DOC, DOCX)
+- Interactive conversations with AI
+- Message history and conversation management
+- File upload support
+- Responsive design for all devices
 
 ### User Authentication
 
-- Secure email/password authentication
-- Protected routes and content
-- User session management
-
-### Real-time Chat
-
-- Instant message delivery
-- Message history
-- File sharing capabilities
-- AI response generation
-
-## Maintenance Mode
-
-GimmyAI includes a built-in maintenance page system for when you need to take the app down for updates or reconstruction.
-
-### How to Enable Maintenance Mode
-
-1. **Open the maintenance config file:**
-
-   ```bash
-   src/config/maintenance.ts
-   ```
-
-2. **Enable maintenance mode:**
-
-   ```typescript
-   export const MAINTENANCE_MODE = true;
-   ```
-
-3. **Choose a scenario (optional):**
-   In `src/App.tsx`, update the scenario:
-
-   ```typescript
-   const config = getMaintenanceConfig("reconstruction"); // or 'upgrade' or 'maintenance'
-   ```
-
-4. **Deploy your changes**
-
-### Available Scenarios
-
-- **`upgrade`** - "Upgrading GimmyAI!" (for feature updates)
-- **`maintenance`** - "Scheduled Maintenance" (for routine maintenance)
-- **`reconstruction`** - "GimmyAI is Being Reconstructed!" (for major rebuilds)
-
-### How to Disable Maintenance Mode
-
-1. **Open the maintenance config file:**
-
-   ```bash
-   src/config/maintenance.ts
-   ```
-
-2. **Disable maintenance mode:**
-
-   ```typescript
-   export const MAINTENANCE_MODE = false;
-   ```
-
-3. **Deploy your changes**
-
-### Testing Maintenance Page
-
-You can test the maintenance page without enabling full maintenance mode by visiting:
-
-```
-http://localhost:5173/maintenance
-```
-
-### Console Helpers
-
-When the app is running, you can use these console commands for quick maintenance mode management:
-
-```javascript
-// Enable maintenance mode
-maintenance.enable("reconstruction");
-
-// Disable maintenance mode
-maintenance.disable();
-
-// Quick scenario shortcuts
-maintenance.scenarios.quickUpgrade();
-maintenance.scenarios.routineMaintenance();
-maintenance.scenarios.majorReconstruction();
-
-// Show help
-maintenance.help();
-```
+- Secure sign-up and sign-in
+- User profile management
+- Conversation history per user
+- Privacy and data protection
 
 ## Contributing
 
@@ -185,8 +104,21 @@ maintenance.help();
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contact
+## Support
 
-Girmachew Samson - [gimmys943@gmail.com](mailto:gimmys943@gmail.com)
+If you have any questions or need help, feel free to:
 
-Project Link: [https://github.com/yourusername/gimmyai](https://github.com/yourusername/gimmyai)
+- Open an issue on GitHub
+- Contact us at gimmys943@gmail.com
+- Visit our website at [gimmyai.com](https://gimmyai.com)
+
+## Acknowledgments
+
+- Built with ❤️ for students
+- Powered by OpenAI GPT-4
+- Styled with Tailwind CSS
+- Icons from Heroicons
+
+---
+
+**Project Link**: [https://github.com/girmmy](https://github.com/girmmy)

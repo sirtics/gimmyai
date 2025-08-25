@@ -172,13 +172,18 @@ export default function ChatInterface() {
   // Load messages for current conversation
   useEffect(() => {
     if (!currentConversationId) {
-      setMessages([
-        {
-          id: "initial",
-          role: "assistant",
-          content: "How may I help you today?",
-        },
-      ]);
+      // Only show welcome message if user has no conversations
+      if (conversations.length === 0) {
+        setMessages([
+          {
+            id: "initial",
+            role: "assistant",
+            content: "How may I help you today?",
+          },
+        ]);
+      } else {
+        setMessages([]);
+      }
       return;
     }
 
@@ -199,15 +204,26 @@ export default function ChatInterface() {
           timestamp: doc.data().timestamp,
         }));
 
-        // Always include the welcome message as the first message
-        setMessages([
-          {
-            id: "initial",
-            role: "assistant",
-            content: "How may I help you today?",
-          },
-          ...newMessages,
-        ]);
+        console.log(
+          `Loading messages for conversation ${currentConversationId}:`,
+          newMessages.length,
+          "messages"
+        );
+
+        // Only show welcome message if there are no other messages
+        if (newMessages.length === 0) {
+          console.log("No messages found, showing welcome message");
+          setMessages([
+            {
+              id: "initial",
+              role: "assistant",
+              content: "How may I help you today?",
+            },
+          ]);
+        } else {
+          console.log("Setting messages from Firestore:", newMessages);
+          setMessages(newMessages);
+        }
       },
       (error) => {
         showErrorToast(error, "firebase");
@@ -231,7 +247,7 @@ export default function ChatInterface() {
       try {
         const conversationRef = doc(db, "conversations", conversationId);
         const title =
-          aiResponse.slice(0, 50) + (aiResponse.length > 50 ? "..." : "");
+          aiResponse.slice(0, 22) + (aiResponse.length > 22 ? "..." : "");
         await updateDoc(conversationRef, {
           title,
           updatedAt: serverTimestamp(),
@@ -539,7 +555,7 @@ export default function ChatInterface() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden relative">
+    <div className="flex h-screen overflow-hidden">
       {/* Navbar with sidebar toggle */}
       <div className="fixed top-0 left-0 right-0 z-40">
         <Navbar onSidebarToggle={() => setShowSidebar((s) => !s)} />
@@ -676,13 +692,13 @@ export default function ChatInterface() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 ml-0 md:ml-64 h-full">
+      <div className="flex-1 flex flex-col min-w-0 ml-0 md:ml-64 h-full pt-16 relative">
         <div
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto px-4 py-2 space-y-4"
+          className="overflow-y-auto px-4 py-2 space-y-4"
           style={{
-            paddingBottom: "5.5rem", // enough space for the fixed input area
-            height: "calc(100vh - 4rem)",
+            height: "calc(100vh - 4rem - 4rem)", // viewport height minus navbar (4rem) minus input area (4rem)
+            paddingBottom: "3.5rem", // gap before input area
           }}
         >
           {messages.map((msg) => (
@@ -711,9 +727,9 @@ export default function ChatInterface() {
 
         {/* InputArea fixed at the bottom */}
         <div
-          className={`fixed bottom-0 z-30 w-full md:left-64 md:w-[calc(100%-16rem)] bg-slate-900 border-t border-slate-700`}
+          className={`fixed bottom-0 left-0 right-0 z-30 bg-slate-900 border-t border-slate-700 md:left-64`}
         >
-          <div className="p-4">
+          <div className="p-3">
             <InputArea
               message={message}
               setMessage={setMessage}

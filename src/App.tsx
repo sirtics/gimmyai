@@ -43,7 +43,6 @@ function App() {
       <Router>
         <AuthProvider>
           <div className="min-h-screen bg-slate-900 text-white">
-            <Navbar />
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/signin" element={<SignInForm />} />

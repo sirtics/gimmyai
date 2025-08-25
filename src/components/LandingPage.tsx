@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import SEOHead from "./SEOHead";
+import Navbar from "./Navbar";
 
 export default function LandingPage() {
   const { user } = useAuth();
@@ -26,6 +27,7 @@ export default function LandingPage() {
         ]}
       />
       <div className="min-h-screen bg-slate-900 text-white">
+        <Navbar />
         {/* Hero Section */}
         <div className="relative min-h-[90vh] flex flex-col items-center justify-center p-8 overflow-hidden">
           {/* Animated background elements */}
