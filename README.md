@@ -1,15 +1,17 @@
-# GimmyAI - Your AI Homework Helper
+# GimmyAI - Your AI Learning Companion
 
-Get instant help with math, science, english, and more. Upload images of your problems for detailed explanations.
+Get guided help with math, science, english, and more. Upload images of your problems for personalized learning guidance that builds understanding, not shortcuts.
 
 ## Features
 
-- 🤖 AI-powered homework assistance
-- 📝 Support for text, images, PDFs, and documents
-- 🔒 Secure authentication with Firebase
-- 💬 Real-time chat interface
-- 📱 Responsive design for all devices
-- 🎨 Modern and intuitive UI
+- AI-powered learning guidance
+- Support for text, images, PDFs, and documents
+- Secure authentication with Firebase
+- Real-time chat interface
+- Responsive design for all devices
+- Modern and intuitive UI
+- Focus on understanding over quick answers
+- Encourages academic persistence
 
 ## Tech Stack
 
@@ -71,10 +73,12 @@ src/
 
 ## Features in Detail
 
-### AI-Powered Homework Help
+### AI-Powered Learning Guidance
 
-- Get instant answers to your questions
-- Upload images of problems for detailed explanations
+- Get guided help that builds understanding
+- Upload images for personalized learning assistance
+- Focus on concepts rather than quick answers
+- Encourages critical thinking and persistence
 - Step-by-step solutions with explanations
 - Support for multiple subjects (math, science, english, etc.)
 

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { toast } from "sonner";
 
 type InputAreaProps = {
   message: string;
@@ -46,6 +47,30 @@ const InputArea: React.FC<InputAreaProps> = ({
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedText = e.clipboardData.getData("text");
+    const currentLength = message.length;
+    const totalLength = currentLength + pastedText.length;
+
+    // If the paste would exceed the character limit, show an alert
+    if (totalLength > MAX_CHARACTERS) {
+      e.preventDefault();
+      const excessChars = totalLength - MAX_CHARACTERS;
+      toast.error(
+        `Text too long! The pasted content exceeds the character limit by ${excessChars} characters. Please shorten your text or paste it in smaller chunks.`,
+        {
+          duration: 5000,
+          style: {
+            background: "#ef4444",
+            color: "white",
+            border: "1px solid #dc2626",
+          },
+        }
+      );
+      return;
+    }
+  };
+
   const handleKeyDownLocal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Prevent typing if at character limit (except for backspace, delete, etc.)
     if (
@@ -80,6 +105,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           value={message}
           onChange={handleChange}
           onKeyDown={handleKeyDownLocal}
+          onPaste={handlePaste}
           placeholder="Type your message..."
           rows={1}
           className={`flex-1 resize-none rounded-md p-2 bg-slate-800 text-white border focus:outline-none max-h-40 min-h-[2.5rem] ${

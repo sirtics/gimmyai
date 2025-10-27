@@ -39,16 +39,16 @@ Disallow: /
 User-agent: DotBot
 Disallow: /
 
-# Block access to sensitive areas
+# Block access to sensitive areas only
 Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
 Disallow: /temp/
 Disallow: /test/
-Disallow: /chat
 Disallow: /maintenance
 
-# Allow important pages
+# IMPORTANT: Allow all public pages to be indexed
+Allow: /chat
 Allow: /signin
 Allow: /signup
 Allow: /forgot-password

@@ -89,16 +89,48 @@ const Message = ({ msg }: { msg: Message }) => (
               rel="noopener noreferrer"
               className="flex w-full max-w-[200px] h-32 bg-slate-600 rounded-lg items-center justify-center hover:bg-slate-500"
             >
-              <span className="text-slate-300">
-                {msg.imageUrl.includes("pdf")
-                  ? "📄 View PDF"
-                  : "📝 View Document"}
+              <span className="text-slate-300 flex items-center gap-2">
+                {msg.imageUrl.includes("pdf") ? (
+                  <>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    View PDF
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    View Document
+                  </>
+                )}
               </span>
             </a>
           )}
         </div>
       )}
-      <MathRenderer content={msg.content} />
+      {msg.role === "assistant" ? (
+        <MathRenderer content={msg.content} />
+      ) : (
+        <div className="whitespace-pre-wrap break-words">{msg.content}</div>
+      )}
     </div>
   </div>
 );
@@ -355,7 +387,28 @@ export default function ChatInterface() {
 
         setMessage("");
 
+        // Wait a moment for the conversation to be set and messages to load
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         setShowTyping(true);
+
+        // Get the current messages from the conversation (including the one we just added)
+        const messagesRef = collection(
+          db,
+          `conversations/${conversationId}/messages`
+        );
+        const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
+        const messagesSnapshot = await getDocs(messagesQuery);
+        const currentMessages = messagesSnapshot.docs.map((doc) => ({
+          role: doc.data().role,
+          content: doc.data().content,
+        }));
+
+        console.log(
+          `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`
+        );
+        console.log("Messages:", currentMessages);
+
         const response = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
@@ -363,13 +416,11 @@ export default function ChatInterface() {
               role: "system",
               content: aicontent,
             },
-            ...messages.map((msg) => ({
-              role: msg.role,
-              content: msg.content,
-            })),
-            { role: "user", content: message },
+            ...currentMessages,
           ],
         });
+
+        console.log("OpenAI response:", response);
 
         const aiResponse =
           response.choices?.[0]?.message?.content ||
@@ -402,7 +453,7 @@ export default function ChatInterface() {
         const errorChatMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: `❌ ${errorMessage}`,
+          content: `Error: ${errorMessage}`,
         };
 
         try {
