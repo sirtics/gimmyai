@@ -306,6 +306,8 @@ export default function ChatInterface() {
         if (!conversationId) {
           // Check conversation limit before creating new one
           if (conversations.length >= MAX_CONVERSATIONS) {
+            setIsLoading(false);
+            setIsSubmitting(false);
             setShowLimitDialog(true);
             return;
           }
@@ -333,6 +335,8 @@ export default function ChatInterface() {
             ) {
               // Check conversation limit before creating new one
               if (conversations.length >= MAX_CONVERSATIONS) {
+                setIsLoading(false);
+                setIsSubmitting(false);
                 setShowLimitDialog(true);
                 return;
               }
@@ -353,6 +357,8 @@ export default function ChatInterface() {
             showErrorToast(error, "firebase");
             // Check conversation limit before creating new one
             if (conversations.length >= MAX_CONVERSATIONS) {
+              setIsLoading(false);
+              setIsSubmitting(false);
               setShowLimitDialog(true);
               return;
             }

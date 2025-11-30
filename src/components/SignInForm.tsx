@@ -19,7 +19,20 @@ export default function SignInForm() {
       toast.success("Signed in successfully!");
       navigate("/chat");
     } catch (error: any) {
-      toast.error(error.message);
+      // Provide user-friendly error messages
+      let errorMessage = "An error occurred. Please try again.";
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "No account found with this email. Please sign up first.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Incorrect password. Please try again or reset your password.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address.";
+      } else if (error.code === "auth/too-many-requests") {
+        errorMessage = "Too many failed attempts. Please try again later or reset your password.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +64,9 @@ export default function SignInForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoComplete="email"
+                className="auth-input-field text-white"
+                placeholder="Enter your email"
               />
             </div>
 
@@ -68,7 +83,9 @@ export default function SignInForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoComplete="current-password"
+                className="auth-input-field text-white"
+                placeholder="Enter your password"
               />
             </div>
 

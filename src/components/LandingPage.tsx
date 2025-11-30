@@ -13,7 +13,7 @@ export default function LandingPage() {
     <>
       <SEOHead
         title="GimmyAI - AI Learning Companion | Guided Help with Math, Science & More"
-        description="GimmyAI (Gimmy AI) is your intelligent learning companion. Upload images of problems and get guided help that builds understanding through questions and concepts, not quick answers. Try GimmyAI today!"
+        description="GimmyAI uses the Socratic Method to help you learn. Instead of giving answers, it asks thoughtful questions that guide you to discover solutions yourself. Build deeper understanding through guided inquiry. Try GimmyAI today!"
         keywords="gimmy ai, gimmyai, jimmyai, AI learning companion, guided learning, academic persistence, critical thinking, learning guidance, concept building, AI tutor, educational support, learning strategies, study guidance, AI education"
         url="https://gimmyai.com"
         tags={[
@@ -73,11 +73,19 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto leading-relaxed"
             >
-              Your AI learning companion. Get guided help with math, science,
-              english, and more. Upload images of your problems for personalized
-              learning guidance that builds understanding, not shortcuts.
+              Your AI learning companion that uses the Socratic Method. Instead of giving you answers, 
+              GimmyAI asks thoughtful questions to help you discover solutions yourself.
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="text-lg md:text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
+              Get guided help with math, science, english, and more. Upload images of your problems 
+              and learn through discovery, not shortcuts.
             </motion.p>
 
             <motion.div
@@ -125,7 +133,7 @@ export default function LandingPage() {
             >
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-blue-400">✓</span>
-                <span>Learning Guidance</span>
+                <span>Socratic Method</span>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-blue-400">✓</span>
@@ -133,7 +141,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-blue-400">✓</span>
-                <span>Concept Building</span>
+                <span>Learn by Discovery</span>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-blue-400">✓</span>
@@ -181,11 +189,11 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  AI-Powered Help
+                  Socratic Method
                 </h3>
                 <p className="text-slate-300 leading-relaxed">
-                  Get detailed explanations and step-by-step solutions to your
-                  homework problems with our advanced AI technology
+                  GimmyAI asks thoughtful questions instead of giving direct answers, 
+                  helping you discover solutions yourself through guided inquiry
                 </p>
               </motion.div>
               <motion.div
@@ -246,8 +254,8 @@ export default function LandingPage() {
                   Real-time Chat
                 </h3>
                 <p className="text-slate-300 leading-relaxed">
-                  Interactive conversations with instant responses and
-                  personalized learning assistance
+                  Interactive conversations where GimmyAI asks questions to guide 
+                  your thinking, helping you discover answers through dialogue
                 </p>
               </motion.div>
             </div>
@@ -309,6 +317,96 @@ export default function LandingPage() {
           </motion.div>
         </section>
 
+        {/* How the Socratic Method Works Section */}
+        <section className="py-20 px-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-800/50 to-slate-900/50" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative z-10 max-w-5xl mx-auto"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 bg-clip-text text-transparent bg-size-200 animate-gradient leading-tight pb-2">
+              How the Socratic Method Works
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 p-6"
+              >
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-red-400 font-bold">✗</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-red-400">Traditional AI Tutors</h3>
+                    <p className="text-slate-300">
+                      Give you direct answers immediately. You copy the solution without understanding the process.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-blue-500/50 p-6"
+              >
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-green-400 font-bold">✓</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-green-400">GimmyAI's Approach</h3>
+                    <p className="text-slate-300">
+                      Asks questions to guide your thinking. You discover the solution yourself and truly understand it.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-slate-800/70 backdrop-blur-sm rounded-xl border border-slate-700/50 p-8"
+            >
+              <h3 className="text-2xl font-semibold mb-6 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Example Conversation
+              </h3>
+              <div className="space-y-4">
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-blue-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-blue-400">You:</strong> "How do I solve x² + 5x + 6 = 0?"</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-purple-400">GimmyAI:</strong> "What type of equation is this? And what methods do you know for solving quadratic equations?"</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-blue-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-blue-400">You:</strong> "It's a quadratic. I know factoring and the quadratic formula."</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-purple-400">GimmyAI:</strong> "Great! For factoring, what two numbers multiply to 6 and add to 5?"</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-blue-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-blue-400">You:</strong> "2 and 3!"</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-slate-300 mb-2"><strong className="text-purple-400">GimmyAI:</strong> "Perfect! So how would you write this as a factored equation?"</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 border-l-4 border-green-500">
+                  <p className="text-slate-300"><strong className="text-green-400">Result:</strong> You discover the solution yourself: (x + 2)(x + 3) = 0, so x = -2 or x = -3</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </section>
+
         {/* Humanized Learning Support Section */}
         <section className="py-20 px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-800/50" />
@@ -320,7 +418,7 @@ export default function LandingPage() {
             className="relative z-10"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400 bg-clip-text text-transparent bg-size-200 animate-gradient leading-tight pb-2">
-              Humanized Learning Support
+              The Socratic Method: Learn by Discovery
             </h2>
             <div className="max-w-4xl mx-auto text-center">
               <motion.div
@@ -346,27 +444,26 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Natural Conversations, Real Learning
+                  Questions, Not Answers
                 </h3>
                 <p className="text-slate-300 leading-relaxed text-lg mb-6">
-                  Unlike rigid tutoring systems and other chatbots, GimmyAI
-                  provides humanized feedback that feels like talking to a
-                  knowledgeable friend, making drafts sound more human. Get
-                  personalized explanations, ask follow-up questions, and
-                  receive guidance that adapts to your learning style.
+                  GimmyAI uses the Socratic Method: instead of giving you answers, 
+                  it asks thoughtful questions that guide you to discover solutions yourself. 
+                  This approach builds deeper understanding, critical thinking skills, and 
+                  confidence in your problem-solving abilities. You learn by thinking, not by copying.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-400">
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-blue-400">✓</span>
-                    <span>Conversational</span>
+                    <span>Asks Questions</span>
                   </div>
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-blue-400">✓</span>
-                    <span>Personalized</span>
+                    <span>No Direct Answers</span>
                   </div>
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-blue-400">✓</span>
-                    <span>Adaptive</span>
+                    <span>Guides Discovery</span>
                   </div>
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-blue-400">✓</span>

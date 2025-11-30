@@ -49,26 +49,61 @@ const InputArea: React.FC<InputAreaProps> = ({
 
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedText = e.clipboardData.getData("text");
-    const currentLength = message.length;
-    const totalLength = currentLength + pastedText.length;
+    if (!textareaRef.current) return;
 
-    // If the paste would exceed the character limit, show an alert
-    if (totalLength > MAX_CHARACTERS) {
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = message.substring(start, end);
+    const textBeforeSelection = message.substring(0, start);
+    const textAfterSelection = message.substring(end);
+
+    // Calculate new length after paste (replacing selection)
+    const newLength = textBeforeSelection.length + pastedText.length + textAfterSelection.length;
+
+    // If the paste would exceed the character limit, paste only what fits
+    if (newLength > MAX_CHARACTERS) {
       e.preventDefault();
-      const excessChars = totalLength - MAX_CHARACTERS;
-      toast.error(
-        `Text too long! The pasted content exceeds the character limit by ${excessChars} characters. Please shorten your text or paste it in smaller chunks.`,
-        {
-          duration: 5000,
-          style: {
-            background: "#ef4444",
-            color: "white",
-            border: "1px solid #dc2626",
-          },
-        }
-      );
+      const availableSpace = MAX_CHARACTERS - (textBeforeSelection.length + textAfterSelection.length);
+      
+      if (availableSpace > 0) {
+        // Paste as much as possible
+        const partialText = pastedText.substring(0, availableSpace);
+        const newValue = textBeforeSelection + partialText + textAfterSelection;
+        setMessage(newValue);
+        
+        // Set cursor position after pasted text and maintain focus
+        setTimeout(() => {
+          if (textareaRef.current) {
+            const newCursorPos = textBeforeSelection.length + partialText.length;
+            textareaRef.current.focus();
+            textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height =
+              textareaRef.current.scrollHeight + "px";
+          }
+        }, 0);
+        
+        const trimmedChars = pastedText.length - availableSpace;
+        toast.warning(
+          `Pasted ${availableSpace} characters. ${trimmedChars} characters were trimmed to fit the ${MAX_CHARACTERS} character limit.`,
+          {
+            duration: 4000,
+          }
+        );
+      } else {
+        // No space available
+        toast.error(
+          `Cannot paste: you've reached the ${MAX_CHARACTERS} character limit. Please delete some text first.`,
+          {
+            duration: 4000,
+          }
+        );
+      }
       return;
     }
+    // If within limit, allow default paste behavior to proceed
+    // The browser will handle the paste, then handleChange will update the state
   };
 
   const handleKeyDownLocal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -106,11 +141,14 @@ const InputArea: React.FC<InputAreaProps> = ({
           onChange={handleChange}
           onKeyDown={handleKeyDownLocal}
           onPaste={handlePaste}
-          placeholder="Type your message..."
+          placeholder="Type your message... (Paste works here!)"
           rows={1}
-          className={`flex-1 resize-none rounded-md p-2 bg-slate-800 text-white border focus:outline-none max-h-40 min-h-[2.5rem] ${
+          disabled={isLoading}
+          className={`flex-1 resize-none rounded-md p-2 bg-slate-800 text-white border focus:outline-none max-h-40 min-h-[2.5rem] transition-colors ${
             isAtLimit
               ? "border-red-500 focus:border-red-500"
+              : isLoading
+              ? "border-slate-600 opacity-50 cursor-not-allowed"
               : "border-slate-600 focus:border-blue-500"
           }`}
           style={{ overflow: "auto" }}
@@ -152,13 +190,26 @@ const InputArea: React.FC<InputAreaProps> = ({
           {isInCooldown && (
             <span>Cooldown: {cooldownRemaining}s remaining</span>
           )}
+          {isLoading && (
+            <span className="flex items-center gap-2">
+              <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+              AI is thinking...
+            </span>
+          )}
         </div>
         <div
-          className={`text-sm ${
-            isAtLimit ? "text-red-500 font-medium" : "text-slate-400"
+          className={`text-sm transition-colors ${
+            isAtLimit
+              ? "text-red-500 font-medium"
+              : characterCount > MAX_CHARACTERS * 0.9
+              ? "text-yellow-400"
+              : "text-slate-400"
           }`}
         >
           {characterCount}/{MAX_CHARACTERS}
+          {isAtLimit && (
+            <span className="ml-2 text-xs">(Limit reached)</span>
+          )}
         </div>
       </div>
     </form>

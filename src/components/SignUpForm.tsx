@@ -25,7 +25,18 @@ export default function SignUpForm() {
       toast.success("Account created successfully!");
       navigate("/chat");
     } catch (error: any) {
-      toast.error(error.message);
+      // Provide user-friendly error messages
+      let errorMessage = "An error occurred. Please try again.";
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "This email is already registered. Please sign in instead.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password is too weak. Please use a stronger password.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +70,9 @@ export default function SignUpForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoComplete="email"
+                className="auth-input-field text-white"
+                placeholder="Enter your email"
               />
             </div>
 
@@ -76,8 +89,16 @@ export default function SignUpForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoComplete="new-password"
+                minLength={6}
+                className="auth-input-field text-white"
+                placeholder="Create a password (min. 6 characters)"
               />
+              {password && password.length < 6 && (
+                <p className="text-sm text-yellow-400 mt-1">
+                  Password must be at least 6 characters
+                </p>
+              )}
             </div>
 
             <div>
@@ -93,8 +114,20 @@ export default function SignUpForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoComplete="new-password"
+                className="auth-input-field text-white"
+                placeholder="Confirm your password"
               />
+              {confirmPassword && password !== confirmPassword && (
+                <p className="text-sm text-red-400 mt-1">
+                  Passwords do not match
+                </p>
+              )}
+              {confirmPassword && password === confirmPassword && password.length >= 6 && (
+                <p className="text-sm text-green-400 mt-1">
+                  Passwords match
+                </p>
+              )}
             </div>
 
             <button
