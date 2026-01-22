@@ -4,6 +4,7 @@ import { auth } from "../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "sonner";
 import Navbar from "./Navbar";
+import { validateEmail, sanitizeInput } from "../utils/inputValidation";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
@@ -13,9 +14,20 @@ export default function SignInForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate and sanitize email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      toast.error(emailValidation.error || "Invalid email");
+      return;
+    }
+
+    // Sanitize email
+    const sanitizedEmail = sanitizeInput(email).toLowerCase().trim();
+
     try {
       setIsLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, sanitizedEmail, password);
       toast.success("Signed in successfully!");
       navigate("/chat");
     } catch (error: any) {

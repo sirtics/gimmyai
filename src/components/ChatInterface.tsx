@@ -16,13 +16,10 @@ import {
   getDoc,
   getDocs,
 } from "firebase/firestore";
-import OpenAI from "openai";
-
 import InputArea from "./InputArea";
 import MathRenderer from "./MathRenderer";
 
 import Navbar from "./Navbar";
-import { aicontent } from "../aicontent";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -30,11 +27,8 @@ import {
   showSuccessToast,
   handleOpenAIError,
 } from "../utils/errorHandler";
-
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
+import { validateAndSanitizeMessage } from "../utils/inputValidation";
+import { canSendMessage, startRateLimitCleanup } from "../utils/rateLimiter";
 
 // Conversation limit constant
 const MAX_CONVERSATIONS = 10;
@@ -201,6 +195,12 @@ export default function ChatInterface() {
     return () => unsubscribe();
   }, [user, currentConversationId]);
 
+  // Start rate limit cleanup on mount
+  useEffect(() => {
+    const cleanup = startRateLimitCleanup(60000); // Cleanup every minute
+    return cleanup;
+  }, []);
+
   // Load messages for current conversation
   useEffect(() => {
     if (!currentConversationId) {
@@ -298,9 +298,34 @@ export default function ChatInterface() {
       if (!message.trim()) return;
       if (isLoading || isSubmitting) return;
 
+      // Validate and sanitize message
+      const validation = validateAndSanitizeMessage(message);
+      if (!validation.valid || !validation.sanitized) {
+        if (validation.error) {
+          toast.error(validation.error);
+        }
+        return;
+      }
+
+      // Check rate limiting
+      const rateLimitCheck = canSendMessage(user.uid);
+      if (!rateLimitCheck.allowed) {
+        const secondsUntilReset = Math.ceil((rateLimitCheck.resetTime - Date.now()) / 1000);
+        toast.error(
+          rateLimitCheck.error || `Rate limit exceeded. Please wait ${secondsUntilReset} seconds before sending another message.`,
+          {
+            duration: 6000,
+          }
+        );
+        return;
+      }
+
       try {
         setIsLoading(true);
         setIsSubmitting(true);
+
+        // Use sanitized message
+        const sanitizedMessage = validation.sanitized;
 
         let conversationId = currentConversationId;
         if (!conversationId) {
@@ -380,7 +405,7 @@ export default function ChatInterface() {
         const newMessage: Message = {
           id: Date.now().toString(),
           role: "user",
-          content: message,
+          content: sanitizedMessage,
         };
 
         await addDoc(
@@ -413,24 +438,26 @@ export default function ChatInterface() {
         console.log(
           `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`
         );
-        console.log("Messages:", currentMessages);
 
-        const response = await openai.chat.completions.create({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: aicontent,
-            },
-            ...currentMessages,
-          ],
+        // Call server-side API endpoint (API key is protected on server)
+        const apiResponse = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: currentMessages,
+            userId: user.uid,
+          }),
         });
 
-        console.log("OpenAI response:", response);
+        if (!apiResponse.ok) {
+          const errorData = await apiResponse.json();
+          throw new Error(errorData.error || "Failed to get AI response");
+        }
 
-        const aiResponse =
-          response.choices?.[0]?.message?.content ||
-          "Sorry, I couldn't generate a response.";
+        const data = await apiResponse.json();
+        const aiResponse = data.content || "Sorry, I couldn't generate a response.";
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
@@ -453,7 +480,13 @@ export default function ChatInterface() {
         setShowTyping(false);
 
         // Get the error message and display it in chat
-        const errorMessage = handleOpenAIError(error);
+        let errorMessage = "Sorry, something went wrong. Please try again.";
+        
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
 
         // Add error message as a system message in the chat
         const errorChatMessage: Message = {
@@ -480,8 +513,8 @@ export default function ChatInterface() {
           setMessages((prev) => [...prev, errorChatMessage]);
         }
 
-        // Still show toast as backup (but less noisy)
-        showErrorToast(error, "openai");
+        // Still show toast as backup
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
         setIsSubmitting(false);
@@ -669,7 +702,21 @@ export default function ChatInterface() {
         <div className="flex-1 overflow-y-auto">
           {conversations.length === 0 ? (
             <div className="p-4 text-center text-slate-400">
-              No conversations yet
+              <svg
+                className="w-12 h-12 mx-auto mb-2 text-slate-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
+              <p className="text-sm">No conversations yet</p>
+              <p className="text-xs mt-1 text-slate-500">Start a new chat to begin!</p>
             </div>
           ) : (
             conversations.map((conv) => (
@@ -758,9 +805,28 @@ export default function ChatInterface() {
             paddingBottom: "3.5rem", // gap before input area
           }}
         >
-          {messages.map((msg) => (
-            <Message key={msg.id} msg={msg} />
-          ))}
+          {messages.length === 0 && !showTyping && !currentConversationId ? (
+            <div className="flex flex-col items-center justify-center h-full text-center px-4">
+              <img
+                src="/logo/gimmyai-transparentbg.png"
+                alt="GimmyAI Logo"
+                className="w-24 h-24 mb-4 opacity-50"
+              />
+              <h2 className="text-2xl font-bold text-slate-300 mb-2">
+                Welcome to GimmyAI!
+              </h2>
+              <p className="text-slate-400 max-w-md">
+                I'm here to help you learn using the Socratic Method. Instead of giving you direct answers, I'll ask guiding questions to help you discover solutions yourself.
+              </p>
+              <p className="text-slate-500 text-sm mt-4">
+                Start by typing a question or uploading an image of your problem.
+              </p>
+            </div>
+          ) : (
+            messages.map((msg) => (
+              <Message key={msg.id} msg={msg} />
+            ))
+          )}
           {showTyping && (
             <div className="flex items-center space-x-2 text-slate-400 px-4">
               <div className="flex space-x-1">

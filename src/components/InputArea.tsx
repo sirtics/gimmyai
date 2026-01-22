@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { validateAndSanitizeMessage, MAX_MESSAGE_LENGTH } from "../utils/inputValidation";
+import { canSendMessage } from "../utils/rateLimiter";
 
 type InputAreaProps = {
   message: string;
@@ -11,8 +13,7 @@ type InputAreaProps = {
   isLoading: boolean;
 };
 
-// Character limit constant
-const MAX_CHARACTERS = 1000;
+// Character limit constant (imported from validation utils)
 
 const InputArea: React.FC<InputAreaProps> = ({
   message,
@@ -36,14 +37,25 @@ const InputArea: React.FC<InputAreaProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
 
-    // Only allow changes if under character limit
-    if (newValue.length <= MAX_CHARACTERS) {
-      setMessage(newValue);
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
-        textareaRef.current.style.height =
-          textareaRef.current.scrollHeight + "px";
+    // Validate and sanitize input
+    const validation = validateAndSanitizeMessage(newValue);
+    
+    if (validation.valid && validation.sanitized) {
+      // Only allow changes if under character limit
+      if (validation.sanitized.length <= MAX_MESSAGE_LENGTH) {
+        setMessage(validation.sanitized);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = "auto";
+          textareaRef.current.style.height =
+            textareaRef.current.scrollHeight + "px";
+        }
+      } else {
+        // Show error if exceeds limit
+        toast.error(`Message cannot exceed ${MAX_MESSAGE_LENGTH} characters`);
       }
+    } else if (validation.error) {
+      // Show validation error
+      toast.error(validation.error);
     }
   };
 
@@ -51,24 +63,34 @@ const InputArea: React.FC<InputAreaProps> = ({
     const pastedText = e.clipboardData.getData("text");
     if (!textareaRef.current) return;
 
+    // Validate and sanitize pasted text
+    const validation = validateAndSanitizeMessage(pastedText);
+    if (!validation.valid || !validation.sanitized) {
+      e.preventDefault();
+      if (validation.error) {
+        toast.error(validation.error);
+      }
+      return;
+    }
+
+    const sanitizedPastedText = validation.sanitized;
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    const selectedText = message.substring(start, end);
     const textBeforeSelection = message.substring(0, start);
     const textAfterSelection = message.substring(end);
 
     // Calculate new length after paste (replacing selection)
-    const newLength = textBeforeSelection.length + pastedText.length + textAfterSelection.length;
+    const newLength = textBeforeSelection.length + sanitizedPastedText.length + textAfterSelection.length;
 
     // If the paste would exceed the character limit, paste only what fits
-    if (newLength > MAX_CHARACTERS) {
+    if (newLength > MAX_MESSAGE_LENGTH) {
       e.preventDefault();
-      const availableSpace = MAX_CHARACTERS - (textBeforeSelection.length + textAfterSelection.length);
+      const availableSpace = MAX_MESSAGE_LENGTH - (textBeforeSelection.length + textAfterSelection.length);
       
       if (availableSpace > 0) {
         // Paste as much as possible
-        const partialText = pastedText.substring(0, availableSpace);
+        const partialText = sanitizedPastedText.substring(0, availableSpace);
         const newValue = textBeforeSelection + partialText + textAfterSelection;
         setMessage(newValue);
         
@@ -84,9 +106,9 @@ const InputArea: React.FC<InputAreaProps> = ({
           }
         }, 0);
         
-        const trimmedChars = pastedText.length - availableSpace;
+        const trimmedChars = sanitizedPastedText.length - availableSpace;
         toast.warning(
-          `Pasted ${availableSpace} characters. ${trimmedChars} characters were trimmed to fit the ${MAX_CHARACTERS} character limit.`,
+          `Pasted ${availableSpace} characters. ${trimmedChars} characters were trimmed to fit the ${MAX_MESSAGE_LENGTH} character limit.`,
           {
             duration: 4000,
           }
@@ -94,7 +116,7 @@ const InputArea: React.FC<InputAreaProps> = ({
       } else {
         // No space available
         toast.error(
-          `Cannot paste: you've reached the ${MAX_CHARACTERS} character limit. Please delete some text first.`,
+          `Cannot paste: you've reached the ${MAX_MESSAGE_LENGTH} character limit. Please delete some text first.`,
           {
             duration: 4000,
           }
@@ -109,7 +131,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   const handleKeyDownLocal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Prevent typing if at character limit (except for backspace, delete, etc.)
     if (
-      message.length >= MAX_CHARACTERS &&
+      message.length >= MAX_MESSAGE_LENGTH &&
       ![
         "Backspace",
         "Delete",
@@ -129,7 +151,7 @@ const InputArea: React.FC<InputAreaProps> = ({
     handleKeyDown(e);
   };
 
-  const isAtLimit = message.length >= MAX_CHARACTERS;
+  const isAtLimit = message.length >= MAX_MESSAGE_LENGTH;
   const characterCount = message.length;
 
   return (
@@ -201,12 +223,12 @@ const InputArea: React.FC<InputAreaProps> = ({
           className={`text-sm transition-colors ${
             isAtLimit
               ? "text-red-500 font-medium"
-              : characterCount > MAX_CHARACTERS * 0.9
+              : characterCount > MAX_MESSAGE_LENGTH * 0.9
               ? "text-yellow-400"
               : "text-slate-400"
           }`}
         >
-          {characterCount}/{MAX_CHARACTERS}
+          {characterCount}/{MAX_MESSAGE_LENGTH}
           {isAtLimit && (
             <span className="ml-2 text-xs">(Limit reached)</span>
           )}

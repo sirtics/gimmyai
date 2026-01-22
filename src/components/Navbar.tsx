@@ -86,12 +86,17 @@ export default function Navbar({
             {/* Mobile dropdown */}
             <div className="md:hidden relative">
               <details className="group">
-                <summary className="list-none cursor-pointer flex items-center px-2 py-1 rounded-lg hover:bg-slate-800 focus:outline-none">
+                <summary 
+                  className="list-none cursor-pointer flex items-center px-2 py-1 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Open menu"
+                  aria-expanded="false"
+                >
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -101,7 +106,10 @@ export default function Navbar({
                     />
                   </svg>
                 </summary>
-                <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg z-20 py-2 border border-slate-700">
+                <div 
+                  className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg z-20 py-2 border border-slate-700"
+                  role="menu"
+                >
                   {user ? (
                     <>
                       <div className="px-4 py-2 text-slate-300 truncate">
@@ -110,6 +118,7 @@ export default function Navbar({
                       <button
                         onClick={handleSignOut}
                         className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-700 transition-colors"
+                        role="menuitem"
                       >
                         Sign Out
                       </button>
@@ -119,12 +128,14 @@ export default function Navbar({
                       <Link
                         to="/signin"
                         className="block px-4 py-2 text-slate-300 hover:bg-slate-700 transition-colors"
+                        role="menuitem"
                       >
                         Sign In
                       </Link>
                       <Link
                         to="/signup"
                         className="block px-4 py-2 text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 mt-2"
+                        role="menuitem"
                       >
                         Sign Up
                       </Link>

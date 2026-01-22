@@ -4,6 +4,7 @@ import { auth } from "../firebase/config";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { toast } from "sonner";
 import Navbar from "./Navbar";
+import { validateEmail, sanitizeInput } from "../utils/inputValidation";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -12,13 +13,27 @@ export default function ForgotPasswordForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate and sanitize email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      toast.error(emailValidation.error || "Invalid email");
+      return;
+    }
+
+    // Sanitize email
+    const sanitizedEmail = sanitizeInput(email).toLowerCase().trim();
+
     try {
       setIsLoading(true);
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, sanitizedEmail);
       setIsEmailSent(true);
-      toast.success("Password reset email sent!");
+      toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
-      toast.error(error.message);
+      // Don't reveal if email exists or not (security best practice)
+      // Always show success message to prevent email enumeration
+      setIsEmailSent(true);
+      toast.success("If an account exists with this email, a password reset link has been sent.");
     } finally {
       setIsLoading(false);
     }

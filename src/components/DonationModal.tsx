@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
+import { validateDonationAmount } from "../utils/inputValidation";
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -13,8 +14,12 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
 
   const handleDonate = async () => {
-    if (!amount || parseFloat(amount) < 5) {
-      toast.error("Minimum donation amount is $5 USD");
+    const amountNum = parseFloat(amount);
+    
+    // Validate donation amount
+    const validation = validateDonationAmount(amountNum);
+    if (!validation.valid) {
+      toast.error(validation.error || "Invalid donation amount");
       return;
     }
 
@@ -27,7 +32,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: Math.round(parseFloat(amount) * 100), // Convert to cents
+          amount: Math.round(amountNum * 100), // Convert to cents
           userId: user?.uid || "anonymous",
         }),
       });

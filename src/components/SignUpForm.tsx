@@ -4,6 +4,7 @@ import { auth } from "../firebase/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from "sonner";
 import Navbar from "./Navbar";
+import { validateEmail, validatePassword, sanitizeInput } from "../utils/inputValidation";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
@@ -14,14 +15,31 @@ export default function SignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate and sanitize inputs
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      toast.error(emailValidation.error || "Invalid email");
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      toast.error(passwordValidation.error || "Invalid password");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeInput(email).toLowerCase().trim();
+
     try {
       setIsLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, sanitizedEmail, password);
       toast.success("Account created successfully!");
       navigate("/chat");
     } catch (error: any) {

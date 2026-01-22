@@ -41,6 +41,7 @@ Get guided help with math, science, english, and more. Upload images of your pro
 
 3. Create a `.env` file in the root directory with your Firebase and OpenAI credentials:
 
+   **Client-side variables (VITE_ prefix):**
    ```env
    VITE_FIREBASE_API_KEY=your_firebase_api_key
    VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
@@ -48,12 +49,27 @@ Get guided help with math, science, english, and more. Upload images of your pro
    VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
    VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
    VITE_FIREBASE_APP_ID=your_firebase_app_id
-   VITE_OPENAI_API_KEY=your_openai_api_key
    ```
+
+   **Server-side variables (for server.js):**
+   ```env
+   OPENAI_API_KEY=your_openai_api_key
+   STRIPE_SECRET_KEY=your_stripe_secret_key (optional, for donations)
+   STRIPE_WEBHOOK_SECRET=your_webhook_secret (optional, for donations)
+   UPLOADTHING_APP_ID=your_uploadthing_app_id (optional, for file uploads)
+   UPLOADTHING_TOKEN=your_uploadthing_token (optional, for file uploads)
+   PORT=3000
+   ```
+
+   **Note**: The OpenAI API key is now server-side only for security. See [SECURITY.md](./SECURITY.md) for more details.
 
 4. Start the development server:
 
    ```bash
+   # Start the backend server (for API endpoints)
+   node server.js
+
+   # In another terminal, start the frontend dev server
    npm run dev
    ```
 
@@ -107,6 +123,18 @@ src/
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Security
+
+GimmyAI implements comprehensive security measures including:
+- Server-side API key protection
+- Input validation and sanitization
+- Rate limiting (client and server-side)
+- Firebase security rules
+- XSS and injection prevention
+- Secure error handling
+
+See [SECURITY.md](./SECURITY.md) for detailed security documentation.
 
 ## Support
 
