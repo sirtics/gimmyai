@@ -16,10 +16,12 @@ import {
   getDoc,
   getDocs,
 } from "firebase/firestore";
+import OpenAI from "openai";
 import InputArea from "./InputArea";
 import MathRenderer from "./MathRenderer";
 
 import Navbar from "./Navbar";
+import { aicontent } from "../aicontent";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -29,6 +31,11 @@ import {
 } from "../utils/errorHandler";
 import { validateAndSanitizeMessage } from "../utils/inputValidation";
 import { canSendMessage, startRateLimitCleanup } from "../utils/rateLimiter";
+
+const openai = new OpenAI({
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 // Conversation limit constant
 const MAX_CONVERSATIONS = 10;
@@ -438,26 +445,24 @@ export default function ChatInterface() {
         console.log(
           `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`
         );
+        console.log("Messages:", currentMessages);
 
-        // Call server-side API endpoint (API key is protected on server)
-        const apiResponse = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: currentMessages,
-            userId: user.uid,
-          }),
+        const response = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: aicontent,
+            },
+            ...currentMessages,
+          ],
         });
 
-        if (!apiResponse.ok) {
-          const errorData = await apiResponse.json();
-          throw new Error(errorData.error || "Failed to get AI response");
-        }
+        console.log("OpenAI response:", response);
 
-        const data = await apiResponse.json();
-        const aiResponse = data.content || "Sorry, I couldn't generate a response.";
+        const aiResponse =
+          response.choices?.[0]?.message?.content ||
+          "Sorry, I couldn't generate a response.";
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
@@ -480,13 +485,7 @@ export default function ChatInterface() {
         setShowTyping(false);
 
         // Get the error message and display it in chat
-        let errorMessage = "Sorry, something went wrong. Please try again.";
-        
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        } else if (error?.message) {
-          errorMessage = error.message;
-        }
+        const errorMessage = handleOpenAIError(error);
 
         // Add error message as a system message in the chat
         const errorChatMessage: Message = {
@@ -513,8 +512,8 @@ export default function ChatInterface() {
           setMessages((prev) => [...prev, errorChatMessage]);
         }
 
-        // Still show toast as backup
-        toast.error(errorMessage);
+        // Still show toast as backup (but less noisy)
+        showErrorToast(error, "openai");
       } finally {
         setIsLoading(false);
         setIsSubmitting(false);
