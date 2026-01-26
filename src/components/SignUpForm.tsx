@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../firebase/config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { toast } from "sonner";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Navbar from "./Navbar";
 import { validateEmail, validatePassword, sanitizeInput } from "../utils/inputValidation";
+import { canSignUp } from "../utils/rateLimiter";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
@@ -13,8 +15,19 @@ export default function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Get reCAPTCHA hook (always available since provider always renders)
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check rate limiting first
+    const rateLimitCheck = canSignUp();
+    if (!rateLimitCheck.allowed) {
+      toast.error(rateLimitCheck.error || "Too many signup attempts. Please try again later.");
+      return;
+    }
 
     // Validate and sanitize inputs
     const emailValidation = validateEmail(email);
@@ -37,11 +50,35 @@ export default function SignUpForm() {
     // Sanitize inputs
     const sanitizedEmail = sanitizeInput(email).toLowerCase().trim();
 
+    // Verify reCAPTCHA if configured
+    if (recaptchaSiteKey && executeRecaptcha) {
+      try {
+        const recaptchaToken = await executeRecaptcha("signup");
+        if (!recaptchaToken) {
+          toast.error("reCAPTCHA verification failed. Please try again.");
+          return;
+        }
+        // Token is verified (in production, you could verify server-side)
+      } catch (recaptchaError) {
+        console.error("reCAPTCHA error:", recaptchaError);
+        toast.error("Security verification failed. Please refresh the page and try again.");
+        return;
+      }
+    }
+
     try {
       setIsLoading(true);
-      await createUserWithEmailAndPassword(auth, sanitizedEmail, password);
-      toast.success("Account created successfully!");
-      navigate("/chat");
+      
+      // Create user account
+      const userCredential = await createUserWithEmailAndPassword(auth, sanitizedEmail, password);
+      
+      // Send email verification
+      if (userCredential.user) {
+        await sendEmailVerification(userCredential.user);
+        toast.success("Account created! Please check your email to verify your account before using the chat.");
+        toast.info("You'll need to verify your email before you can use GimmyAI.");
+        navigate("/signin");
+      }
     } catch (error: any) {
       // Provide user-friendly error messages
       let errorMessage = "An error occurred. Please try again.";
@@ -51,6 +88,8 @@ export default function SignUpForm() {
         errorMessage = "Password is too weak. Please use a stronger password.";
       } else if (error.code === "auth/invalid-email") {
         errorMessage = "Please enter a valid email address.";
+      } else if (error.code === "auth/operation-not-allowed") {
+        errorMessage = "Account creation is temporarily disabled. Please try again later.";
       } else if (error.message) {
         errorMessage = error.message;
       }

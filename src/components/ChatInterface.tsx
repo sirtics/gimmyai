@@ -181,7 +181,7 @@ export default function ChatInterface() {
     const q = query(
       conversationsRef,
       where("userId", "==", user.uid),
-      orderBy("updatedAt", "desc")
+      orderBy("updatedAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -228,7 +228,7 @@ export default function ChatInterface() {
 
     const messagesRef = collection(
       db,
-      `conversations/${currentConversationId}/messages`
+      `conversations/${currentConversationId}/messages`,
     );
     const q = query(messagesRef, orderBy("timestamp", "asc"));
 
@@ -246,7 +246,7 @@ export default function ChatInterface() {
         console.log(
           `Loading messages for conversation ${currentConversationId}:`,
           newMessages.length,
-          "messages"
+          "messages",
         );
 
         // Only show welcome message if there are no other messages
@@ -266,7 +266,7 @@ export default function ChatInterface() {
       },
       (error) => {
         showErrorToast(error, "firebase");
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -295,7 +295,7 @@ export default function ChatInterface() {
         console.error("Error updating conversation title:", error);
       }
     },
-    []
+    [],
   );
 
   const handleSubmit = useCallback(
@@ -317,12 +317,15 @@ export default function ChatInterface() {
       // Check rate limiting
       const rateLimitCheck = canSendMessage(user.uid);
       if (!rateLimitCheck.allowed) {
-        const secondsUntilReset = Math.ceil((rateLimitCheck.resetTime - Date.now()) / 1000);
+        const secondsUntilReset = Math.ceil(
+          (rateLimitCheck.resetTime - Date.now()) / 1000,
+        );
         toast.error(
-          rateLimitCheck.error || `Rate limit exceeded. Please wait ${secondsUntilReset} seconds before sending another message.`,
+          rateLimitCheck.error ||
+            `Rate limit exceeded. Please wait ${secondsUntilReset} seconds before sending another message.`,
           {
             duration: 6000,
-          }
+          },
         );
         return;
       }
@@ -351,7 +354,7 @@ export default function ChatInterface() {
               title: "New Chat",
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
-            }
+            },
           );
           conversationId = newConversationRef.id;
           setCurrentConversationId(conversationId);
@@ -359,7 +362,7 @@ export default function ChatInterface() {
           // Verify the conversation belongs to the current user
           try {
             const conversationDoc = await getDoc(
-              doc(db, "conversations", conversationId)
+              doc(db, "conversations", conversationId),
             );
             if (
               !conversationDoc.exists() ||
@@ -380,7 +383,7 @@ export default function ChatInterface() {
                   title: "New Chat",
                   createdAt: serverTimestamp(),
                   updatedAt: serverTimestamp(),
-                }
+                },
               );
               conversationId = newConversationRef.id;
               setCurrentConversationId(conversationId);
@@ -402,7 +405,7 @@ export default function ChatInterface() {
                 title: "New Chat",
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
-              }
+              },
             );
             conversationId = newConversationRef.id;
             setCurrentConversationId(conversationId);
@@ -420,7 +423,7 @@ export default function ChatInterface() {
           {
             ...newMessage,
             timestamp: serverTimestamp(),
-          }
+          },
         );
 
         setMessage("");
@@ -433,7 +436,7 @@ export default function ChatInterface() {
         // Get the current messages from the conversation (including the one we just added)
         const messagesRef = collection(
           db,
-          `conversations/${conversationId}/messages`
+          `conversations/${conversationId}/messages`,
         );
         const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
         const messagesSnapshot = await getDocs(messagesQuery);
@@ -443,7 +446,7 @@ export default function ChatInterface() {
         }));
 
         console.log(
-          `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`
+          `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`,
         );
         console.log("Messages:", currentMessages);
 
@@ -474,7 +477,7 @@ export default function ChatInterface() {
           {
             ...aiMessage,
             timestamp: serverTimestamp(),
-          }
+          },
         );
 
         // Update conversation title after AI responds
@@ -501,7 +504,7 @@ export default function ChatInterface() {
               {
                 ...errorChatMessage,
                 timestamp: serverTimestamp(),
-              }
+              },
             );
           } else {
             // If no conversation ID, just add to local messages
@@ -528,7 +531,7 @@ export default function ChatInterface() {
       messages,
       conversations.length,
       updateConversationTitle,
-    ]
+    ],
   );
 
   const handleKeyDown = useCallback(
@@ -538,7 +541,7 @@ export default function ChatInterface() {
         void handleSubmit(e);
       }
     },
-    [handleSubmit]
+    [handleSubmit],
   );
 
   const handleFormSubmit = useCallback(
@@ -548,7 +551,7 @@ export default function ChatInterface() {
       if (isLoading || isSubmitting) return;
       void handleSubmit(e);
     },
-    [message, isLoading, isSubmitting, handleSubmit]
+    [message, isLoading, isSubmitting, handleSubmit],
   );
 
   const handleNewChat = async () => {
@@ -585,7 +588,7 @@ export default function ChatInterface() {
 
   const handleDeleteConversation = async (
     conversationId: string,
-    e: React.MouseEvent
+    e: React.MouseEvent,
   ) => {
     e.stopPropagation(); // Prevent triggering the conversation selection
 
@@ -604,7 +607,7 @@ export default function ChatInterface() {
       // If the deleted conversation was the current one, switch to the most recent conversation
       if (conversationToDelete === currentConversationId) {
         const remainingConversations = conversations.filter(
-          (c) => c.id !== conversationToDelete
+          (c) => c.id !== conversationToDelete,
         );
         if (remainingConversations.length > 0) {
           setCurrentConversationId(remainingConversations[0].id);
@@ -715,7 +718,9 @@ export default function ChatInterface() {
                 />
               </svg>
               <p className="text-sm">No conversations yet</p>
-              <p className="text-xs mt-1 text-slate-500">Start a new chat to begin!</p>
+              <p className="text-xs mt-1 text-slate-500">
+                Start a new chat to begin!
+              </p>
             </div>
           ) : (
             conversations.map((conv) => (
@@ -798,10 +803,9 @@ export default function ChatInterface() {
       <div className="flex-1 flex flex-col min-w-0 ml-0 md:ml-64 h-full pt-16 relative">
         <div
           ref={chatContainerRef}
-          className="overflow-y-auto px-4 py-2 space-y-4"
+          className="overflow-y-auto px-4 py-6 space-y-4"
           style={{
-            height: "calc(100vh - 4rem - 4rem)", // viewport height minus navbar (4rem) minus input area (4rem)
-            paddingBottom: "3.5rem", // gap before input area
+            height: "calc(100vh - 4rem - 5.5rem)", // viewport height minus navbar (4rem) minus input area (5.5rem for spacing)
           }}
         >
           {messages.length === 0 && !showTyping && !currentConversationId ? (
@@ -815,16 +819,17 @@ export default function ChatInterface() {
                 Welcome to GimmyAI!
               </h2>
               <p className="text-slate-400 max-w-md">
-                I'm here to help you learn using the Socratic Method. Instead of giving you direct answers, I'll ask guiding questions to help you discover solutions yourself.
+                I'm here to help you learn using the Socratic Method. Instead of
+                giving you direct answers, I'll ask guiding questions to help
+                you discover solutions yourself.
               </p>
               <p className="text-slate-500 text-sm mt-4">
-                Start by typing a question or uploading an image of your problem.
+                Start by typing a question or uploading an image of your
+                problem.
               </p>
             </div>
           ) : (
-            messages.map((msg) => (
-              <Message key={msg.id} msg={msg} />
-            ))
+            messages.map((msg) => <Message key={msg.id} msg={msg} />)
           )}
           {showTyping && (
             <div className="flex items-center space-x-2 text-slate-400 px-4">

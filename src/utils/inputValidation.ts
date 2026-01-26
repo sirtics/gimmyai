@@ -15,6 +15,8 @@ export const RATE_LIMITS = {
   MESSAGES_PER_HOUR: 100,
   API_CALLS_PER_MINUTE: 20,
   API_CALLS_PER_HOUR: 200,
+  SIGNUPS_PER_HOUR: 3, // Limit signups per hour per IP/session
+  SIGNUPS_PER_DAY: 5, // Limit signups per day per IP/session
 };
 
 /**
@@ -64,6 +66,24 @@ export function validateEmail(email: string): { valid: boolean; error?: string }
   // Check for dangerous patterns
   if (email.includes("<") || email.includes(">") || email.includes("'") || email.includes('"')) {
     return { valid: false, error: "Email contains invalid characters" };
+  }
+
+  // Check for suspicious email patterns (bot detection)
+  const suspiciousPatterns = [
+    // Disposable email domains (common ones)
+    /@(10minutemail|tempmail|guerrillamail|mailinator|throwaway|temp-mail|yopmail|getnada|mohmal|fakeinbox|trashmail|mintemail|dispostable|mytemp|sharklasers|grr\.la|guerrillamailblock|pokemail|spam4|emailondeck|maildrop|meltmail|mintemail|mohmal|mytrashmail|nada|spamgourmet|throwawaymail|tempail|tempmail|trashmail|yopmail)\./i,
+    // Suspicious patterns
+    /^[a-z0-9]{1,5}@/, // Very short local part
+    /^[a-z0-9]{20,}@/, // Very long local part
+    /\d{10,}@/, // Many consecutive digits
+    /(test|fake|bot|spam|temp|trial|demo|sample)\d*@/i, // Common bot keywords
+    /^[a-z]+[0-9]{6,}@/, // Pattern like "user1234567@"
+  ];
+
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(email)) {
+      return { valid: false, error: "This email address appears to be invalid or suspicious" };
+    }
   }
 
   return { valid: true };

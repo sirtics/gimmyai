@@ -49,6 +49,8 @@ Get guided help with math, science, english, and more. Upload images of your pro
    VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
    VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
    VITE_FIREBASE_APP_ID=your_firebase_app_id
+   VITE_OPENAI_API_KEY=your_openai_api_key
+   VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key  # Optional but recommended for bot protection
    ```
 
    **Server-side variables (for server.js):**
@@ -124,6 +126,28 @@ src/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Bot Protection
+
+GimmyAI includes comprehensive bot protection to prevent automated account creation and token abuse:
+
+- **reCAPTCHA v3** - Invisible bot detection on signup
+- **Email Verification** - Users must verify email before using chat
+- **Rate Limiting** - Limits signup attempts per hour/day
+- **Suspicious Email Detection** - Blocks disposable email domains
+
+See [BOT_PROTECTION_SETUP.md](./BOT_PROTECTION_SETUP.md) for detailed setup instructions.
+
+## Bot Protection
+
+GimmyAI includes comprehensive bot protection to prevent automated account creation and token abuse:
+
+- **reCAPTCHA v3** - Invisible bot detection on signup
+- **Email Verification** - Users must verify email before using chat
+- **Rate Limiting** - Limits signup attempts per hour/day
+- **Suspicious Email Detection** - Blocks disposable email domains
+
+See [BOT_PROTECTION_SETUP.md](./BOT_PROTECTION_SETUP.md) for detailed setup instructions.
+
 ## Security
 
 GimmyAI implements comprehensive security measures including:
@@ -133,6 +157,7 @@ GimmyAI implements comprehensive security measures including:
 - Firebase security rules
 - XSS and injection prevention
 - Secure error handling
+- Bot protection (reCAPTCHA, email verification, rate limiting)
 
 See [SECURITY.md](./SECURITY.md) for detailed security documentation.
 

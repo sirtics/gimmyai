@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import ReCaptchaProvider from "./components/ReCaptchaProvider";
 import Navbar from "./components/Navbar";
 import ChatInterface from "./components/ChatInterface";
 import SignInForm from "./components/SignInForm";
@@ -40,36 +41,38 @@ function App() {
 
   return (
     <HelmetProvider>
-      <Router>
-        <AuthProvider>
-          <div className="min-h-screen bg-slate-900 text-white">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/signin" element={<SignInForm />} />
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-              <Route
-                path="/chat"
-                element={
-                  <PrivateRoute>
-                    <ChatInterface />
-                  </PrivateRoute>
-                }
-              />
-              {/* Maintenance route for testing */}
-              <Route
-                path="/maintenance"
-                element={
-                  <MaintenancePage
-                    {...getMaintenanceConfig("reconstruction")}
-                  />
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </AuthProvider>
-      </Router>
+      <ReCaptchaProvider>
+        <Router>
+          <AuthProvider>
+            <div className="min-h-screen bg-slate-900 text-white">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/signin" element={<SignInForm />} />
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+                <Route
+                  path="/chat"
+                  element={
+                    <PrivateRoute>
+                      <ChatInterface />
+                    </PrivateRoute>
+                  }
+                />
+                {/* Maintenance route for testing */}
+                <Route
+                  path="/maintenance"
+                  element={
+                    <MaintenancePage
+                      {...getMaintenanceConfig("reconstruction")}
+                    />
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </AuthProvider>
+        </Router>
+      </ReCaptchaProvider>
     </HelmetProvider>
   );
 }

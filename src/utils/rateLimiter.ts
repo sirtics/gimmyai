@@ -222,3 +222,55 @@ export function startRateLimitCleanup(intervalMs: number = 60000): () => void {
   // Return cleanup function
   return () => clearInterval(intervalId);
 }
+
+/**
+ * Checks if user can create a new account (signup rate limiting)
+ */
+export function canSignUp(ipAddress?: string): {
+  allowed: boolean;
+  remaining: number;
+  resetTime: number;
+  error?: string;
+} {
+  const userKey = ipAddress ? `signup:${ipAddress}` : "signup:anonymous";
+  
+  // Check per-hour limit
+  const hourCheck = checkRateLimit(
+    `${userKey}:hour`,
+    RATE_LIMITS.SIGNUPS_PER_HOUR,
+    60 * 60 * 1000
+  );
+
+  if (!hourCheck.allowed) {
+    const minutesUntilReset = Math.ceil((hourCheck.resetTime - Date.now()) / (60 * 1000));
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: hourCheck.resetTime,
+      error: `Too many signup attempts. Please wait ${minutesUntilReset} minutes before trying again.`,
+    };
+  }
+
+  // Check per-day limit
+  const dayCheck = checkRateLimit(
+    `${userKey}:day`,
+    RATE_LIMITS.SIGNUPS_PER_DAY,
+    24 * 60 * 60 * 1000
+  );
+
+  if (!dayCheck.allowed) {
+    const hoursUntilReset = Math.ceil((dayCheck.resetTime - Date.now()) / (60 * 60 * 1000));
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: dayCheck.resetTime,
+      error: `Daily signup limit reached. Please wait ${hoursUntilReset} hours before trying again.`,
+    };
+  }
+
+  return {
+    allowed: true,
+    remaining: Math.min(hourCheck.remaining, dayCheck.remaining),
+    resetTime: Math.min(hourCheck.resetTime, dayCheck.resetTime),
+  };
+}

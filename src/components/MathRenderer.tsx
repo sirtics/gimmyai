@@ -106,12 +106,19 @@ const MathRenderer: React.FC<MathRendererProps> = ({
     try {
       if (isBlock) {
         return (
-          <div className="my-4 p-3 bg-slate-800 rounded border border-slate-700 overflow-x-auto">
-            <BlockMath math={mathContent} />
+          <div className="my-4 overflow-x-auto">
+            <div className="text-center">
+              <BlockMath math={mathContent} />
+            </div>
           </div>
         );
       } else {
-        return <InlineMath math={mathContent} />;
+        // Inline math - make it seamless with text
+        return (
+          <span className="inline-block align-middle">
+            <InlineMath math={mathContent} />
+          </span>
+        );
       }
     } catch (error) {
       // If LaTeX parsing fails, return the original text with styling
@@ -139,33 +146,38 @@ const MathRenderer: React.FC<MathRendererProps> = ({
     // Preprocess the content first
     const processedText = preprocessContent(text);
 
-    // Only process text that already has LaTeX delimiters - no automatic conversion
-    // Split by math delimiters first
-    const parts = processedText.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
+    // Split by math delimiters - handle both inline ($...$) and block ($$...$$)
+    // Use a regex that properly captures math expressions
+    const parts = processedText.split(/(\$\$[^$]+\$\$|\$[^$\n]+\$)/);
 
     return parts
       .map((part, index) => {
-        // Inline math: $...$
-        if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
-          const mathContent = part.slice(1, -1).trim();
-          return renderMath(mathContent, false);
-        }
-
         // Block math: $$...$$
         if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4) {
           const mathContent = part.slice(2, -2).trim();
-          return renderMath(mathContent, true);
+          return <div key={index}>{renderMath(mathContent, true)}</div>;
+        }
+
+        // Inline math: $...$ (but not block math)
+        if (
+          part.startsWith("$") &&
+          part.endsWith("$") &&
+          part.length > 2 &&
+          !part.startsWith("$$")
+        ) {
+          const mathContent = part.slice(1, -1).trim();
+          return <span key={index}>{renderMath(mathContent, false)}</span>;
         }
 
         // Regular text - render with markdown
         if (part.trim()) {
           return (
-            <div key={index}>
+            <span key={index} className="inline">
               <ReactMarkdown
                 components={{
-                  // Customize markdown components
+                  // Customize markdown components for seamless rendering
                   p: ({ children }) => (
-                    <div className="mb-2 leading-relaxed">{children}</div>
+                    <span className="block mb-2 leading-relaxed">{children}</span>
                   ),
                   strong: ({ children }) => (
                     <strong className="font-bold text-white">{children}</strong>
@@ -179,17 +191,17 @@ const MathRenderer: React.FC<MathRendererProps> = ({
                     </code>
                   ),
                   pre: ({ children }) => (
-                    <pre className="bg-slate-800 p-2 rounded text-sm font-mono overflow-x-auto">
+                    <pre className="bg-slate-800 p-2 rounded text-sm font-mono overflow-x-auto block my-2">
                       {children}
                     </pre>
                   ),
                   ul: ({ children }) => (
-                    <ul className="list-disc list-inside space-y-1 ml-4 mb-3">
+                    <ul className="list-disc list-inside space-y-1 ml-4 mb-3 block">
                       {children}
                     </ul>
                   ),
                   ol: ({ children }) => (
-                    <ol className="list-decimal list-inside space-y-1 ml-4 mb-3">
+                    <ol className="list-decimal list-inside space-y-1 ml-4 mb-3 block">
                       {children}
                     </ol>
                   ),
@@ -199,7 +211,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
                     </li>
                   ),
                   blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-blue-500 pl-4 italic text-slate-300 mb-2">
+                    <blockquote className="border-l-4 border-blue-500 pl-4 italic text-slate-300 mb-2 block">
                       {children}
                     </blockquote>
                   ),
@@ -207,7 +219,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
               >
                 {part}
               </ReactMarkdown>
-            </div>
+            </span>
           );
         }
 
