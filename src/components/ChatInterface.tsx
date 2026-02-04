@@ -14,7 +14,6 @@ import {
   deleteDoc,
   where,
   getDoc,
-  getDocs,
 } from "firebase/firestore";
 import OpenAI from "openai";
 import InputArea from "./InputArea";
@@ -26,7 +25,6 @@ import ConfirmationDialog from "./ConfirmationDialog";
 import { useAuth } from "../contexts/AuthContext";
 import {
   showErrorToast,
-  showSuccessToast,
   handleOpenAIError,
 } from "../utils/errorHandler";
 import { validateAndSanitizeMessage } from "../utils/inputValidation";
@@ -59,17 +57,17 @@ const Message = ({ msg }: { msg: Message }) => (
   <div
     className={`flex ${
       msg.role === "user" ? "justify-end" : "justify-start"
-    } items-start gap-2`}
+    } items-start gap-2 px-2 sm:px-0`}
   >
     {msg.role === "assistant" && (
       <img
         src="/logo/gimmyai-transparentbg.png"
         alt="GimmyAI Logo"
-        className="w-7 h-8 self-center"
+        className="w-6 h-7 sm:w-7 sm:h-8 self-center flex-shrink-0"
       />
     )}
     <div
-      className={`max-w-[80%] rounded-lg p-4 ${
+      className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] rounded-lg p-3 sm:p-4 ${
         msg.role === "user"
           ? "bg-blue-600 text-white"
           : "bg-slate-800 text-slate-200"
@@ -81,14 +79,14 @@ const Message = ({ msg }: { msg: Message }) => (
             <img
               src={msg.imageUrl}
               alt="Uploaded"
-              className="max-w-[200px] max-h-32 object-contain rounded-lg"
+              className="max-w-full sm:max-w-[200px] max-h-32 object-contain rounded-lg"
             />
           ) : (
             <a
               href={msg.imageUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full max-w-[200px] h-32 bg-slate-600 rounded-lg items-center justify-center hover:bg-slate-500"
+              className="flex w-full max-w-full sm:max-w-[200px] h-24 sm:h-32 bg-slate-600 rounded-lg items-center justify-center hover:bg-slate-500"
             >
               <span className="text-slate-300 flex items-center gap-2">
                 {msg.imageUrl.includes("pdf") ? (
@@ -136,14 +134,6 @@ const Message = ({ msg }: { msg: Message }) => (
   </div>
 );
 
-const TypingIndicator = () => (
-  <div className="flex items-center space-x-2 animate-pulse text-slate-400 px-4">
-    <span className="w-2 h-2 bg-slate-400 rounded-full" />
-    <span className="w-2 h-2 bg-slate-400 rounded-full" />
-    <span className="w-2 h-2 bg-slate-400 rounded-full" />
-    <span>GimmyAI is typing...</span>
-  </div>
-);
 
 export default function ChatInterface() {
   const [currentConversationId, setCurrentConversationId] = useState<
@@ -168,7 +158,7 @@ export default function ChatInterface() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   // Load conversations when component mounts or user changes
   useEffect(() => {
@@ -330,6 +320,9 @@ export default function ChatInterface() {
         return;
       }
 
+      // Declare conversationId outside try block so it's accessible in catch
+      let conversationId: string | null = currentConversationId;
+
       try {
         setIsLoading(true);
         setIsSubmitting(true);
@@ -337,14 +330,14 @@ export default function ChatInterface() {
         // Use sanitized message
         const sanitizedMessage = validation.sanitized;
 
-        let conversationId = currentConversationId;
-        if (!conversationId) {
+        // Helper function to create new conversation (DRY principle)
+        const createNewConversation = async (): Promise<string> => {
           // Check conversation limit before creating new one
           if (conversations.length >= MAX_CONVERSATIONS) {
             setIsLoading(false);
             setIsSubmitting(false);
             setShowLimitDialog(true);
-            return;
+            throw new Error("Conversation limit reached");
           }
 
           const newConversationRef = await addDoc(
@@ -356,59 +349,30 @@ export default function ChatInterface() {
               updatedAt: serverTimestamp(),
             },
           );
-          conversationId = newConversationRef.id;
-          setCurrentConversationId(conversationId);
+          const newId = newConversationRef.id;
+          setCurrentConversationId(newId);
+          return newId;
+        };
+
+        // Create new conversation if none exists
+        if (!conversationId) {
+          conversationId = await createNewConversation();
         } else {
-          // Verify the conversation belongs to the current user
+          // Verify the conversation exists and belongs to the current user
           try {
             const conversationDoc = await getDoc(
               doc(db, "conversations", conversationId),
             );
             if (
               !conversationDoc.exists() ||
-              conversationDoc.data().userId !== user.uid
+              conversationDoc.data()?.userId !== user.uid
             ) {
-              // Check conversation limit before creating new one
-              if (conversations.length >= MAX_CONVERSATIONS) {
-                setIsLoading(false);
-                setIsSubmitting(false);
-                setShowLimitDialog(true);
-                return;
-              }
-
-              const newConversationRef = await addDoc(
-                collection(db, "conversations"),
-                {
-                  userId: user.uid,
-                  title: "New Chat",
-                  createdAt: serverTimestamp(),
-                  updatedAt: serverTimestamp(),
-                },
-              );
-              conversationId = newConversationRef.id;
-              setCurrentConversationId(conversationId);
+              console.warn("Conversation doesn't exist or doesn't belong to user, creating new one");
+              conversationId = await createNewConversation();
             }
           } catch (error) {
-            showErrorToast(error, "firebase");
-            // Check conversation limit before creating new one
-            if (conversations.length >= MAX_CONVERSATIONS) {
-              setIsLoading(false);
-              setIsSubmitting(false);
-              setShowLimitDialog(true);
-              return;
-            }
-
-            const newConversationRef = await addDoc(
-              collection(db, "conversations"),
-              {
-                userId: user.uid,
-                title: "New Chat",
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-              },
-            );
-            conversationId = newConversationRef.id;
-            setCurrentConversationId(conversationId);
+            console.error("Error verifying conversation:", error);
+            conversationId = await createNewConversation();
           }
         }
 
@@ -418,37 +382,40 @@ export default function ChatInterface() {
           content: sanitizedMessage,
         };
 
-        await addDoc(
-          collection(db, `conversations/${conversationId}/messages`),
+        // Build message history from local state instead of querying Firestore
+        // This prevents race conditions where Firestore hasn't written the message yet
+        const conversationMessages = messages.filter(msg => msg.id !== "initial");
+        const currentMessages = [
+          ...conversationMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+          })),
           {
-            ...newMessage,
-            timestamp: serverTimestamp(),
-          },
-        );
-
-        setMessage("");
-
-        // Wait a moment for the conversation to be set and messages to load
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        setShowTyping(true);
-
-        // Get the current messages from the conversation (including the one we just added)
-        const messagesRef = collection(
-          db,
-          `conversations/${conversationId}/messages`,
-        );
-        const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"));
-        const messagesSnapshot = await getDocs(messagesQuery);
-        const currentMessages = messagesSnapshot.docs.map((doc) => ({
-          role: doc.data().role,
-          content: doc.data().content,
-        }));
+            role: newMessage.role,
+            content: newMessage.content,
+          }
+        ];
 
         console.log(
           `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`,
         );
         console.log("Messages:", currentMessages);
+
+        // Clear input and show typing indicator before async operations
+        setMessage("");
+        setShowTyping(true);
+
+        // Add user message to Firestore (async, don't wait for it)
+        addDoc(
+          collection(db, `conversations/${conversationId}/messages`),
+          {
+            ...newMessage,
+            timestamp: serverTimestamp(),
+          },
+        ).catch((error) => {
+          console.error("Error saving user message:", error);
+          // Message will still be sent to AI using local state
+        });
 
         // Check API rate limiting before making OpenAI call
         const apiRateLimitCheck = canMakeAPICall(user.uid);
@@ -498,6 +465,7 @@ export default function ChatInterface() {
         setShowTyping(false);
       } catch (error: any) {
         setShowTyping(false);
+        console.error("Error in message submission:", error);
 
         // Get the error message and display it in chat
         const errorMessage = handleOpenAIError(error);
@@ -506,13 +474,13 @@ export default function ChatInterface() {
         const errorChatMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: `Error: ${errorMessage}`,
+          content: `⚠️ Error: ${errorMessage}`,
         };
 
         try {
-          if (currentConversationId) {
+          if (conversationId) {
             await addDoc(
-              collection(db, `conversations/${currentConversationId}/messages`),
+              collection(db, `conversations/${conversationId}/messages`),
               {
                 ...errorChatMessage,
                 timestamp: serverTimestamp(),
@@ -523,12 +491,13 @@ export default function ChatInterface() {
             setMessages((prev) => [...prev, errorChatMessage]);
           }
         } catch (dbError) {
+          console.error("Error saving error message to database:", dbError);
           // If database save fails, just add to local messages
           setMessages((prev) => [...prev, errorChatMessage]);
         }
 
-        // Still show toast as backup (but less noisy)
-        showErrorToast(error, "openai");
+        // Show toast notification
+        toast.error(errorMessage, { duration: 5000 });
       } finally {
         setIsLoading(false);
         setIsSubmitting(false);
@@ -567,7 +536,10 @@ export default function ChatInterface() {
   );
 
   const handleNewChat = async () => {
-    if (!user) return;
+    if (!user) {
+      toast.error("Please sign in to create a new chat");
+      return;
+    }
 
     // Check conversation limit
     if (conversations.length >= MAX_CONVERSATIONS) {
@@ -590,10 +562,13 @@ export default function ChatInterface() {
           content: "How may I help you today?",
         },
       ]);
+      // Auto-close sidebar on mobile for better UX
       if (window.innerWidth < 768) {
         setShowSidebar(false);
       }
+      toast.success("New conversation started!");
     } catch (error) {
+      console.error("Error creating new chat:", error);
       showErrorToast(error, "firebase");
     }
   };
@@ -634,7 +609,10 @@ export default function ChatInterface() {
           ]);
         }
       }
+
+      toast.success("Conversation deleted successfully");
     } catch (error) {
+      console.error("Error deleting conversation:", error);
       showErrorToast(error, "firebase");
     } finally {
       // Reset dialog state
@@ -676,13 +654,13 @@ export default function ChatInterface() {
 
       <div
         ref={sidebarRef}
-        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] z-50 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out flex flex-col
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] z-50 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out flex flex-col overflow-hidden
           ${
             showSidebar || window.innerWidth >= 768
               ? "translate-x-0"
               : "-translate-x-full"
           }
-          md:translate-x-0`}
+          md:translate-x-0 md:z-30`}
       >
         {/* New Chat Button */}
         <div className="p-4 border-b border-slate-700 flex-shrink-0">
@@ -815,27 +793,28 @@ export default function ChatInterface() {
       <div className="flex-1 flex flex-col min-w-0 ml-0 md:ml-64 h-full pt-16 relative">
         <div
           ref={chatContainerRef}
-          className="overflow-y-auto px-4 py-6 space-y-4"
+          className="overflow-y-auto px-2 sm:px-4 py-4 sm:py-6 space-y-3 sm:space-y-4 pb-safe"
           style={{
-            height: "calc(100vh - 4rem - 5.5rem)", // viewport height minus navbar (4rem) minus input area (5.5rem for spacing)
+            height: "calc(100vh - 4rem - 6.5rem)", // viewport height minus navbar (4rem) minus input area (6.5rem for better spacing on mobile)
+            WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
           }}
         >
           {messages.length === 0 && !showTyping && !currentConversationId ? (
-            <div className="flex flex-col items-center justify-center h-full text-center px-4">
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 sm:px-6">
               <img
                 src="/logo/gimmyai-transparentbg.png"
                 alt="GimmyAI Logo"
-                className="w-24 h-24 mb-4 opacity-50"
+                className="w-16 h-16 sm:w-24 sm:h-24 mb-3 sm:mb-4 opacity-50"
               />
-              <h2 className="text-2xl font-bold text-slate-300 mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-300 mb-2">
                 Welcome to GimmyAI!
               </h2>
-              <p className="text-slate-400 max-w-md">
+              <p className="text-sm sm:text-base text-slate-400 max-w-md">
                 I'm here to help you learn using the Socratic Method. Instead of
                 giving you direct answers, I'll ask guiding questions to help
                 you discover solutions yourself.
               </p>
-              <p className="text-slate-500 text-sm mt-4">
+              <p className="text-slate-500 text-xs sm:text-sm mt-3 sm:mt-4">
                 Start by typing a question or uploading an image of your
                 problem.
               </p>
@@ -844,7 +823,7 @@ export default function ChatInterface() {
             messages.map((msg) => <Message key={msg.id} msg={msg} />)
           )}
           {showTyping && (
-            <div className="flex items-center space-x-2 text-slate-400 px-4">
+            <div className="flex items-center space-x-2 text-slate-400 px-2 sm:px-4">
               <div className="flex space-x-1">
                 <div
                   className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
@@ -859,16 +838,16 @@ export default function ChatInterface() {
                   style={{ animationDelay: "300ms" }}
                 />
               </div>
-              <span>GimmyAI is thinking...</span>
+              <span className="text-sm sm:text-base">GimmyAI is thinking...</span>
             </div>
           )}
         </div>
 
         {/* InputArea fixed at the bottom */}
         <div
-          className={`fixed bottom-0 left-0 right-0 z-30 bg-slate-900 border-t border-slate-700 md:left-64`}
+          className={`fixed bottom-0 left-0 right-0 z-30 bg-slate-900 border-t border-slate-700 md:left-64 pb-safe`}
         >
-          <div className="p-3">
+          <div className="p-2 sm:p-3">
             <InputArea
               message={message}
               setMessage={setMessage}
