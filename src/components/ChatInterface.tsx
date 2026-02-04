@@ -30,7 +30,7 @@ import {
   handleOpenAIError,
 } from "../utils/errorHandler";
 import { validateAndSanitizeMessage } from "../utils/inputValidation";
-import { canSendMessage, startRateLimitCleanup } from "../utils/rateLimiter";
+import { canSendMessage, canMakeAPICall, startRateLimitCleanup } from "../utils/rateLimiter";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -449,6 +449,18 @@ export default function ChatInterface() {
           `Sending ${currentMessages.length} messages to AI for conversation ${conversationId}`,
         );
         console.log("Messages:", currentMessages);
+
+        // Check API rate limiting before making OpenAI call
+        const apiRateLimitCheck = canMakeAPICall(user.uid);
+        if (!apiRateLimitCheck.allowed) {
+          const minutesUntilReset = Math.ceil(
+            (apiRateLimitCheck.resetTime - Date.now()) / (60 * 1000),
+          );
+          throw new Error(
+            apiRateLimitCheck.error ||
+              `API rate limit exceeded. Please wait ${minutesUntilReset} minutes before trying again.`,
+          );
+        }
 
         const response = await openai.chat.completions.create({
           model: "gpt-4",

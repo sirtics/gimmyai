@@ -14,12 +14,19 @@ export default function ReCaptchaProvider({ children }: ReCaptchaProviderProps) 
     console.warn("reCAPTCHA site key not found. Bot protection is disabled.");
   }
 
+  useEffect(() => {
+    // Log reCAPTCHA initialization for debugging
+    if (recaptchaSiteKey && recaptchaSiteKey !== "dummy-key") {
+      console.log("reCAPTCHA initialized with site key");
+    }
+  }, [recaptchaSiteKey]);
+
   return (
     <GoogleReCaptchaProvider
       reCaptchaKey={recaptchaSiteKey || "dummy-key"} // Use dummy key if not configured
       scriptProps={{
-        async: false,
-        defer: false,
+        async: true, // Changed to async for better performance
+        defer: true,
         appendTo: "head",
       }}
     >

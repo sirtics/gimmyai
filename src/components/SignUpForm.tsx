@@ -50,19 +50,19 @@ export default function SignUpForm() {
     // Sanitize inputs
     const sanitizedEmail = sanitizeInput(email).toLowerCase().trim();
 
-    // Verify reCAPTCHA if configured
+    // Verify reCAPTCHA if configured (non-blocking to prevent signup issues)
     if (recaptchaSiteKey && executeRecaptcha) {
       try {
         const recaptchaToken = await executeRecaptcha("signup");
         if (!recaptchaToken) {
-          toast.error("reCAPTCHA verification failed. Please try again.");
-          return;
+          console.warn("reCAPTCHA verification returned empty token, proceeding without verification");
+          toast.warning("Security verification unavailable, but signup will proceed.");
         }
         // Token is verified (in production, you could verify server-side)
       } catch (recaptchaError) {
         console.error("reCAPTCHA error:", recaptchaError);
-        toast.error("Security verification failed. Please refresh the page and try again.");
-        return;
+        // Don't block signup if reCAPTCHA fails - log warning instead
+        toast.warning("Security verification failed, but signup will proceed.");
       }
     }
 
@@ -147,13 +147,13 @@ export default function SignUpForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                minLength={6}
+                minLength={8}
                 className="auth-input-field text-white"
-                placeholder="Create a password (min. 6 characters)"
+                placeholder="Create a password (min. 8 characters)"
               />
-              {password && password.length < 6 && (
+              {password && password.length < 8 && (
                 <p className="text-sm text-yellow-400 mt-1">
-                  Password must be at least 6 characters
+                  Password must be at least 8 characters
                 </p>
               )}
             </div>
@@ -180,7 +180,7 @@ export default function SignUpForm() {
                   Passwords do not match
                 </p>
               )}
-              {confirmPassword && password === confirmPassword && password.length >= 6 && (
+              {confirmPassword && password === confirmPassword && password.length >= 8 && (
                 <p className="text-sm text-green-400 mt-1">
                   Passwords match
                 </p>

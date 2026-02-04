@@ -6,15 +6,15 @@
 // Maximum lengths
 export const MAX_MESSAGE_LENGTH = 1000;
 export const MAX_EMAIL_LENGTH = 254;
-export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_PASSWORD_LENGTH = 8; // Increased from 6 for better security
 export const MAX_PASSWORD_LENGTH = 128;
 
-// Rate limiting constants
+// Rate limiting constants (stricter limits to prevent abuse)
 export const RATE_LIMITS = {
-  MESSAGES_PER_MINUTE: 10,
-  MESSAGES_PER_HOUR: 100,
-  API_CALLS_PER_MINUTE: 20,
-  API_CALLS_PER_HOUR: 200,
+  MESSAGES_PER_MINUTE: 5, // Reduced from 10 to prevent spam
+  MESSAGES_PER_HOUR: 50, // Reduced from 100 for better control
+  API_CALLS_PER_MINUTE: 10, // Reduced from 20 to prevent quota abuse
+  API_CALLS_PER_HOUR: 100, // Reduced from 200 to prevent quota abuse
   SIGNUPS_PER_HOUR: 3, // Limit signups per hour per IP/session
   SIGNUPS_PER_DAY: 5, // Limit signups per day per IP/session
 };
@@ -112,9 +112,9 @@ export function validatePassword(password: string): { valid: boolean; error?: st
   }
 
   // Check for common weak passwords
-  const commonPasswords = ["password", "123456", "12345678", "qwerty", "abc123"];
+  const commonPasswords = ["password", "123456", "12345678", "qwerty", "abc123", "password123", "letmein", "welcome"];
   if (commonPasswords.includes(password.toLowerCase())) {
-    return { valid: true, error: "Password is too common", strength: "weak" };
+    return { valid: false, error: "Password is too common. Please use a stronger password.", strength: "weak" };
   }
 
   // Calculate password strength

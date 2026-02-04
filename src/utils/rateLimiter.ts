@@ -1,6 +1,10 @@
 /**
  * Client-Side Rate Limiting Utility
  * Prevents abuse by limiting user actions
+ *
+ * Uses localStorage for persistence across browser sessions
+ * Note: This is still client-side and can be bypassed. For production,
+ * implement server-side rate limiting as well.
  */
 
 import { RATE_LIMITS } from "./inputValidation";
@@ -10,19 +14,53 @@ interface RateLimitEntry {
   resetTime: number;
 }
 
-// In-memory storage for rate limiting (per session)
-// In production, consider using localStorage or a backend service
-const rateLimitStore = new Map<string, RateLimitEntry>();
+// Use localStorage for persistence across browser sessions
+const STORAGE_KEY = 'gimmyai_rate_limits';
+
+// Helper to get rate limits from localStorage
+function getRateLimitStore(): Map<string, RateLimitEntry> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return new Map(Object.entries(data));
+    }
+  } catch (error) {
+    console.error('Error reading rate limit store:', error);
+  }
+  return new Map();
+}
+
+// Helper to save rate limits to localStorage
+function saveRateLimitStore(store: Map<string, RateLimitEntry>): void {
+  try {
+    const data = Object.fromEntries(store);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving rate limit store:', error);
+  }
+}
+
+// In-memory cache with localStorage fallback
+let rateLimitStore = getRateLimitStore();
 
 /**
  * Cleans up expired rate limit entries
  */
 function cleanupExpiredEntries() {
   const now = Date.now();
+  let hasChanges = false;
+
   for (const [key, entry] of rateLimitStore.entries()) {
     if (now > entry.resetTime) {
       rateLimitStore.delete(key);
+      hasChanges = true;
     }
+  }
+
+  // Save to localStorage if there were changes
+  if (hasChanges) {
+    saveRateLimitStore(rateLimitStore);
   }
 }
 
@@ -47,6 +85,7 @@ export function checkRateLimit(
       resetTime: now + windowMs,
     };
     rateLimitStore.set(key, newEntry);
+    saveRateLimitStore(rateLimitStore);
     return {
       allowed: true,
       remaining: limit - 1,
@@ -65,6 +104,7 @@ export function checkRateLimit(
   // Increment count
   entry.count++;
   rateLimitStore.set(key, entry);
+  saveRateLimitStore(rateLimitStore);
 
   return {
     allowed: true,
@@ -182,6 +222,19 @@ export function canMakeAPICall(userId?: string): {
  */
 export function resetRateLimit(action: string): void {
   rateLimitStore.delete(action);
+  saveRateLimitStore(rateLimitStore);
+}
+
+/**
+ * Clears all rate limits (useful for testing)
+ */
+export function clearAllRateLimits(): void {
+  rateLimitStore.clear();
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.error('Error clearing rate limits:', error);
+  }
 }
 
 /**

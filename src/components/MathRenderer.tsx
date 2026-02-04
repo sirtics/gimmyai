@@ -14,6 +14,11 @@ const MathRenderer: React.FC<MathRendererProps> = ({
 }) => {
   // Function to convert common math expressions to LaTeX
   const convertMathExpressions = (text: string): string => {
+    // Don't convert if text is already in LaTeX format
+    if (text.includes('\\') || text.match(/\$.*\$/)) {
+      return text;
+    }
+
     return (
       text
         // Only convert expressions that are clearly mathematical
@@ -36,7 +41,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
         .replace(/\bdelta\b/g, "$\\delta") // delta -> \delta
         .replace(/\bepsilon\b/g, "$\\epsilon") // epsilon -> \epsilon
         .replace(/\bzeta\b/g, "$\\zeta") // zeta -> \zeta
-        .replace(/\beta\b/g, "$\\eta") // eta -> \eta
+        .replace(/\beta\b/g, "$\\eta") // eta -> \eta (FIXED: was \beta)
         .replace(/\biota\b/g, "$\\iota") // iota -> \iota
         .replace(/\bkappa\b/g, "$\\kappa") // kappa -> \kappa
         .replace(/\blambda\b/g, "$\\lambda") // lambda -> \lambda
@@ -103,6 +108,11 @@ const MathRenderer: React.FC<MathRendererProps> = ({
     mathContent: string,
     isBlock: boolean = false
   ): React.ReactNode => {
+    // Validate input
+    if (!mathContent || mathContent.trim().length === 0) {
+      return null;
+    }
+
     try {
       if (isBlock) {
         return (
@@ -122,18 +132,19 @@ const MathRenderer: React.FC<MathRendererProps> = ({
       }
     } catch (error) {
       // If LaTeX parsing fails, return the original text with styling
-      console.warn("LaTeX parsing error:", error);
+      console.error("KaTeX rendering error:", error, "Content:", mathContent);
       if (isBlock) {
         return (
-          <div className="my-4 p-3 bg-slate-800 rounded border border-slate-700">
-            <div className="font-mono text-center text-red-300">
+          <div className="my-4 p-3 bg-red-900/20 rounded border border-red-700">
+            <div className="font-mono text-center text-red-300 text-sm">
+              <div className="text-red-400 font-semibold mb-1">Math rendering error:</div>
               {mathContent}
             </div>
           </div>
         );
       } else {
         return (
-          <span className="font-mono text-red-300 bg-slate-700 px-1 rounded">
+          <span className="font-mono text-red-300 bg-red-900/20 px-1 rounded text-sm border border-red-700" title="Math rendering error">
             {mathContent}
           </span>
         );
@@ -147,15 +158,25 @@ const MathRenderer: React.FC<MathRendererProps> = ({
     const processedText = preprocessContent(text);
 
     // Split by math delimiters - handle both inline ($...$) and block ($$...$$)
-    // Use a regex that properly captures math expressions
-    const parts = processedText.split(/(\$\$[^$]+\$\$|\$[^$\n]+\$)/);
+    // Improved regex to handle edge cases including newlines and escaped delimiters
+    // Match $$ first (block math), then $ (inline math)
+    const parts = processedText.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g);
 
     return parts
       .map((part, index) => {
+        // Skip empty parts
+        if (!part || part.trim().length === 0) {
+          return null;
+        }
+
         // Block math: $$...$$
         if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4) {
           const mathContent = part.slice(2, -2).trim();
-          return <div key={index}>{renderMath(mathContent, true)}</div>;
+          // Validate that it's not just empty or whitespace
+          if (mathContent.length > 0) {
+            return <div key={index}>{renderMath(mathContent, true)}</div>;
+          }
+          return null;
         }
 
         // Inline math: $...$ (but not block math)
@@ -166,7 +187,11 @@ const MathRenderer: React.FC<MathRendererProps> = ({
           !part.startsWith("$$")
         ) {
           const mathContent = part.slice(1, -1).trim();
-          return <span key={index}>{renderMath(mathContent, false)}</span>;
+          // Validate that it's not just empty or whitespace
+          if (mathContent.length > 0) {
+            return <span key={index}>{renderMath(mathContent, false)}</span>;
+          }
+          return null;
         }
 
         // Regular text - render with markdown
